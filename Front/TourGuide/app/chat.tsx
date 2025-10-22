@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
+import Markdown from 'react-native-markdown-display';
 
 interface Message {
   id: string;
@@ -31,10 +33,11 @@ const mockResponses = [
 ];
 
 export default function ChatScreen() {
+  const { message } = useLocalSearchParams();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm your CMU Tour Guide AI. I can see you've scanned a building - let me tell you all about it! What would you like to know?",
+      text: String(message),
       isUser: false,
       timestamp: new Date(),
     }
@@ -83,9 +86,23 @@ export default function ChatScreen() {
   const renderMessage = ({ item }: { item: Message }) => (
     <View style={[styles.messageContainer, item.isUser ? styles.userMessage : styles.aiMessage]}>
       <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.aiBubble]}>
-        <Text style={[styles.messageText, item.isUser ? styles.userText : styles.aiText]}>
-          {item.text}
-        </Text>
+        {item.isUser ? (
+          <Text style={[styles.messageText, styles.userText]}>
+            {item.text}
+          </Text>
+        ) : (
+          <Markdown 
+            style={{
+              body: {
+                ...styles.messageText,
+                ...styles.aiText,
+              },
+              strong: styles.boldText,
+            }}
+          >
+            {item.text}
+          </Markdown>
+        )}
         <Text style={[styles.timestamp, item.isUser ? styles.userTimestamp : styles.aiTimestamp]}>
           {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
@@ -258,6 +275,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   aiText: {
+    color: '#333',
+  },
+  boldText: {
+    fontWeight: 'bold',
     color: '#333',
   },
   timestamp: {
