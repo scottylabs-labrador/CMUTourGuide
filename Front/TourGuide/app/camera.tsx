@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { CameraView, CameraType, useCameraPermissions, Camera } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -9,6 +9,7 @@ export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isCapturing, setIsCapturing] = useState(false);
   const router = useRouter();
+  const camera = useRef<CameraView>(null);
 
   if (!permission) {
     return <View />;
@@ -40,6 +41,26 @@ export default function CameraScreen() {
     
     setIsCapturing(true);
     
+    const photo = await camera.current?.takePictureAsync({
+      base64: true,
+      quality: 0.8
+    });
+
+    console.log(photo?.base64)
+
+    const res = await fetch('http://localhost:8000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: "What building is this?",
+        imageBase64: photo?.base64,
+      })
+    });
+
+    const data = await res.json()
+
+    console.log(data)
+
     // Simulate photo processing
     setTimeout(() => {
       setIsCapturing(false);
