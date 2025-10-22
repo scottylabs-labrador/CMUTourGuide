@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions, Camera } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -46,13 +46,13 @@ export default function CameraScreen() {
       quality: 0.8
     });
 
-    console.log(photo?.base64)
+    console.log('photo data:', photo?.base64)
 
-    const res = await fetch('http://localhost:8000/chat', {
+    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        message: "What building is this?",
+        message: "What Carnegie Mellon University building/monument is this?",
         imageBase64: photo?.base64,
       })
     });
@@ -64,7 +64,7 @@ export default function CameraScreen() {
     // Simulate photo processing
     setTimeout(() => {
       setIsCapturing(false);
-      router.push('/chat');
+      router.push({ pathname: '/chat', params: { message: data.reply } });
     }, 1500);
   };
 
@@ -88,6 +88,7 @@ export default function CameraScreen() {
 
       <CameraView 
         style={styles.camera} 
+        ref={camera}
         facing={facing}
       >
         <View style={styles.cameraOverlay}>
@@ -116,7 +117,7 @@ export default function CameraScreen() {
             disabled={isCapturing}
           >
             {isCapturing ? (
-              <Ionicons name="hourglass" size={32} color="white" />
+              <ActivityIndicator size="large" color="white" />
             ) : (
               <Ionicons name="camera" size={32} color="white" />
             )}
@@ -125,6 +126,7 @@ export default function CameraScreen() {
         
         {isCapturing && (
           <View style={styles.processingContainer}>
+            <ActivityIndicator size="small" color="white" style={styles.processingIndicator} />
             <Text style={styles.processingText}>Processing image...</Text>
           </View>
         )}
@@ -276,6 +278,11 @@ const styles = StyleSheet.create({
   processingContainer: {
     marginTop: 16,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  processingIndicator: {
+    marginRight: 8,
   },
   processingText: {
     color: 'white',

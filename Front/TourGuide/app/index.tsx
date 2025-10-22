@@ -7,12 +7,11 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const handleTestAPI = async () => {
-    const response = await fetch('http://localhost:8000/chat', {
-      method: 'POST',
+    const response = await fetch('https://cmutourguide-backend-production.up.railway.app/health', {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: 'Hello, how are you?' }),
     });
     console.log(await response.json());
   };
