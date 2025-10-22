@@ -6,6 +6,17 @@ import { Ionicons } from '@expo/vector-icons';
 export default function HomeScreen() {
   const router = useRouter();
 
+  const handleTestAPI = async () => {
+    const response = await fetch('http://localhost:8000/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: 'Hello, how are you?' }),
+    });
+    console.log(await response.json());
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -31,6 +42,13 @@ export default function HomeScreen() {
           >
             <Ionicons name="camera-outline" size={24} color="white" />
             <Text style={styles.scanButtonText}>Scan a Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.scanButton}
+            onPress={handleTestAPI}
+          >
+            <Ionicons name="camera-outline" size={24} color="white" />
+            <Text style={styles.scanButtonText}>Test API</Text>
           </TouchableOpacity>
         </View>
 
