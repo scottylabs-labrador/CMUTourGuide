@@ -15,22 +15,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 
-interface Message {
+export interface Message {
   id: string;
   text: string;
   isUser: boolean;
   timestamp: Date;
 }
-
-const mockResponses = [
-  "This is Hunt Library, one of Carnegie Mellon's most iconic buildings! 🏛️\n\nDesigned by Mack Scogin Merrill Elam Architects, it's not just a library—it's a masterpiece of modern architecture. The building's distinctive design features a dramatic cantilevered section that seems to defy gravity.\n\n**Fun Facts:**\n• The 'Maggie Murph' cafe is named after Margaret Murphy, a beloved former dean\n• The quietest study spots are on the 4th floor\n• It houses the Posner Center with rare first-edition books including Newton's Principia\n• The building's design won the AIA Honor Award in 2012",
-  
-  "I can see you're looking at Wean Hall! 🏢\n\nThis is the heart of CMU's engineering programs. Named after Herbert A. Simon and Allen Newell, it's where countless breakthroughs in computer science and artificial intelligence have happened.\n\n**Insider Tips:**\n• The 5th floor has the best views of campus\n• The basement study rooms are surprisingly quiet\n• Look for the hidden study nooks near the elevators\n• The building connects to Newell-Simon Hall via underground tunnels",
-  
-  "Ah, the Gates Hillman Center! 💻\n\nThis is where the magic of computer science happens at CMU. Named after Bill Gates and Henry Hillman, it's the newest addition to the CS department.\n\n**What makes it special:**\n• State-of-the-art research labs\n• The famous 'Gates Hillman Center' sign is a popular photo spot\n• Home to the Human-Computer Interaction Institute\n• Features sustainable design with LEED Gold certification\n• The building's open design encourages collaboration between researchers",
-  
-  "I see you've found the Cut! 🌳\n\nThis is Carnegie Mellon's central gathering space, where students come to relax, study, and socialize. The Cut is surrounded by some of the most important buildings on campus.\n\n**The Cut's History:**\n• Originally a ravine that was filled in to create this flat space\n• Named after the 'cut' made through the hillside\n• Home to the famous 'Fence' tradition\n• Perfect spot for outdoor events and festivals\n• Surrounded by Wean Hall, Doherty Hall, and the University Center"
-];
 
 export default function ChatScreen() {
   const { message } = useLocalSearchParams();
@@ -54,7 +44,7 @@ export default function ChatScreen() {
     }, 100);
   }, [messages]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (inputText.trim() === '') return;
 
     const userMessage: Message = {
@@ -64,23 +54,32 @@ export default function ChatScreen() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: randomResponse,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
+    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: updatedMessages,
+      })
+    });
+
+    const data = await res.json();
+    console.log(data)
+
+    const chatMessage: Message = {
+      id: Date.now().toString(),
+      text: data.reply,
+      isUser: false,
+      timestamp: new Date(),
+    }
+
+    setMessages(prev => [...prev, chatMessage]);
+    setIsTyping(false);
+
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
