@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions, Camera } from 'expo-camera';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Message } from './chat'
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -48,7 +49,7 @@ export default function CameraScreen() {
 
     console.log('photo data:', photo?.base64)
 
-    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
+    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
