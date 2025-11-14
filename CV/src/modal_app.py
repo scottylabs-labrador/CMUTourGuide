@@ -38,16 +38,18 @@ image = (
     timeout=300,   # 5 minutes
     secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
 )
-def recognize_building(image_bytes: bytes) -> dict:
+@modal.fastapi_endpoint(method="POST")
+async def recognize_building(request: dict) -> dict:
     """
-    Recognize a building from image bytes.
+    HTTP endpoint for building recognition.
     
-    Args:
-        image_bytes: Raw image bytes
-        
+    POST request with JSON body containing base64 image.
+    Expected format: {"image": "base64_string"} or {"imageBase64": "base64_string"}
+    
     Returns:
         Dictionary with building name, confidence, and description
     """
+    import base64
     import sys
     from PIL import Image
     
@@ -56,6 +58,41 @@ def recognize_building(image_bytes: bytes) -> dict:
     
     from model import BuildingRecognizer
     from database import BuildingDB
+    
+    # Parse request and decode base64 image
+    if "image" in request:
+        image_data = request["image"]
+    elif "imageBase64" in request:
+        image_data = request["imageBase64"]
+    else:
+        return {
+            "building": "Error",
+            "confidence": 0.0,
+            "description": "No image provided. Send 'image' or 'imageBase64' in JSON body",
+            "error": "NO_IMAGE_PROVIDED"
+        }
+    
+    # Decode base64
+    if isinstance(image_data, str):
+        # Remove data URL prefix if present (e.g., "data:image/jpeg;base64,...")
+        if "," in image_data:
+            image_data = image_data.split(",")[1]
+        try:
+            image_bytes = base64.b64decode(image_data)
+        except Exception as e:
+            return {
+                "building": "Error",
+                "confidence": 0.0,
+                "description": f"Failed to decode base64 image: {str(e)}",
+                "error": "DECODE_ERROR"
+            }
+    else:
+        return {
+            "building": "Error",
+            "confidence": 0.0,
+            "description": "Image must be a base64 string",
+            "error": "INVALID_FORMAT"
+        }
     
     try:
         # Load image from bytes
@@ -83,6 +120,7 @@ def recognize_building(image_bytes: bytes) -> dict:
             }
         
         best_match = results[0]
+        print(f"🏢 Best match: {best_match['name']} with confidence {best_match['similarity']}")
         return {
             "building": best_match["name"],
             "confidence": round(best_match["similarity"], 4),
@@ -99,40 +137,6 @@ def recognize_building(image_bytes: bytes) -> dict:
             "description": "Error processing image",
             "error": str(e)
         }
-
-
-@app.function(
-    image=image,
-    memory=2048,
-    secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
-)
-@modal.fastapi_endpoint(method="POST")
-def search(request: dict):
-    """
-    HTTP endpoint for building recognition.
-    
-    POST request with multipart/form-data image upload.
-    """
-    import base64
-    
-    # Handle both base64 and raw bytes
-    if "image" in request:
-        # Base64 encoded
-        if isinstance(request["image"], str):
-            image_bytes = base64.b64decode(request["image"])
-        else:
-            image_bytes = request["image"]
-    elif "file" in request:
-        # File upload
-        image_bytes = request["file"]
-    else:
-        return {
-            "error": "No image provided. Send 'image' (base64) or 'file' (bytes)"
-        }
-    
-    # Call recognition function
-    result = recognize_building.remote(image_bytes)
-    return result
 
 
 @app.function(
@@ -196,6 +200,8 @@ def main():
     Local testing entry point.
     Usage: modal run modal_app.py
     """
+    import base64
+    
     print("🧪 Testing Modal deployment locally...")
     
     # Test with a local image
@@ -205,8 +211,11 @@ def main():
         with open(test_image_path, "rb") as f:
             image_bytes = f.read()
         
+        # Encode as base64 for the web endpoint
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        
         print(f"Testing with: {test_image_path}")
-        result = recognize_building.remote(image_bytes)
+        result = recognize_building.remote({"imageBase64": image_base64})
         print(f"\n✅ Result: {result}")
     else:
         print(f"⚠️  Test image not found: {test_image_path}")
