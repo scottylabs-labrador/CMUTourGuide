@@ -28,7 +28,7 @@ image = (
     # Install CLIP from GitHub (requires git)
     .pip_install("git+https://github.com/openai/CLIP.git")
     # Add source code to image (Modal 1.0 pattern)
-    .add_local_dir("src", remote_path="/root/src")
+    .add_local_dir(".", remote_path="/root/src")
 )
 
 
@@ -49,7 +49,6 @@ def recognize_building(image_bytes: bytes) -> dict:
         Dictionary with building name, confidence, and description
     """
     import sys
-    import os
     from PIL import Image
     
     # Add src to path
@@ -107,7 +106,7 @@ def recognize_building(image_bytes: bytes) -> dict:
     memory=2048,
     secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
 )
-@modal.web_endpoint(method="POST")
+@modal.fastapi_endpoint(method="POST")
 def search(request: dict):
     """
     HTTP endpoint for building recognition.
@@ -140,7 +139,7 @@ def search(request: dict):
     image=image,
     secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
 )
-@modal.web_endpoint(method="GET")
+@modal.fastapi_endpoint(method="GET")
 def health():
     """Health check endpoint."""
     import sys
@@ -169,7 +168,7 @@ def health():
     image=image,
     secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
 )
-@modal.web_endpoint(method="GET")
+@modal.fastapi_endpoint(method="GET")
 def buildings():
     """List all buildings in the database."""
     import sys
@@ -200,7 +199,7 @@ def main():
     print("🧪 Testing Modal deployment locally...")
     
     # Test with a local image
-    test_image_path = "data/Tepper/Tepper_1.jpeg"
+    test_image_path = "../data/Tepper/Tepper_1.jpeg"
     
     if Path(test_image_path).exists():
         with open(test_image_path, "rb") as f:

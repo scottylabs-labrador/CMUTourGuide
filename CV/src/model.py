@@ -5,9 +5,7 @@ CLIP is chosen for high accuracy with minimal training data requirements.
 import torch
 import clip
 from PIL import Image
-import numpy as np
 import ssl
-import urllib.request
 
 # Fix for SSL certificate issues on macOS
 ssl._create_default_https_context = ssl._create_unverified_context
