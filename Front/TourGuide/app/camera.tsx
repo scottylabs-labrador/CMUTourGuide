@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, Activity
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Message } from './chat'
-
+import * as Haptics from 'expo-haptics'
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function CameraScreen() {
@@ -41,15 +40,14 @@ export default function CameraScreen() {
 
   const takePicture = async () => {
     if (isCapturing) return;
-    
     setIsCapturing(true);
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     const photo = await camera.current?.takePictureAsync({
       base64: true,
-      quality: 0.8
+      quality: 1.0
     });
-
-    // console.log('photo data:', photo?.base64)
 
     const res = await fetch('https://cmutourguide-backend-production.up.railway.app/image', {
       method: 'POST',
@@ -61,13 +59,14 @@ export default function CameraScreen() {
 
     const data = await res.json()
 
-    console.log(data)
-
-    // Simulate photo processing
-    setTimeout(() => {
-      setIsCapturing(false);
-      router.push({ pathname: '/chat', params: { message: data.reply } });
-    }, 1500);
+    setIsCapturing(false);
+    router.push({ 
+      pathname: '/chat', 
+      params: { 
+        message: data.reply,
+        imageUri: photo?.uri || '',
+      } 
+    });
   };
 
   return (

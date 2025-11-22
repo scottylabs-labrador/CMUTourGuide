@@ -2,12 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics'
 
 export default function HomeScreen() {
   const router = useRouter();
 
   const handlePastChats = () => {
-    // Dummy function - no functionality yet
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push('/pastChats');
   };
 
   const handleMapView = () => {
@@ -15,6 +17,7 @@ export default function HomeScreen() {
   };
 
   const handleScan = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push('/camera');
   };
 

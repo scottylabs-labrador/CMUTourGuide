@@ -14,16 +14,18 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
-
-export interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { Image } from 'expo-image';
+import { saveChatSession, getChatSession } from '../utils/chatStorage';
+import { Message, ChatSession } from '../types/chat';
 
 export default function ChatScreen() {
-  const { message } = useLocalSearchParams();
+  const { message, sessionId, imageUri } = useLocalSearchParams();
+  const [sessionIdState, setSessionIdState] = useState<string>(
+    sessionId ? String(sessionId) : `chat_${Date.now()}`
+  );
+  const [imageUriState, setImageUriState] = useState<string | undefined>(
+    imageUri ? String(imageUri) : undefined
+  );
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -38,11 +40,45 @@ export default function ChatScreen() {
   const router = useRouter();
 
   useEffect(() => {
+    // Load existing session if sessionId is provided
+    const loadSession = async () => {
+      if (sessionId) {
+        const session = await getChatSession(String(sessionId));
+        if (session && session.messages.length > 0) {
+          setMessages(session.messages);
+          setSessionIdState(session.id);
+          if (session.imageUri) {
+            setImageUriState(session.imageUri);
+          }
+        }
+      }
+    };
+    loadSession();
+  }, [sessionId]);
+
+  useEffect(() => {
     // Auto-scroll to bottom when new messages are added
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 100);
   }, [messages]);
+
+  useEffect(() => {
+    // Save chat session whenever messages change
+    const saveSession = async () => {
+      if (messages.length > 0) {
+        const session: ChatSession = {
+          id: sessionIdState,
+          messages: messages,
+          createdAt: messages[0].timestamp.toISOString(),
+          updatedAt: messages[messages.length - 1].timestamp.toISOString(),
+          imageUri: imageUriState,
+        };
+        await saveChatSession(session);
+      }
+    };
+    saveSession();
+  }, [messages, sessionIdState, imageUriState]);
 
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
@@ -109,6 +145,23 @@ export default function ChatScreen() {
     </View>
   );
 
+  const renderImageMessage = () => {
+    if (!imageUriState) return null;
+    
+    return (
+      <View style={[styles.messageContainer, styles.userMessage]}>
+        <View style={[styles.messageBubble, styles.userBubble, styles.imageBubble]}>
+          <Image
+            source={{ uri: imageUriState }}
+            style={styles.chatImage}
+            contentFit="contain"
+            transition={200}
+          />
+        </View>
+      </View>
+    );
+  };
+
   const renderTypingIndicator = () => (
     <View style={[styles.messageContainer, styles.aiMessage]}>
       <View style={[styles.messageBubble, styles.aiBubble]}>
@@ -144,7 +197,7 @@ export default function ChatScreen() {
           </View>
           <TouchableOpacity 
             style={styles.newChatButton}
-            onPress={() => router.push('/')}
+            onPress={() => router.dismissTo("/camera")}
           >
             <Ionicons name="add" size={24} color="white" />
           </TouchableOpacity>
@@ -158,6 +211,7 @@ export default function ChatScreen() {
           keyExtractor={(item) => item.id}
           style={styles.messagesList}
           contentContainerStyle={styles.messagesContent}
+          ListHeaderComponent={renderImageMessage}
           ListFooterComponent={isTyping ? renderTypingIndicator : null}
         />
 
@@ -246,13 +300,22 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     maxWidth: '80%',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     borderRadius: 20,
   },
   userBubble: {
     backgroundColor: '#C41E3A',
     borderBottomRightRadius: 4,
+  },
+  imageBubble: {
+    padding: 0,
+    overflow: 'hidden',
+    maxWidth: 250,
+  },
+  chatImage: {
+    width: 180,
+    height: 250,
   },
   aiBubble: {
     backgroundColor: 'white',
