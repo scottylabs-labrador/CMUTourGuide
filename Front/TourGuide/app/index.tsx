@@ -1,72 +1,83 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  const handleTestAPI = async () => {
-    const response = await fetch('https://cmutourguide-backend-production.up.railway.app/health', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    console.log(await response.json());
+  const handlePastChats = () => {
+    // Dummy function - no functionality yet
+  };
+
+  const handleMapView = () => {
+    // Dummy function - no functionality yet
+  };
+
+  const handleScan = () => {
+    router.push('/camera');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>CMU Tour Guide</Text>
-          <Text style={styles.subtitle}>Discover Carnegie Mellon's Hidden Stories</Text>
-        </View>
-
-        {/* Main Content */}
-        <View style={styles.mainContent}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="camera" size={80} color="#C41E3A" />
-          </View>
-          
-          <Text style={styles.description}>
-            Point your camera at any building, monument, or landmark on campus to learn its fascinating history and insider secrets.
-          </Text>
-
           <TouchableOpacity 
-            style={styles.scanButton}
-            onPress={() => router.push('/camera')}
+            style={styles.infoButton}
+            onPress={() => router.push('/info')}
+            activeOpacity={0.7}
           >
-            <Ionicons name="camera-outline" size={24} color="white" />
-            <Text style={styles.scanButtonText}>Scan a Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.scanButton}
-            onPress={handleTestAPI}
-          >
-            <Ionicons name="camera-outline" size={24} color="white" />
-            <Text style={styles.scanButtonText}>Test API</Text>
+            <Ionicons name="information-circle-outline" size={24} color="#C41E3A" />
           </TouchableOpacity>
         </View>
 
-        {/* Features */}
-        <View style={styles.features}>
-          <View style={styles.feature}>
-            <Ionicons name="eye" size={20} color="#C41E3A" />
-            <Text style={styles.featureText}>Computer Vision</Text>
+        {/* Main Action Button */}
+        <TouchableOpacity 
+          style={styles.mainButton}
+          onPress={handleScan}
+          activeOpacity={0.9}
+        >
+          <View style={styles.mainButtonIcon}>
+            <Ionicons name="camera" size={48} color="#C41E3A" />
           </View>
-          <View style={styles.feature}>
-            <Ionicons name="bulb" size={20} color="#C41E3A" />
-            <Text style={styles.featureText}>AI Insights</Text>
-          </View>
-          <View style={styles.feature}>
-            <Ionicons name="map" size={20} color="#C41E3A" />
-            <Text style={styles.featureText}>Campus Expert</Text>
+          <Text style={styles.mainButtonText}>Scan</Text>
+        </TouchableOpacity>
+
+        {/* Secondary Actions */}
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={handlePastChats}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="chatbubbles-outline" size={24} color="#C41E3A" />
+            <Text style={styles.actionButtonText}>Chats</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={handleMapView}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="map-outline" size={24} color="#C41E3A" />
+            <Text style={styles.actionButtonText}>Map</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Map Preview Section */}
+        <View style={styles.mapContainer}>
+          <View style={styles.mapPlaceholder}>
+            <Ionicons name="map" size={64} color="#ddd" />
+            <Text style={styles.mapPlaceholderText}>Map View</Text>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -74,79 +85,92 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#ffffff',
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   header: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#C41E3A',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  mainContent: {
-    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 48,
+    marginTop: 12,
+    position: 'relative',
   },
-  iconContainer: {
+  title: {
+    fontSize: 36,
+    fontWeight: '700',
+    color: '#C41E3A',
+    letterSpacing: -0.5,
+  },
+  mainButton: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 24,
+    paddingVertical: 48,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 32,
+    borderWidth: 2,
+    borderColor: '#C41E3A',
+    borderStyle: 'dashed',
+  },
+  mainButtonIcon: {
+    marginBottom: 16,
+  },
+  mainButtonText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#C41E3A',
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    gap: 16,
     marginBottom: 32,
   },
-  description: {
-    fontSize: 18,
-    color: '#333',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 40,
-    paddingHorizontal: 20,
-  },
-  scanButton: {
-    backgroundColor: '#C41E3A',
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 25,
-    flexDirection: 'row',
+  actionButton: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 16,
+    paddingVertical: 20,
     alignItems: 'center',
-    shadowColor: '#C41E3A',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
   },
-  scanButtonText: {
-    color: 'white',
-    fontSize: 18,
+  actionButtonText: {
+    fontSize: 14,
     fontWeight: '600',
-    marginLeft: 8,
+    color: '#C41E3A',
+    marginTop: 8,
   },
-  features: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 40,
+  mapContainer: {
+    marginTop: 8,
   },
-  feature: {
+  mapPlaceholder: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 16,
+    height: 300,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
   },
-  featureText: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
+  mapPlaceholderText: {
+    fontSize: 16,
+    color: '#999',
+    marginTop: 12,
     fontWeight: '500',
+  },
+  infoButton: {
+    position: 'absolute',
+    right: 0,
+    padding: 8,
   },
 });

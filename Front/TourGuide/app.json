@@ -4,7 +4,7 @@
     "slug": "TourGuide",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/appstore.png",
     "scheme": "tourguide",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
