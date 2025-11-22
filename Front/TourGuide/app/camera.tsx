@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from './chat'
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -47,13 +49,12 @@ export default function CameraScreen() {
       quality: 0.8
     });
 
-    console.log('photo data:', photo?.base64)
+    // console.log('photo data:', photo?.base64)
 
     const res = await fetch('https://cmutourguide-backend-production.up.railway.app/image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        message: "What Carnegie Mellon University building/monument is this?",
         imageBase64: photo?.base64,
       })
     });
@@ -200,16 +201,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scanFrame: {
-    width: 250,
-    height: 250,
+    width: SCREEN_WIDTH * 0.90,
+    height: SCREEN_WIDTH * 0.90,
     position: 'relative',
   },
   corner: {
     position: 'absolute',
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     borderColor: '#C41E3A',
-    borderWidth: 3,
+    borderWidth: 5,
   },
   topLeft: {
     top: 0,
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
   },
   instructions: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 30,
     left: 20,
     right: 20,
   },
