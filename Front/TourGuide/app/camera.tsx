@@ -87,11 +87,12 @@ export default function CameraScreen() {
         </TouchableOpacity>
       </View>
 
-      <CameraView 
-        style={styles.camera} 
-        ref={camera}
-        facing={facing}
-      >
+      <View style={styles.cameraContainer}>
+        <CameraView 
+          style={styles.camera} 
+          ref={camera}
+          facing={facing}
+        />
         <View style={styles.cameraOverlay}>
           {/* Scanning frame */}
           <View style={styles.scanFrame}>
@@ -103,12 +104,21 @@ export default function CameraScreen() {
           
           {/* Instructions */}
           <View style={styles.instructions}>
-            <Text style={styles.instructionText}>
-              Point your camera at a building or landmark
-            </Text>
+            <View style={styles.instructionContainer}>
+              <Text style={styles.instructionText}>
+                {isCapturing ? 'Processing image...' : 'Point your camera at a building or landmark'}
+              </Text>
+              {isCapturing && (
+                <ActivityIndicator 
+                  size="small" 
+                  color="white" 
+                  style={styles.activityIndicator}
+                />
+              )}
+            </View>
           </View>
         </View>
-      </CameraView>
+      </View>
 
       <View style={styles.bottomControls}>
         <View style={styles.controlsContainer}>
@@ -117,20 +127,10 @@ export default function CameraScreen() {
             onPress={takePicture}
             disabled={isCapturing}
           >
-            {isCapturing ? (
-              <ActivityIndicator size="large" color="white" />
-            ) : (
-              <Ionicons name="camera" size={32} color="white" />
-            )}
+            <Ionicons name="camera" size={32} color="white" />
           </TouchableOpacity>
         </View>
-        
-        {isCapturing && (
-          <View style={styles.processingContainer}>
-            <ActivityIndicator size="small" color="white" style={styles.processingIndicator} />
-            <Text style={styles.processingText}>Processing image...</Text>
-          </View>
-        )}
+
       </View>
     </SafeAreaView>
   );
@@ -191,13 +191,22 @@ const styles = StyleSheet.create({
   flipButton: {
     padding: 8,
   },
+  cameraContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   camera: {
     flex: 1,
   },
   cameraOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    pointerEvents: 'box-none',
   },
   scanFrame: {
     width: SCREEN_WIDTH * 0.90,
@@ -241,14 +250,22 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
   },
-  instructionText: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
+  instructionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.7)',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 20,
+  },
+  instructionText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  activityIndicator: {
+    marginLeft: 8,
   },
   bottomControls: {
     backgroundColor: 'rgba(0,0,0,0.8)',
