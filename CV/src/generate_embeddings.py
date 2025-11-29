@@ -66,42 +66,38 @@ def generate_and_store_embeddings(data_dir: str = "data",
         if building_name not in building_groups:
             building_groups[building_name] = []
         building_groups[building_name].append(img_path)
+
+    total_images_processed = 0
     
     print(f"🏛️  Processing {len(building_groups)} buildings...")
     
-    # Process each building
-    all_buildings = []
-    
     for building_name, image_paths in tqdm(building_groups.items(), desc="Processing"):
-        # Compute average embedding for all images of this building
-        embeddings = []
+        all_rows = []
         
         # Process in batches
         for i in range(0, len(image_paths), batch_size):
-            batch = image_paths[i:i+batch_size]
-            batch_embeddings = recognizer.encode_image_batch(batch)
-            embeddings.append(batch_embeddings)
+            batch_paths = image_paths[i:i + batch_size]
+            batch_embeddings = recognizer.encode_image_batch(batch_paths)
+            # ensure 2D
+            if batch_embeddings.ndim == 1:
+                batch_embeddings = batch_embeddings[None, :]
+
+            for img_path, emb in zip(batch_paths, batch_embeddings):
+                all_rows.append((
+                    building_name,
+                    emb.tolist(),
+                    "Building at Carnegie Mellon University",
+                    str(img_path)
+                ))
+                total_images_processed += 1
+
         
-        # Average all embeddings for this building
-        all_embeddings = np.vstack(embeddings)
-        avg_embedding = all_embeddings.mean(axis=0)
-        # Normalize
-        avg_embedding = avg_embedding / np.linalg.norm(avg_embedding)
+        if all_rows:
+            print(f"💾 Storing {len(all_rows)} image embeddings for {building_name}...")
+            for name, embedding, description, image_path in all_rows:
+                db.insert_image(name, embedding, description, image_path)
+
         
-        # Store building with average embedding
-        description = f"Building at Carnegie Mellon University"
-        all_buildings.append((
-            building_name,
-            avg_embedding.tolist(),
-            description,
-            image_paths[0] if image_paths else None
-        ))
-    
-    # Batch insert into database
-    print("💾 Storing embeddings in database...")
-    db.insert_buildings_batch(all_buildings)
-    
-    # Create IVFFlat index after data is loaded (requires data to exist)
     print("🔧 Creating vector index for fast similarity search...")
     try:
         import psycopg2
@@ -111,9 +107,12 @@ def generate_and_store_embeddings(data_dir: str = "data",
         # Drop existing index if any
         cur.execute("DROP INDEX IF EXISTS buildings_embedding_idx;")
         
-        # Create IVFFlat index (requires at least some data)
-        num_buildings = len(all_buildings)
-        lists = max(10, min(100, num_buildings // 10))  # Adaptive list size
+        # Count how many image rows we have
+        cur.execute("SELECT COUNT(*) FROM buildings;")
+        (num_rows,) = cur.fetchone()
+        
+        # Choose number of lists based on number of image rows
+        lists = max(10, min(100, max(1, num_rows // 10)))
         
         cur.execute(f"""
             CREATE INDEX buildings_embedding_idx 
@@ -127,9 +126,8 @@ def generate_and_store_embeddings(data_dir: str = "data",
     except Exception as e:
         print(f"⚠️  Could not create vector index: {e}")
         print("   Similarity search will still work, but may be slower")
-    
-    print(f"✅ Successfully processed {len(all_buildings)} buildings!")
-    print(f"📊 Database now contains {len(db.get_all_buildings())} buildings")
+
+    print(f"✅ Successfully processed {total_images_processed} images!")
 
 if __name__ == "__main__":
     data_dir = sys.argv[1] if len(sys.argv) > 1 else "data"

@@ -11,7 +11,7 @@ Building recognition system using CLIP and pgvector for similarity search. Works
 
 ## Architecture
 
-1. **CLIP ViT-B/32**: Pretrained vision transformer that encodes images into 512-dimensional embeddings
+1. **CLIP ViT-L/14**: Pretrained vision transformer that encodes images into 768-dimensional embeddings
 2. **PostgreSQL + pgvector**: Stores building embeddings and does fast similarity search
 3. **FastAPI**: REST API for image recognition
 
@@ -47,6 +47,7 @@ data/
 ```
 
 Tips:
+
 - 3-10 images per building from different angles
 - Daytime photos with good lighting work best
 - Capture distinctive architectural features
@@ -81,6 +82,7 @@ API available at `http://localhost:8000`
 Recognize a building from an uploaded image.
 
 **Request:**
+
 ```bash
 curl -X POST "http://localhost:8000/search" \
   -H "accept: application/json" \
@@ -89,6 +91,7 @@ curl -X POST "http://localhost:8000/search" \
 ```
 
 **Response:**
+
 ```json
 {
   "building": "Hunt Library",
@@ -115,6 +118,7 @@ Root endpoint with service info.
 ### Database Connection
 
 Set `DATABASE_URL` environment variable or it defaults to:
+
 ```
 postgresql://cmu_tour:cmu_tour_pass@localhost:5433/cmu_tour_db
 ```
@@ -124,6 +128,7 @@ Note: Uses port 5433 to avoid conflicts with local PostgreSQL on 5432.
 ### Similarity Threshold
 
 Adjust in `api_server.py`:
+
 ```python
 results = db.search_similar(embedding.tolist(), limit=1, threshold=0.6)
 ```
@@ -202,6 +207,7 @@ docker-compose restart postgres
 ### CLIP Model Download Issues
 
 CLIP downloads automatically on first use. If it fails:
+
 - Check internet connection
 - Model is ~350MB, make sure you have disk space
 
@@ -231,7 +237,7 @@ cv 2/
 
 ## How It Works
 
-1. CLIP encodes images into 512-dimensional vectors
+1. CLIP encodes images into 768-dimensional vectors
 2. Embeddings are normalized to unit vectors for cosine similarity
 3. Each building gets an averaged embedding stored in PostgreSQL
 4. When querying, cosine similarity is computed using pgvector
