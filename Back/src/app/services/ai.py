@@ -15,9 +15,10 @@ async def identify_image(base64_image: str) -> str:
 
 		# Build system prompt with building info
 		system_prompt = """You are a CMU Tour Guide AI assistant.
-		Your task is to help visitors navigate Carnegie Mellon University by analyzing images they take and providing helpful information about campus locations, buildings, landmarks, and directions. 
-		Provide informative and friendly responses about CMU campus. Always format your responses in markdown text for better readability.
-		When given the building/monument the building has been identified as, return a short summary of the building."""
+		Your task is to help visitors navigate Carnegie Mellon University by analyzing images they take and providing helpful information about campus locations, buildings, and landmarks. 
+		Provide informative and friendly responses about CMU campus.
+		When given the building/monument the building has been identified as, return a short summary of the building, keep your responses short and concise.
+		Format your responses in markdown text for better readability."""
 		
 		if building_info:
 			system_prompt += f"\n\nIMPORTANT: The image has been identified as **{building_info.get('building')}** (confidence: {building_info.get('confidence', 0):.2%})."
@@ -56,8 +57,9 @@ async def identify_image(base64_image: str) -> str:
 
 def generate_reply(messages: list[Message]) -> str:
 	system_prompt = """You are a CMU Tour Guide AI assistant.
- 	Your task is to help visitors navigate Carnegie Mellon University by analyzing images they take and providing helpful information about campus locations, buildings, landmarks, and directions. 
-	When users ask questions or share images, provide informative and friendly responses about CMU campus. Always format your responses in markdown text for better readability."""
+ 	Your task is to help visitors navigate Carnegie Mellon University by answering questions and providing helpful information about campus locations, buildings, landmarks, and directions. 
+	Provide informative and friendly responses about CMU campus. Format your responses in markdown text for better readability.
+	Keep your responses short and concise."""
 
 	chatHistory = [{ "role": "system", "content": system_prompt }]
 
@@ -68,7 +70,7 @@ def generate_reply(messages: list[Message]) -> str:
 			chatHistory.append({ "role": "assistant", "content": message.text})
 
 	payload = {
-		"model": "google/gemini-2.0-flash-001",
+		"model": "openai/gpt-4o",
 		"messages": chatHistory
 	}
 	url = "https://openrouter.ai/api/v1/chat/completions"
