@@ -24,12 +24,11 @@ class BuildingDB:
             )
 
 
-    def insert_building(self, name: str, embedding: List[float], 
+    def insert_image(self, name: str, embedding: List[float], 
                        description: Optional[str] = None,
                        image_path: Optional[str] = None):
         """
-        Insert a building with its embedding.
-        
+        Insert an image with its embedding.
         Args:
             name: Building name
             embedding: Embedding vector (list of floats)
@@ -52,34 +51,7 @@ class BuildingDB:
         finally:
             cur.close()
             conn.close()
-    
-    def insert_buildings_batch(self, buildings: List[Tuple[str, List[float], Optional[str], Optional[str]]]):
-        """
-        Batch insert buildings for efficiency.
-        
-        Args:
-            buildings: List of tuples (name, embedding, description, image_path)
-        """
-        conn = psycopg2.connect(self.conn_str)
-        cur = conn.cursor()
-        
-        try:
-            # Insert one by one since vector casting needs to be explicit
-            for name, embedding, desc, img_path in buildings:
-                cur.execute("""
-                    INSERT INTO buildings (name, embedding, description, image_path)
-                    VALUES (%s, %s::vector, %s, %s)
-                """, (name, str(embedding), desc, img_path))
-            
-            conn.commit()
-            print(f"✅ Inserted {len(buildings)} buildings")
-        except Exception as e:
-            conn.rollback()
-            raise
-        finally:
-            cur.close()
-            conn.close()
-    
+
     def search_similar(self, embedding: List[float], limit: int = 5, 
                       threshold: float = 0.7) -> List[dict]:
         """

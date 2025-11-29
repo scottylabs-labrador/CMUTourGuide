@@ -13,12 +13,12 @@ ssl._create_default_https_context = ssl._create_unverified_context
 class BuildingRecognizer:
     """CLIP-based image encoder for building recognition."""
     
-    def __init__(self, model_name="ViT-B/32", device=None):
+    def __init__(self, model_name="ViT-L/14", device=None):
         """
         Initialize CLIP model.
         
         Args:
-            model_name: CLIP model variant (ViT-B/32 is a good balance)
+            model_name: CLIP model variant (ViT-L/14 provides better accuracy)
             device: torch device (auto-detected if None)
         """
         if device is None:
@@ -31,7 +31,7 @@ class BuildingRecognizer:
         
     def encode_image(self, image_path):
         """
-        Encode an image into a normalized embedding vector.
+        Encode an image into a normalized embedding vector. (This is for inference.)
         
         Args:
             image_path: Path to image file or PIL Image object
@@ -56,7 +56,7 @@ class BuildingRecognizer:
     
     def encode_image_batch(self, image_paths):
         """
-        Encode multiple images efficiently.
+        Encode multiple images efficiently. (This is for training.)
         
         Args:
             image_paths: List of image paths or PIL Image objects
