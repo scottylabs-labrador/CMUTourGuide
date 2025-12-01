@@ -1,0 +1,118 @@
+{
+    "Tepper": {
+        "title": "Tepper Quad",
+        "summary": [
+        "Tepper Quad Building, is a 315,000 square foot state-of-the-art building, is home to the Tepper School of Business, the Coulter Welcome Center, fitness center, dining locations, JP Morgan and Chase AI Makerspace, and the Swartz Center for Entrepreneurship.",
+        "The Tepper School of Business houses three variations of undergraduate majors including Business administration major with 9 different concentrations, Multiple ways to earn an Economics major, and a Computational Finance major.",
+        "Here at CMU we do not have a central dining hall, but 30+ different eateries around campus. Inside the Tepper Building we have Rohr Commons featuring Build Pizza, Forbes Ave Subs, Tepper Taqueria, and Millie's Coffee ‘N Creamery."
+        ],
+        "image_url": "https://www.cmu.edu/news/stories/archives/2018/september/images/tepper-quad-exterior-press-release-900x600-min.jpg"
+    },
+    "Gates": {
+        "title": "Gates",
+        "summary": [
+        "Gates and Hillman Centers for Future-Generation Technologies are home to the School of Computer Science and Computational Biology Department. These Gold LEED Certified Centers were made possible by lead gifts from the Bill and Melinda Gates and the Henry L. Hillman foundations. The building also houses a Mission Control Center for the student project Iris Rover created by over 300 students from across the university that was the first of its kind to survive a launch and a zero-gravity environment.",
+        "The School of Computer Science was the first standalone school of Computer Science in the nation and launched the first Artificial Intelligence degree by a US University. The school houses five undergraduate majors including Computer Science, Artificial Intelligence, Computational Biology, Human Computer Interaction, Robotics."
+        ],
+        "image_url": "https://www.cs.cmu.edu/files/images/GHC_b.jpg"
+    },
+    "Warner": {
+        "title": "Warner Hall",
+        "summary": [
+            "Warner Hall is home to the Office of Undergraduate Admission on the second floor. Their office is open from 8:30AM - 4:30PM Monday through Friday if you would like to stop in for a walk-in appointment.",
+            "The HUB and Enrollment Services also reside here, which would be where you get your Student ID if you choose to attend CMU."
+        ],
+        "image_url": "https://live.staticflickr.com/4025/4207746920_e76b944d8a_b.jpg"
+    },
+    "Purnell": {
+        "title": "Purnell Center for the Arts",
+        "summary": [
+        "Purnell Center for the Arts is home to our School of Drama, the nation’s oldest degree-granting drama program, and includes state-of-the-art performance and education facilities like the Philip Chosky Theater and the Regina Gouger Miller Gallery. Whether you see yourself on stage, behind the scenes, or forging a creative path all on your own, our School of Drama’s specialized curriculum and dedicated, world-class faculty can help you get there with majors in acting/musical theater, design, dramaturgy, and production technology & management."
+        ],
+        "image_url": "https://www.cmu.edu/fms/files/BuildingPictures/BuildingPictures/Purnell.jpg"
+    },
+    "Doherty": {
+         "title": "Doherty Hall",
+        "summary": [
+        "Doherty Hall contains some of the largest lecture style classrooms and renovated lab spaces for our Mellon College of Science students, in addition to lab and studio spaces for departments like Engineering, Chemistry, Biology and Art.",
+        "The Mellon College of Science houses 4 departments with 20 majors including biology, chemistry, physics, mathematics. Over 70% of undergraduates in this college do research. The college facilities also include a Cloud Lab that is the first academic Cloud Laboratory in the country and home to programmable robot-run experimentation instruments.",
+        "Also the new Richard King Mellon Hall of Sciences is coming in 2027 that will house our Mellon College of Science, the university's School of Computer Science and the public Institute for Contemporary Art. This mix of science, technology and art will spur exciting opportunities for cross-collaboration and embody Carnegie's Mellon spirit of innovation."
+        ],
+        "image_url": "https://www.cmu.edu/computing/services/teach-learn/tes/images/doherty700x700.jpg"
+    },
+    "Hamerschlag": {
+        "title": "Hamerschlag Hall",
+        "summary": [
+        "Hamerschlag Hall is home to Electrical & Computer Engineering. The building's rotunda is one of the most iconic images on campus. This building also boasts a living roof"
+        ],
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Hamerschlag_Hall_at_Carnegie_Mellon_University.jpg"
+    },
+    "ANSYS": {
+        "title": "ANSYS Hall",
+        "summary": [
+        "ANSYS Hall is a four story, 36,000 square foot mixed-use building that incorporates a maker assembly space with immediate access to the outdoor Maker Courtyard, student collaboration space, classrooms and offices.",
+        "On the first floor of this building is TechSpark, which you can see into. This facility is a 16,000 square foot makerspace that provides resources, certification, classes and equipment for rapidly prototyping designs from ideas to reality for educational, extracurricular, and research activities. It is a hands-on learning and exploration space available to all current CMU students, faculty and staff. In addition to the highbay area for projects, the makerspace supports machining, wood working, embedded electronics, additive manufacturing, molding and casting with a dedicated wood shop, metal shop, professional shop with welding, hot metals room with jewelry making and metal casting, polymer casting room, computer lab with suite of engineering software, and a fabrication shop with 15 3D printers, 6 laser cutters and a sewing center."
+        ],
+        "image_url": "https://www.cmu.edu/cdfd/ansys/images/ansysphoto-interior1courtyard-700x4xx.jpg"
+    },
+    "Scaife": {
+        "title": "Scaife Hall",
+        "summary": [
+        "Alan Magee Scaife Hall of Engineering is a new 85,000 square-foot building comprising labs, a drone arena, offices, classrooms, and a café. The labs support research in a variety of subjects ranging from Biology to Robotics to Rapid Prototyping and are supported by 100 PhD workspaces directly adjacent to the lab spaces. The building is the home for the Mechanical Engineering Department."
+        ],
+        "image_url": "https://www.cmu.edu/cdfd/buildings/scaife/images/scaife-transportation-900x600.jpg"
+    },
+    "Baker": {
+        "title": "Baker Hall",
+        "summary": [
+        "Baker Hall is one of the oldest buildings on campus and connects to Porter Hall via a long, sloped hallway. Baker is home to the Dietrich College of Humanities and Social Sciences. Our humanities are situated at the intersection of humanity and technology. For undergraduates, Dietrich houses 37 majors that are designed to be completed in 2 years, which allows students to add on additional majors, minors, and dual degrees. With this flexibility comes the ability to participate in experiences including internships, research, study abroad and more to prepare their students for the next step on their journey of graduate school or a career."
+        ],
+        "image_url": "https://www.cmu.edu/dietrich/english/news-and-events/news-archive/2022/baker_hall"
+    },
+    "Cfa": {
+        "title": "College of Fine Arts",
+        "summary": [
+        "College of Fine Arts Building is an architectural creation of Henry Hornbostel, the college’s first dean, and is home to three of its five schools: architecture, art, and music. To speak a little more about each of these:",
+        "It includes the school of Music, Art, and Architecture"
+        ],
+        "image_url": "https://freight.cargo.site/t/original/i/4e4dd19166a61e7b73ba5a17f4b961264757176e28342f251b43739bf843ebba/nichesD-1.jpg"
+    },
+    "Posner": {
+        "title": "Posner Hall",
+        "summary": [
+        "Posner Hall is adjacent to the Hall of the Arts, which is home to some teaching and rehearsal spaces for the School of Music. This building is home to a student-favorite eatery called The Exchange as well as the Student Academic Success Center. The  Student Academic Success Center focuses on creating spaces for students to engage in their coursework and approach to learning through options like academic coaching, subject-specific tutoring, effective communication strategies, accommodations for students with disabilities, and language support for multilingual learners."
+        ],
+        "image_url": "https://www.cmu.edu/student-success/images/sasc-images/posner_entrance-min.jpg"
+    },
+    "Margaret Morrision": {
+        "title": "Margaret Morrision",
+        "summary": [
+        "Margaret Morrison Carnegie Hall, affectionately known on campus as 'Maggie Mo'. This building originally housed the Margaret Morrison Carnegie College for Women, and it now houses some years of the design and architecture programs as well as our on campus children’s school!",
+        "The School of Design is an exploration of humanity and sustainable systems. With a focus on interdisciplinary learning, our programs prepare students for real-world design challenges by working collaboratively across fields. CMU was the first school to offer a degree in Industrial Design. Now it’s called “Product Design”."
+        ],
+        "image_url": "https://www.allenshariff.com/wp-content/uploads/2022/04/AS_CMU_MM_Breed_002.jpg"
+    },
+    "Highmark": {
+        "title": "Highmark Center for Health, Wellness and Athletics",
+        "summary": [
+        "The Highmark Center is a 160,000 square foot building recently opened which unifies robust health services, contemporary facilities and educational programs that support students’ minds, bodies and spirits in a comprehensive care model. It includes new full-service clinical areas as an expanded University Health Services; private and supportive spaces for Counseling and Psychological Services; and a modern athletics facility for practice, performance, training and athlete care."
+        ],
+        "image_url": "https://www.cmu.edu/news/sites/default/files/styles/hero_full_width_fallback/public/2024-08/240815_Highmark_Building-MWH.jpg.webp?itok=8dBgqjwF"
+    },
+    "Gesling Stadium": {
+        "title": "",
+        "summary": [
+        "Welcome to modern day Gesling Stadium, home of the Carnegie Mellon Tartans! A tartan is woven wool fabric with a plaid design. It originated in Scotland, where every family or clan represented their lineage with a one-of-a-kind pattern worn proudly as a brand. The son of a Scottish weaver, our founder Andrew Carnegie inspired the Tartan as the official athletics team name and later a school color. The weaving of colors and line-weights in the Tartan represents different thoughts, interests, backgrounds and skills coming together to make up the fabric of our university."
+        ],
+        "image_url": "https://cms.concept3d.com/map/lib/image-cache/i.php?mapId=192&image=192/USE_-_GS_stop_-MC_Aerial_Campus_2017_0469_4.jpg&w=900&h=508&r=1"
+    },
+    "UC": {
+        "title": "Cohon University Center",
+        "summary": [
+        "Jared L. Cohon University Center is our student union. Here students can take advantage of the student fitness facilities, catch a show at the black-box theater, visit the chapel, gather with other students in meeting rooms, or get lunch in one of many eateries.",
+        "You see our Scotty statue mascot that was funded and created by multiple CMU alumni. Our mascot is the Scottish Highland Terrier or Scottie for short. We like to call the dog “Scotty” who is a confident, independent and spirited breed. We students like to rub its nose for goodluck, so feel free to try that out before leaving this stop!",
+        "Additionally, located in this building is The Center for Student Diversity and Inclusion. The Center offers resources to enhance an inclusive and transformative student experience for our student population that joins us from 120 different countries. The Center is focused on access, success, campus climate and intergroup dialogue."
+        ],
+        "image_url": "https://cms.concept3d.com/map/lib/image-cache/i.php?mapId=192&image=192/UA_DR_CUC_Expansion_2016MC_UE__CUC_opening_2016_00844_3.jpg&w=900&h=508&r=1"
+    }
+}
