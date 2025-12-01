@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ export default function InfoScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -95,7 +95,7 @@ export default function InfoScreen() {
           <Text style={styles.footerText}>Made for Carnegie Mellon University</Text>
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 

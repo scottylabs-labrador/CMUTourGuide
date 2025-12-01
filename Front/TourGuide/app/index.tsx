@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics'
@@ -23,7 +23,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -82,7 +82,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 

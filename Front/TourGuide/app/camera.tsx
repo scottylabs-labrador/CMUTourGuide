@@ -1,16 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Dimensions } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics'
+import * as Haptics from 'expo-haptics';
+import SummaryModal from '../components/SummaryModal';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isCapturing, setIsCapturing] = useState(false);
+  const [showSummaryPopup, setShowSummaryPopup] = useState(false)
+  const [buildingId, setBuildingId] = useState("")
   const router = useRouter();
   const camera = useRef<CameraView>(null);
 
@@ -20,7 +23,7 @@ export default function CameraScreen() {
 
   if (!permission.granted) {
     return (
-      <SafeAreaProvider style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.permissionContainer}>
           <Ionicons name="camera-outline" size={80} color="#C41E3A" />
           <Text style={styles.permissionTitle}>Camera Permission Required</Text>
@@ -31,7 +34,7 @@ export default function CameraScreen() {
             <Text style={styles.permissionButtonText}>Grant Permission</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaProvider>
+      </SafeAreaView>
     );
   }
 
@@ -50,28 +53,23 @@ export default function CameraScreen() {
       quality: 1.0
     });
 
-    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/image', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        imageBase64: photo?.base64,
-      })
-    });
+    // const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ 
+    //     imageBase64: photo?.base64,
+    //   })
+    // });
 
-    const data = await res.json()
-
+    // const data = await res.json()
+    // console.log(data)
     setIsCapturing(false);
-    router.push({ 
-      pathname: '/chat', 
-      params: { 
-        message: data.reply,
-        imageUri: photo?.uri || '',
-      } 
-    });
+    setBuildingId("UC")
+    setShowSummaryPopup(true)
   };
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -131,9 +129,14 @@ export default function CameraScreen() {
             <Ionicons name="camera" size={32} color="white" />
           </TouchableOpacity>
         </View>
-
       </View>
-    </SafeAreaProvider>
+
+      <SummaryModal 
+        visible={showSummaryPopup}
+        onClose={() => setShowSummaryPopup(false)}
+        building_id={buildingId}
+      />
+    </SafeAreaView>
   );
 }
 
