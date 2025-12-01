@@ -4,10 +4,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getAllChatSessions } from '../utils/chatStorage';
@@ -115,7 +115,7 @@ export default function PastChatsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaProvider style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -145,7 +145,7 @@ export default function PastChatsScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
