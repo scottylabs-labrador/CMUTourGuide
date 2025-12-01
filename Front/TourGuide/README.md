@@ -11,7 +11,6 @@ A React Native Expo app that uses computer vision and AI to provide information 
 
 ## Screens
 
-1. **Splash Screen**: Animated welcome screen
 2. **Home Screen**: Main interface with "Scan a Photo" button
 3. **Camera Screen**: Built-in camera with scanning frame and capture functionality
 4. **Chat Screen**: AI-powered chat interface with mock responses about CMU buildings
@@ -51,7 +50,6 @@ A React Native Expo app that uses computer vision and AI to provide information 
 app/
 ├── _layout.tsx      # Root layout with navigation
 ├── index.tsx        # Home screen
-├── splash.tsx       # Splash screen
 ├── camera.tsx       # Camera scanning screen
 └── chat.tsx         # AI chat interface
 ```
