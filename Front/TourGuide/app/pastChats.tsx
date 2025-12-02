@@ -6,11 +6,12 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getAllChatSessions } from '../utils/chatStorage';
+import { getAllChatSessions, clearAllChatSessions } from '../utils/chatStorage';
 import { ChatSession } from '../types/chat';
 import * as Haptics from 'expo-haptics';
 
@@ -73,10 +74,31 @@ export default function PastChatsScreen() {
 
   const handleChatPress = (sessionId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push({
-      pathname: '/chat',
-      params: { sessionId },
-    });
+    router.push({ pathname: '/chat', params: { sessionId } });
+  };
+
+  const handleClearAll = () => {
+    if (sessions.length === 0) return;
+
+    Alert.alert(
+      'Clear All Chats',
+      'Are you sure you want to delete all chat history? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete All',
+          style: 'destructive',
+          onPress: async () => {
+            await clearAllChatSessions();
+            setSessions([]);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          },
+        },
+      ]
+    );
   };
 
   const renderChatItem = ({ item }: { item: ChatSession }) => (
@@ -127,7 +149,17 @@ export default function PastChatsScreen() {
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Past Chats</Text>
         </View>
-        <View style={styles.placeholder} />
+        <TouchableOpacity
+          style={styles.trashButton}
+          onPress={handleClearAll}
+          disabled={sessions.length === 0}
+        >
+          <Ionicons
+            name="trash-outline"
+            size={24}
+            color={sessions.length === 0 ? 'rgba(255,255,255,0.3)' : 'white'}
+          />
+        </TouchableOpacity>
       </View>
 
       {/* Content */}
@@ -181,8 +213,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  placeholder: {
-    width: 40,
+  trashButton: {
+    padding: 8,
   },
   loadingContainer: {
     flex: 1,
