@@ -19,7 +19,7 @@ import { saveChatSession, getChatSession } from '../utils/chatStorage';
 import { Message, ChatSession } from '../types/chat';
 
 export default function ChatScreen() {
-  const { message, sessionId, imageUri } = useLocalSearchParams();
+  const { sessionId, imageUri, building_name } = useLocalSearchParams();
   const [sessionIdState, setSessionIdState] = useState<string>(
     sessionId ? String(sessionId) : `chat_${Date.now()}`
   );
@@ -29,7 +29,7 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: String(message),
+      text: "Hi, Welcome to CMU! Im your personal AI campus Tour Guide. What would you like to know about " + building_name + "?",
       isUser: false,
       timestamp: new Date(),
     }

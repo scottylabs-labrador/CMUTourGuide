@@ -47,7 +47,7 @@ export default function CameraScreen() {
     setIsCapturing(true);
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     const photo = await camera.current?.takePictureAsync({
       base64: true,
       quality: 1.0
@@ -64,21 +64,21 @@ export default function CameraScreen() {
     // const data = await res.json()
     // console.log(data)
     setIsCapturing(false);
-    setBuildingId("UC")
+    setBuildingId("Tepper")
     setShowSummaryPopup(true)
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Scan Building</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.flipButton}
           onPress={toggleCameraFacing}
         >
@@ -87,11 +87,13 @@ export default function CameraScreen() {
       </View>
 
       <View style={styles.cameraContainer}>
-        <CameraView 
-          style={styles.camera} 
-          ref={camera}
-          facing={facing}
-        />
+        {!showSummaryPopup && (
+          <CameraView
+            style={styles.camera}
+            ref={camera}
+            facing={facing}
+          />
+        )}
         <View style={styles.cameraOverlay}>
           {/* Scanning frame */}
           <View style={styles.scanFrame}>
@@ -100,7 +102,7 @@ export default function CameraScreen() {
             <View style={[styles.corner, styles.bottomLeft]} />
             <View style={[styles.corner, styles.bottomRight]} />
           </View>
-          
+
           {/* Instructions */}
           <View style={styles.instructions}>
             <View style={styles.instructionContainer}>
@@ -108,9 +110,9 @@ export default function CameraScreen() {
                 {isCapturing ? 'Processing image...' : 'Point your camera at a building or landmark'}
               </Text>
               {isCapturing && (
-                <ActivityIndicator 
-                  size="small" 
-                  color="white" 
+                <ActivityIndicator
+                  size="small"
+                  color="white"
                   style={styles.activityIndicator}
                 />
               )}
@@ -121,7 +123,7 @@ export default function CameraScreen() {
 
       <View style={styles.bottomControls}>
         <View style={styles.controlsContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.captureButton, isCapturing && styles.capturingButton]}
             onPress={takePicture}
             disabled={isCapturing}
@@ -131,7 +133,7 @@ export default function CameraScreen() {
         </View>
       </View>
 
-      <SummaryModal 
+      <SummaryModal
         visible={showSummaryPopup}
         onClose={() => setShowSummaryPopup(false)}
         building_id={buildingId}

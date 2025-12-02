@@ -6,7 +6,10 @@
         "The Tepper School of Business houses three variations of undergraduate majors including Business administration major with 9 different concentrations, Multiple ways to earn an Economics major, and a Computational Finance major.",
         "Here at CMU we do not have a central dining hall, but 30+ different eateries around campus. Inside the Tepper Building we have Rohr Commons featuring Build Pizza, Forbes Ave Subs, Tepper Taqueria, and Millie's Coffee ‘N Creamery."
         ],
-        "image_url": "https://www.cmu.edu/news/stories/archives/2018/september/images/tepper-quad-exterior-press-release-900x600-min.jpg"
+        "image_url": "https://www.cmu.edu/news/stories/archives/2018/september/images/tepper-quad-exterior-press-release-900x600-min.jpg",
+        "inside_pictures": [
+            "https://www.cmu.edu/cdfd/tepper-quad/images/tepperphoto-interior2-900x600.jpg"
+        ]
     },
     "Gates": {
         "title": "Gates",
@@ -114,5 +117,19 @@
         "Additionally, located in this building is The Center for Student Diversity and Inclusion. The Center offers resources to enhance an inclusive and transformative student experience for our student population that joins us from 120 different countries. The Center is focused on access, success, campus climate and intergroup dialogue."
         ],
         "image_url": "https://cms.concept3d.com/map/lib/image-cache/i.php?mapId=192&image=192/UA_DR_CUC_Expansion_2016MC_UE__CUC_opening_2016_00844_3.jpg&w=900&h=508&r=1"
+    },
+    "Wean": {
+        "title": "Wean Hall",
+        "summary": [
+
+        ],
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Wean_hall.jpg/1200px-Wean_hall.jpg"
+    },
+    "Porter": {
+        "title": "Porter Hall",
+        "summary": [
+
+        ],
+        "image_url": ""
     }
 }

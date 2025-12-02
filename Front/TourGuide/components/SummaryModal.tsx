@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Modal, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import buildings from "../components/buildings.json"
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
     visible: boolean;
@@ -12,8 +13,18 @@ interface SummaryModalProps {
 
 export default function SummaryModal({ visible, onClose, building_id }: SummaryModalProps) {
     const buildingData = buildings[building_id as keyof typeof buildings]
+    const router = useRouter()
+
     if (!buildingData) {
         return null;
+    }
+
+    const pushChat = () => {
+        if (!buildingData.title) {
+            return;
+        }
+        onClose();
+        router.push({ pathname: "/chat", params: { building_name: buildingData.title } })
     }
     return (
         <Modal
@@ -45,18 +56,28 @@ export default function SummaryModal({ visible, onClose, building_id }: SummaryM
                     <Text style={styles.title}>{buildingData.title}</Text>
 
                     {/* Description Text Placeholder */}
-                    <View style={styles.textContainer}>
+                    <ScrollView
+                        style={styles.textContainer}
+                    >
                         <Text style={styles.description}>{buildingData.summary}
                         </Text>
+                    </ScrollView>
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={pushChat}
+                        >
+                            <Text style={styles.actionButtonText}>Chat More</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={onClose}
+                        >
+                            <Text style={styles.actionButtonText}>Look Inside</Text>
+                        </TouchableOpacity>
                     </View>
 
-                    {/* Action Button */}
-                    <TouchableOpacity
-                        style={styles.actionButton}
-                        onPress={onClose}
-                    >
-                        <Text style={styles.actionButtonText}>Got it</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
         </Modal>
@@ -72,6 +93,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: SCREEN_WIDTH * 0.9,
+        height: SCREEN_HEIGHT * 0.7,
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
@@ -86,11 +108,8 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     closeButton: {
-        position: 'absolute',
-        top: 15,
-        right: 15,
-        zIndex: 1,
-        padding: 5,
+        alignSelf: 'flex-end',
+        marginBottom: 5,
     },
     imageContainer: {
         width: '100%',
@@ -121,13 +140,17 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         textAlign: 'center',
     },
+    buttonContainer: {
+        flexDirection: 'row',
+    },
     actionButton: {
         backgroundColor: '#C41E3A',
-        paddingHorizontal: 40,
+        paddingHorizontal: 10,
         paddingVertical: 14,
         borderRadius: 25,
-        width: '100%',
+        width: '50%',
         alignItems: 'center',
+        marginHorizontal: 4,
     },
     actionButtonText: {
         color: 'white',
