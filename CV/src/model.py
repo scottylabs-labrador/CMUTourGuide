@@ -54,7 +54,7 @@ class BuildingRecognizer:
             
         return image_features.cpu().numpy().squeeze()
     
-    def encode_image_batch(self, image_paths):
+    def encode_images(self, image_paths):
         """
         Encode multiple images efficiently. (This is for training.)
         
@@ -79,3 +79,4 @@ class BuildingRecognizer:
             image_features = image_features / image_features.norm(dim=-1, keepdim=True)
             
         return image_features.cpu().numpy()
+    
