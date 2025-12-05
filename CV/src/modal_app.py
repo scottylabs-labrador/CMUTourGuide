@@ -23,8 +23,9 @@ image = (
         "tqdm",
         "Pillow>=10.0.0",
         "numpy>=1.24.0",
-        "psycopg2-binary>=2.9.0",
         "fastapi[standard]>=0.100.0",  # Required for Modal web endpoints
+        "scikit-learn>=1.3.0",
+        "joblib>=1.3.0"
     )
     # Install CLIP from GitHub (requires git)
     .pip_install("git+https://github.com/openai/CLIP.git")
@@ -34,39 +35,33 @@ image = (
 
 # Module-level cache for the recognizer (persists across requests in same container)
 _recognizer_cache = None
+_classifier_cache = None
 
 @app.function(
     image=image,
-    memory=4096,  # 4GB RAM for CLIP ViT-L/14 model
-    timeout=300,   # 5 minutes
-    container_idle_timeout=300,  # Keep container warm for 5 minutes
-    secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
+    memory=4096,
+    timeout=300,
+    container_idle_timeout=300
 )
 @modal.fastapi_endpoint(method="POST")
-async def recognize_building(request: dict) -> dict:
+async def recognize_building_LP(request: dict) -> dict:
     """
-    HTTP endpoint for building recognition.
-    
-    POST request with JSON body containing base64 image.
-    Expected format: {"image": "base64_string"} or {"imageBase64": "base64_string"}
-    
-    Returns:
-        Dictionary with building name, confidence, and description
+    New Linear Probe endpoint. 
+    Faster and more accurate, but requires cmu_building_classifier_{timestamp}.pkl to be present.
     """
     import base64
-    import sys
+    import joblib
     from PIL import Image
+    import sys
     
     # Add src to path
     sys.path.insert(0, "/root/src")
     
     from model import BuildingRecognizer
-    from database import BuildingDB
     
-    # Use module-level cache for recognizer
-    global _recognizer_cache
-    
-    # Parse request and decode base64 image
+    # Use global caches
+    global _recognizer_cache, _classifier_cache
+
     if "image" in request:
         image_data = request["image"]
     elif "imageBase64" in request:
@@ -78,7 +73,7 @@ async def recognize_building(request: dict) -> dict:
             "description": "No image provided. Send 'image' or 'imageBase64' in JSON body",
             "error": "NO_IMAGE_PROVIDED"
         }
-    
+
     # Decode base64
     if isinstance(image_data, str):
         # Remove data URL prefix if present (e.g., "data:image/jpeg;base64,...")
@@ -100,137 +95,42 @@ async def recognize_building(request: dict) -> dict:
             "description": "Image must be a base64 string",
             "error": "INVALID_FORMAT"
         }
-    
+
     try:
-        # Load image from bytes
-        image = Image.open(io.BytesIO(image_bytes))
-        
         # Initialize model only once per container (cached)
         if _recognizer_cache is None:
             print("🤖 Loading CLIP model (first time in this container)...")
             _recognizer_cache = BuildingRecognizer()
-        else:
-            print("✅ Using cached CLIP model")
+
+        if _classifier_cache is None:
+            print("🤖 Loading linear probe (first time in this container)...")
+            _classifier_cache = joblib.load("src/cmu_building_classifier_20251205_1314.pkl")
         
         recognizer = _recognizer_cache
-        
-        # Generate embedding
-        print("📸 Encoding image...")
-        embedding = recognizer.encode_image(image)
-        
-        # Search database
-        print("🔍 Searching database...")
-        db = BuildingDB()
-        results = db.search_similar(embedding.tolist(), limit=5, threshold=0.7)
-        if not results:
-            return {
-                "building": "Unknown",
-                "confidence": 0.0,
-                "description": "No matching building found",
-                "error": None
-            }
-        
-        print("Top 5 likely buildings:", results)
+        classifier = _classifier_cache
 
-        building_confidence = defaultdict(list)
-        building_metadata = {}  # Store description and image_path for each building
+        image = Image.open(io.BytesIO(image_bytes))
+        embedding = recognizer.encode_image(image)
+        if embedding.ndim == 1:
+            embedding = embedding.reshape(1, -1)
         
-        for r in results:
-            building_name = r["name"]
-            building_confidence[building_name].append(r["similarity"])
-            
-            if building_name not in building_metadata:
-                building_metadata[building_name] = {
-                    "description": r.get("description", ""),
-                    "image_path": r.get("image_path"),
-                    "best_similarity": r["similarity"]
-                }
-            else:
-                if r["similarity"] > building_metadata[building_name]["best_similarity"]:
-                    building_metadata[building_name] = {
-                        "description": r.get("description", ""),
-                        "image_path": r.get("image_path"),
-                        "best_similarity": r["similarity"]
-                    }
+        clf = classifier["model"]
+        labels = classifier["labels"]
+
+        probs = clf.predict_proba(embedding)[0]
+        best_idx = probs.argmax()
         
-        best_match = max(building_confidence.items(), key=lambda x: sum(x[1]))
-        building_name = best_match[0]
-        confidence = sum(best_match[1]) / len(best_match[1])  # Average confidence
+        confidence = float(probs[best_idx])
+        building_name = labels[best_idx]
+        print(f"🏢 Identified: {building_name} ({confidence:.2f})")
         
-        metadata = building_metadata[building_name]
-        
-        print(f"🏢 Best match: {building_name} with confidence {confidence}")
         return {
             "building": building_name,
             "confidence": confidence,
-            "description": metadata["description"],
-            "image_path": metadata["image_path"],
+            "method": "Linear Probe",
             "error": None
         }
-        
     except Exception as e:
         print(f"❌ Error: {str(e)}")
-        return {
-            "building": "Error",
-            "confidence": 0.0,
-            "description": "Error processing image",
-            "error": str(e)
-        }
-
-
-@app.function(
-    image=image,
-    secrets=[modal.Secret.from_name("tour_guide_supabase_url")],
-)
-@modal.fastapi_endpoint(method="GET")
-def health():
-    """Health check endpoint."""
-    import sys
-    sys.path.insert(0, "/root/src")
-    
-    try:
-        from database import BuildingDB
-        db = BuildingDB()
-        buildings = db.get_all_buildings()
-        
-        return {
-            "status": "healthy",
-            "service": "CMU Tour Guide CV API (Modal)",
-            "model": "CLIP ViT-L/14",
-            "buildings_count": len(buildings),
-            "platform": "Modal Serverless"
-        }
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
-
-# Local testing
-@app.local_entrypoint()
-def main():
-    """
-    Local testing entry point.
-    Usage: modal run modal_app.py
-    """
-    import base64
-    
-    print("🧪 Testing Modal deployment locally...")
-    
-    # Test with a local image
-    test_image_path = "../data/Tepper/Tepper_1.jpeg"
-    
-    if Path(test_image_path).exists():
-        with open(test_image_path, "rb") as f:
-            image_bytes = f.read()
-        
-        # Encode as base64 for the web endpoint
-        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-        
-        print(f"Testing with: {test_image_path}")
-        result = recognize_building.remote({"imageBase64": image_base64})
-        print(f"\n✅ Result: {result}")
-    else:
-        print(f"⚠️  Test image not found: {test_image_path}")
-        print("Skipping local test.")
+        return {"error": "PROCESSING_ERROR", "description": str(e)}
 
