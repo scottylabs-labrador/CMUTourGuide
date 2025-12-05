@@ -4,8 +4,6 @@ Serverless deployment with auto-scaling and pay-per-use pricing.
 """
 import modal
 import io
-from pathlib import Path
-from collections import defaultdict
 
 # Create Modal app
 app = modal.App("cmu-tour-guide-cv")
