@@ -23,12 +23,13 @@ async def recognize_building(image_base64: str) -> VisionResponse:
 	try:
 		async with httpx.AsyncClient(timeout=30.0) as client:
 			response = await client.post(
-				"https://ncdev1919--cmu-tour-guide-cv-recognize-building.modal.run",
+				"https://ncdev1919--cmu-tour-guide-cv-recognize-building-lp.modal.run",
 				json={"imageBase64": image_base64},
 				headers={"Content-Type": "application/json"}
 			)
 			response.raise_for_status()
 			res_json =  response.json()
+			print(res_json)
 			building = res_json.get("building", "Unknown")
 			confidence = float(res_json.get("confidence", 0.0))
 			return VisionResponse(building_name=building, confidence=confidence, error= None)

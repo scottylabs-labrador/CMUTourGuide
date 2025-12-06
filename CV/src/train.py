@@ -23,7 +23,7 @@ def scan_directory(data_dir: str):
     
     for building_dir in data_path.iterdir():
         if building_dir.is_dir():
-            if building_dir.name.lower() == "todo":
+            if building_dir.name.lower() == "todo" or building_dir.name.lower() == "field":
                 continue
             building_name = building_dir.name.replace("_", " ").title()
             for ext in ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]:
