@@ -1,11 +1,38 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useBuildings } from '../contexts/BuildingContext';
 
 export default function InfoScreen() {
   const router = useRouter();
+  const { clearStorage } = useBuildings();
+
+  const handleClearStorage = () => {
+    Alert.alert(
+      'Clear Progress',
+      'Are you sure you want to clear all unlocked buildings? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearStorage();
+              Alert.alert('Success', 'All progress has been cleared.');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to clear storage. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,6 +115,18 @@ export default function InfoScreen() {
           <Text style={styles.sectionText}>
             Simply point your camera at any building or landmark on campus. Our advanced computer vision technology identifies the location, and our AI system provides you with fascinating stories, historical context, and insider information about that place.
           </Text>
+        </View>
+
+        {/* Clear Storage Section */}
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={styles.clearButton}
+            onPress={handleClearStorage}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="trash-outline" size={20} color="#fff" />
+            <Text style={styles.clearButtonText}>Clear All Progress</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer */}
@@ -193,5 +232,19 @@ const styles = StyleSheet.create({
     color: '#999',
     fontWeight: '500',
   },
-
+  clearButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#dc3545',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    gap: 8,
+  },
+  clearButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
 });

@@ -6,16 +6,38 @@
         "The Tepper School of Business houses three variations of undergraduate majors including Business administration major with 9 different concentrations, Multiple ways to earn an Economics major, and a Computational Finance major.",
         "Here at CMU we do not have a central dining hall, but 30+ different eateries around campus. Inside the Tepper Building we have Rohr Commons featuring Build Pizza, Forbes Ave Subs, Tepper Taqueria, and Millie's Coffee ‘N Creamery."
         ],
+        "tour_guide": [
+            "Here is the massive and modern **Tepper Quad**.",
+            "**Purpose & Affiliation:**\nThis 315,000-square-foot facility is home to the **Tepper School of Business**. It’s where students pursue degrees in Business Administration, Economics, and Computational Finance. But it's not just for business majors; it houses the **Swartz Center for Entrepreneurship** and the **JP Morgan Chase AI Makerspace**, proving that at CMU, business and technology always go hand in hand.",
+            "**Student Life Tip (Food Edition):**\nOne thing to know about CMU is that we don't have one giant central dining hall; instead, we have over 30 distinct eateries spread across campus. Tepper is a prime lunch spot—Rohr Commons inside has everything from custom pizzas and subs to a taqueria. And yes, there's a Millie's Coffee ‘N Creamery for your post-class caffeine or sugar fix!"
+        ],
         "image_url": "https://www.cmu.edu/news/stories/archives/2018/september/images/tepper-quad-exterior-press-release-900x600-min.jpg",
         "inside_pictures": [
             "https://www.cmu.edu/cdfd/tepper-quad/images/tepperphoto-interior2-900x600.jpg"
         ]
+    },
+    "Tcs": {
+        "title": "TCS Hall",
+        "summary": [],
+        "tour_guide": [
+            "We arrived at the modern **Tata Consultancy Services (TCS) Hall**.",
+            "**Purpose & Affiliation:**\nOpened in 2020, this building is a major hub for the **School of Computer Science**, specifically housing the **Institute for Software Research**. It is also home to the **MSCF** (Computational Finance) program. The interior is designed for connection, featuring a makerspace and open suites linked by 'communicating stairs' that you can actually see through the large windows.",
+            "**Industry Collaboration:**\nThe 5th floor is unique—it houses **TCS Paceport**, a dedicated space for academic collaboration between CMU and Tata Consultancy Services. It serves as a physical bridge between our research and the tech industry.",
+            "**Green Design:**\nThe building is Gold LEED Certified and features a beautiful rain garden and expansive courtyard outside, blending high-tech workspace with sustainable design."
+        ],
+        "image_url": "https://www.cmu.edu/news/stories/archives/2021/march/images/tcs-hall-gets-leed-certified-900x600-min.jpg"
     },
     "Gates": {
         "title": "Gates",
         "summary": [
         "Gates and Hillman Centers for Future-Generation Technologies are home to the School of Computer Science and Computational Biology Department. These Gold LEED Certified Centers were made possible by lead gifts from the Bill and Melinda Gates and the Henry L. Hillman foundations. The building also houses a Mission Control Center for the student project Iris Rover created by over 300 students from across the university that was the first of its kind to survive a launch and a zero-gravity environment.",
         "The School of Computer Science was the first standalone school of Computer Science in the nation and launched the first Artificial Intelligence degree by a US University. The school houses five undergraduate majors including Computer Science, Artificial Intelligence, Computational Biology, Human Computer Interaction, Robotics."
+        ],
+        "tour_guide": [
+            "And here we have the stunning **Gates and Hillman Centers for Future-Generation Technologies**.",
+            "**Purpose & Affiliation:**\nThis is the home of our world-renowned **School of Computer Science (SCS)**. CMU is a huge pioneer in this field—we established the nation's *first* standalone School of Computer Science and launched the first-ever undergraduate degree in AI. Students here study everything from Robotics and Human-Computer Interaction to Computational Biology.",
+            "**Student Project Spotlight:**\nIf you head inside, you can actually see a Mission Control Center for the **Iris Rover**. This project was built by over 300 students from across the university and holds the title of the first student project of its kind to survive a launch and zero-gravity environment. It’s a perfect example of how hands-on we get here.",
+            "**Fun Fact:**\nThe buildings were made possible by gifts from the Bill and Melinda Gates and Henry L. Hillman foundations. It’s not just high-tech on the inside; the building itself is Gold LEED Certified, meaning it's incredibly eco-friendly."
         ],
         "image_url": "https://www.cs.cmu.edu/files/images/GHC_b.jpg"
     },
@@ -25,12 +47,22 @@
             "Warner Hall is home to the Office of Undergraduate Admission on the second floor. Their office is open from 8:30AM - 4:30PM Monday through Friday if you would like to stop in for a walk-in appointment.",
             "The HUB and Enrollment Services also reside here, which would be where you get your Student ID if you choose to attend CMU."
         ],
+        "tour_guide": [
+            "And here we have **Warner Hall**.",
+            "**Purpose & Affiliation:**\nThis building is the administrative heart of your enrollment journey. It houses **The HUB**, which handles enrollment services. Most importantly for future Tartans, this is the very spot where you will come to pick up your official Student ID card on your first day!",
+            "**Visitor Tip:**\nThe **Office of Undergraduate Admission** is located right here on the second floor. They are open Monday through Friday from 8:30 AM to 4:30 PM. If you have any burning questions that I can't answer today, feel free to head up there for a walk-in appointment after the tour."
+        ],
         "image_url": "https://live.staticflickr.com/4025/4207746920_e76b944d8a_b.jpg"
     },
     "Purnell": {
         "title": "Purnell Center for the Arts",
         "summary": [
         "Purnell Center for the Arts is home to our School of Drama, the nation’s oldest degree-granting drama program, and includes state-of-the-art performance and education facilities like the Philip Chosky Theater and the Regina Gouger Miller Gallery. Whether you see yourself on stage, behind the scenes, or forging a creative path all on your own, our School of Drama’s specialized curriculum and dedicated, world-class faculty can help you get there with majors in acting/musical theater, design, dramaturgy, and production technology & management."
+        ],
+        "tour_guide": [
+            "Next up is the **Purnell Center for the Arts**.",
+            "**Purpose & Affiliation:**\nThis building houses the **School of Drama**, which is actually the nation’s *oldest* degree-granting drama program. It features incredible facilities like the Philip Chosky Theater and the Miller Gallery. Whether students are studying Acting, Musical Theater, or the technical wizardry of Production Management, this is where they hone their craft.",
+            "**Student Life Tip:**\nYou don't have to be a major to enjoy this building! I highly recommend catching a show at the Chosky Theater. The production quality is Broadway-level, and it’s a great way to see the stars of tomorrow before they get famous."
         ],
         "image_url": "https://www.cmu.edu/fms/files/BuildingPictures/BuildingPictures/Purnell.jpg"
     },
@@ -41,12 +73,23 @@
         "The Mellon College of Science houses 4 departments with 20 majors including biology, chemistry, physics, mathematics. Over 70% of undergraduates in this college do research. The college facilities also include a Cloud Lab that is the first academic Cloud Laboratory in the country and home to programmable robot-run experimentation instruments.",
         "Also the new Richard King Mellon Hall of Sciences is coming in 2027 that will house our Mellon College of Science, the university's School of Computer Science and the public Institute for Contemporary Art. This mix of science, technology and art will spur exciting opportunities for cross-collaboration and embody Carnegie's Mellon spirit of innovation."
         ],
+        "tour_guide": [
+            "This massive building is **Doherty Hall**.",
+            "**Purpose & Affiliation:**\nDoherty is the primary home for the **Mellon College of Science (MCS)**. Inside, you'll find everything from huge lecture halls to renovated labs for Biology, Chemistry, Physics, and Math. Uniquely, it also shares space with the School of Art and Engineering, meaning you might find a chemistry experiment happening right down the hall from a fine arts studio.",
+            "**Cool Feature:**\nMCS is huge on innovation—over 70% of undergrads here do research! We even have the country’s first academic **Cloud Lab**, where students can program robots to run their experiments remotely. It's literally science fiction coming to life.",
+            "**Looking Ahead:**\nWhile Doherty is historic, we are also looking to the future. In 2027, the new **Richard King Mellon Hall of Sciences** will open, bringing Science, Computer Science, and the Institute for Contemporary Art together under one roof to really supercharge that cross-collaboration."
+        ],
         "image_url": "https://www.cmu.edu/computing/services/teach-learn/tes/images/doherty700x700.jpg"
     },
     "Hamerschlag": {
         "title": "Hamerschlag Hall",
         "summary": [
         "Hamerschlag Hall is home to Electrical & Computer Engineering. The building's rotunda is one of the most iconic images on campus. This building also boasts a living roof"
+        ],
+        "tour_guide": [
+            "And here is the iconic **Hamerschlag Hall**.",
+            "**Purpose & Affiliation:**\nThis building belongs to the **College of Engineering** and is the headquarters for the **Electrical & Computer Engineering (ECE)** department. It’s the heart of hardware and signals innovation on campus.",
+            "**Fun Fact:**\nThat rotunda at the end is one of the most famous images of CMU. It was actually designed to look like a spark plug to symbolize electrical engineering! Also, while you can't see it from down here, the building boasts a 'living roof' covered in plants to help manage rainwater and regulate temperature."
         ],
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Hamerschlag_Hall_at_Carnegie_Mellon_University.jpg"
     },
@@ -56,6 +99,7 @@
         "ANSYS Hall is a four story, 36,000 square foot mixed-use building that incorporates a maker assembly space with immediate access to the outdoor Maker Courtyard, student collaboration space, classrooms and offices.",
         "On the first floor of this building is TechSpark, which you can see into. This facility is a 16,000 square foot makerspace that provides resources, certification, classes and equipment for rapidly prototyping designs from ideas to reality for educational, extracurricular, and research activities. It is a hands-on learning and exploration space available to all current CMU students, faculty and staff. In addition to the highbay area for projects, the makerspace supports machining, wood working, embedded electronics, additive manufacturing, molding and casting with a dedicated wood shop, metal shop, professional shop with welding, hot metals room with jewelry making and metal casting, polymer casting room, computer lab with suite of engineering software, and a fabrication shop with 15 3D printers, 6 laser cutters and a sewing center."
         ],
+        "tour_guide": [],
         "image_url": "https://www.cmu.edu/cdfd/ansys/images/ansysphoto-interior1courtyard-700x4xx.jpg"
     },
     "Scaife": {
@@ -63,12 +107,18 @@
         "summary": [
         "Alan Magee Scaife Hall of Engineering is a new 85,000 square-foot building comprising labs, a drone arena, offices, classrooms, and a café. The labs support research in a variety of subjects ranging from Biology to Robotics to Rapid Prototyping and are supported by 100 PhD workspaces directly adjacent to the lab spaces. The building is the home for the Mechanical Engineering Department."
         ],
+        "tour_guide": [],
         "image_url": "https://www.cmu.edu/cdfd/buildings/scaife/images/scaife-transportation-900x600.jpg"
     },
     "Baker": {
         "title": "Baker Hall",
         "summary": [
         "Baker Hall is one of the oldest buildings on campus and connects to Porter Hall via a long, sloped hallway. Baker is home to the Dietrich College of Humanities and Social Sciences. Our humanities are situated at the intersection of humanity and technology. For undergraduates, Dietrich houses 37 majors that are designed to be completed in 2 years, which allows students to add on additional majors, minors, and dual degrees. With this flexibility comes the ability to participate in experiences including internships, research, study abroad and more to prepare their students for the next step on their journey of graduate school or a career."
+        ],
+        "tour_guide": [
+            "Next, we have **Baker Hall**, one of the oldest and most recognizable buildings on campus.",
+            "**Purpose & Affiliation:**\nBaker is the home of **Dietrich College of Humanities and Social Sciences**. At CMU, we like to say our humanities sit right at the intersection of humanity and technology. Dietrich offers about 37 majors designed to be completed in just two years. This gives you huge flexibility to pick up a second major or a minor, or to spend time on internships and study abroad programs.",
+            "**Student Life Tip:**\nBaker connects directly to Porter Hall via a very long, sloped hallway. It's a great indoor shortcut during Pittsburgh winters, but fair warning: the slope is deceptive. If you're rushing to class from the bottom of the hill, your calves will definitely feel the burn!"
         ],
         "image_url": "https://www.cmu.edu/dietrich/english/news-and-events/news-archive/2022/baker_hall"
     },
@@ -78,6 +128,12 @@
         "College of Fine Arts Building is an architectural creation of Henry Hornbostel, the college’s first dean, and is home to three of its five schools: architecture, art, and music. To speak a little more about each of these:",
         "It includes the school of Music, Art, and Architecture"
         ],
+        "tour_guide": [
+            "Here is the **College of Fine Arts building**, or simply **CFA**.",
+            "**Purpose & Affiliation:**\nThis belongs to the **College of Fine Arts**. It serves as the creative headquarters for three of our five art schools: **Architecture, Art, and Music**.",
+            "**Fun Fact:**\nThis building is a masterpiece designed by Henry Hornbostel, who wasn't just the architect—he was also the college’s first dean! If you look up at the ceiling in the Great Hall inside, you'll see floor plans of famous historical buildings painted right onto the plaster. Hornbostel wanted architecture students to be able to study history just by looking up.",
+            "**Student Life Tip:**\nThe Great Hall is one of the most aesthetic spots on campus. If you sit there to study during the day, you’ll almost always get a free concert from the music students practicing in the nearby rehearsal rooms."
+        ],
         "image_url": "https://freight.cargo.site/t/original/i/4e4dd19166a61e7b73ba5a17f4b961264757176e28342f251b43739bf843ebba/nichesD-1.jpg"
     },
     "Posner": {
@@ -85,14 +141,24 @@
         "summary": [
         "Posner Hall is adjacent to the Hall of the Arts, which is home to some teaching and rehearsal spaces for the School of Music. This building is home to a student-favorite eatery called The Exchange as well as the Student Academic Success Center. The  Student Academic Success Center focuses on creating spaces for students to engage in their coursework and approach to learning through options like academic coaching, subject-specific tutoring, effective communication strategies, accommodations for students with disabilities, and language support for multilingual learners."
         ],
+        "tour_guide": [
+            "Next stop is **Posner Hall**.",
+            "**Purpose & Affiliation:** Situated right next to the Hall of the Arts, Posner Hall acts as a central support hub for students from all colleges. It is home to the **Student Academic Success Center**, a vital resource where you can find subject-specific tutoring, academic coaching, communication workshops, and accommodations for students with disabilities.",
+            "**Student Life:** Ask any student about Posner, and they will likely mention **The Exchange**. It’s a fast-casual eatery located inside that is a huge student favorite—definitely a go-to spot for grabbing a quick lunch!"
+        ],
         "image_url": "https://www.cmu.edu/student-success/images/sasc-images/posner_entrance-min.jpg"
     },
-    "Margaret Morrision": {
-        "title": "Margaret Morrision",
+    "Margaret Morrison": {
+        "title": "Margaret Morrison",
         "summary": [
         "Margaret Morrison Carnegie Hall, affectionately known on campus as 'Maggie Mo'. This building originally housed the Margaret Morrison Carnegie College for Women, and it now houses some years of the design and architecture programs as well as our on campus children’s school!",
         "The School of Design is an exploration of humanity and sustainable systems. With a focus on interdisciplinary learning, our programs prepare students for real-world design challenges by working collaboratively across fields. CMU was the first school to offer a degree in Industrial Design. Now it’s called “Product Design”."
         ],
+        "tour_guide": [
+            "You found **Margaret Morrison Carnegie Hall**, or as we affectionately call it, **'Maggie Mo'**.",
+            "**Purpose & Affiliation:**\nThis building is part of the **College of Fine Arts** and currently houses the **School of Design**, parts of the School of Architecture, and even our on-campus Children’s School.",
+            "**History & Innovation:**\nOriginally, this was the Margaret Morrison Carnegie College for Women. Today, it carries on a legacy of innovation—CMU was actually the *first* school to offer a degree in Industrial Design (now called Product Design)! The focus here is on interdisciplinary learning and sustainable systems, preparing students to solve real-world problems."
+            ],
         "image_url": "https://www.allenshariff.com/wp-content/uploads/2022/04/AS_CMU_MM_Breed_002.jpg"
     },
     "Highmark": {
@@ -100,36 +166,73 @@
         "summary": [
         "The Highmark Center is a 160,000 square foot building recently opened which unifies robust health services, contemporary facilities and educational programs that support students’ minds, bodies and spirits in a comprehensive care model. It includes new full-service clinical areas as an expanded University Health Services; private and supportive spaces for Counseling and Psychological Services; and a modern athletics facility for practice, performance, training and athlete care."
         ],
+        "tour_guide": [
+            "Here is the **Highmark Center for Health, Wellness and Athletics**.",
+            "**Purpose & Affiliation:**\nThis state-of-the-art facility is a university-wide resource, meaning it belongs to *everyone*. It serves as a unified home for your mind, body, and spirit, housing University Health Services, Counseling and Psychological Services (CaPS), and our varsity and intramural athletics all under one roof.",
+            "**Fun Facts:**\nEven though it's brand new (opened in 2024), it preserves our history by being built around the foundation of the old Skibo Gym. Also, take a look at the floor tiles in the lobby—they are designed to mimic the rhythm of a human heartbeat!"
+            ],
         "image_url": "https://www.cmu.edu/news/sites/default/files/styles/hero_full_width_fallback/public/2024-08/240815_Highmark_Building-MWH.jpg.webp?itok=8dBgqjwF"
     },
-    "Gesling Stadium": {
-        "title": "",
-        "summary": [
-        "Welcome to modern day Gesling Stadium, home of the Carnegie Mellon Tartans! A tartan is woven wool fabric with a plaid design. It originated in Scotland, where every family or clan represented their lineage with a one-of-a-kind pattern worn proudly as a brand. The son of a Scottish weaver, our founder Andrew Carnegie inspired the Tartan as the official athletics team name and later a school color. The weaving of colors and line-weights in the Tartan represents different thoughts, interests, backgrounds and skills coming together to make up the fabric of our university."
+    "Hunt": {
+        "title": "Hunt Library",
+        "tour_guide": [
+            "Here we have the unmistakable **Hunt Library**.",
+            "**Purpose & Affiliation:**\nThis is the largest library on campus, housing four floors of collections specifically for the arts, humanities, and social sciences. It's also home to our University Archives and, uniquely, the **Hunt Institute for Botanical Documentation** on the fifth floor, which specializes in the history of plant science.",
+            "**Innovation Underground:**\nDon't let the quiet upper floors fool you—the basement is buzzing with energy. It houses the **IDeATe** program, which stands for Integrative Design, Arts, and Technology. This is a collaborative hub offering nine minors where students merge tech and art—think Game Design, Animation, and Physical Computing. It’s a maker's paradise down there!"
         ],
-        "image_url": "https://cms.concept3d.com/map/lib/image-cache/i.php?mapId=192&image=192/USE_-_GS_stop_-MC_Aerial_Campus_2017_0469_4.jpg&w=900&h=508&r=1"
+        "image_url": "https://midcenturymundane.wordpress.com/wp-content/uploads/2014/07/img_7547.jpg"
     },
-    "UC": {
+    "Hamburg": {
+        "title": "Hamburg Hall",
+        "tour_guide": [
+            "Here is **Hamburg Hall**, home to the **Heinz College of Information Systems and Public Policy**.",
+            "**Purpose & Affiliation:**\nThis college focuses on the intersection of people, policy, and technology. It uniquely houses both the School of Information Systems & Management and the School of Public Policy & Management under one roof.",
+            "**History & Architecture:**\nDesigned by Henry Hornbostel in 1915, this building was actually the U.S. Bureau of Mines before CMU acquired it. The recent renovation added the stunning **Teresa Heinz Rotunda** and a 'floating' classroom in the courtyard that is an architectural marvel."
+        ],
+        "image_url": ""
+    },
+    "Cyert": {
+        "title": "Cyert Hall",
+        "tour_guide": [
+            "Next is **Cyert Hall**, located right near the entrance to campus.",
+            "**Purpose & Affiliation:**\nThis building is the nerve center for campus technology, housing **Computing Services** and the Office of the CIO. It’s also the home of the **Office of International Education (OIE)**, so if you are studying abroad or are an international student, you'll likely visit here.",
+            "**History & Innovation:**\nIt is named after **Richard Cyert**, CMU's sixth president. He was a visionary who launched the 'Andrew' computing network, which was the first to link all computers on campus together. Fittingly, this building was originally known as the University Computing Center.",
+            "**Student Life Tip:**\nNeed a quiet place to work or have a tech issue? Cyert has a computer cluster on the lower level that is often less crowded than the library. Plus, the IT Help Desk is located here if your laptop ever decides to quit on you during finals week!"
+        ],
+        "image_url": ""
+    },
+    "Uc": {
         "title": "Cohon University Center",
         "summary": [
         "Jared L. Cohon University Center is our student union. Here students can take advantage of the student fitness facilities, catch a show at the black-box theater, visit the chapel, gather with other students in meeting rooms, or get lunch in one of many eateries.",
         "You see our Scotty statue mascot that was funded and created by multiple CMU alumni. Our mascot is the Scottish Highland Terrier or Scottie for short. We like to call the dog “Scotty” who is a confident, independent and spirited breed. We students like to rub its nose for goodluck, so feel free to try that out before leaving this stop!",
         "Additionally, located in this building is The Center for Student Diversity and Inclusion. The Center offers resources to enhance an inclusive and transformative student experience for our student population that joins us from 120 different countries. The Center is focused on access, success, campus climate and intergroup dialogue."
         ],
+        "tour_guide": [
+            "Here is the **Jared L. Cohon University Center**, or as we call it, the **CUC**.",
+            "**Purpose & Affiliation:**\nThis is our student union, so it doesn't belong to just one college—it’s for everyone. It's the hub of campus life where you'll find our fitness facilities, a black-box theater, a chapel, and plenty of eateries to grab lunch.",
+            "**Community Spotlight:**\nInside, you'll also find the **Center for Student Diversity and Inclusion**. They offer resources and support for our diverse student body, which represents over 120 different countries!",
+            "**Fun Fact & Tradition:**\nSee that statue of the Scottish Highland Terrier? That’s 'Scotty,' our mascot! It was actually funded and created by CMU alumni. It’s a huge campus tradition to rub his nose for good luck, so definitely give it a try before we head to the next stop!"
+            ],
         "image_url": "https://cms.concept3d.com/map/lib/image-cache/i.php?mapId=192&image=192/UA_DR_CUC_Expansion_2016MC_UE__CUC_opening_2016_00844_3.jpg&w=900&h=508&r=1"
     },
     "Wean": {
         "title": "Wean Hall",
-        "summary": [
-
+        "summary": [],
+        "tour_guide": [
+            "Here we are at **Wean Hall**, instantly recognizable by its concrete, brutalist architecture.",
+            "**Purpose & Affiliation:**\nThis is a major hub for the sciences and engineering. It houses **Mathematical Sciences, Physics, Material Science**, and some undergraduate **Computer Science** spaces. It’s also home to the **Engineering and Science Library**—if you look at the exterior, those unique sloped panes of glass are actually the windows for the library!",
+            "**Campus Topography Fun Fact:**\nWelcome to CMU's unique geography: we are standing at the main entrance right now, but we are actually on the **5th floor**! The building extends down into the ravine for a total of eight floors. Also, if you head down to the 4th floor, there's a skyway bridge that connects you directly to Newell-Simon Hall.",
+            "**Student Life Tip:**\nIf you need a serious caffeine fix, Wean is home to **La Prima Espresso**. It’s a local Pittsburgh coffee roaster, and many students swear it is hands-down the best coffee on campus."
         ],
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Wean_hall.jpg/1200px-Wean_hall.jpg"
     },
     "Porter": {
         "title": "Porter Hall",
-        "summary": [
-
+        "summary": [],
+        "tour_guide": [
+            "Welcome to **Porter Hall**! This is actually the very first building ever constructed on our campus. It connects directly to Baker Hall and serves as a home for many of our interdisciplinary programs."
         ],
-        "image_url": ""
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/CMU_Porter_Hall.jpg"
     }
 }
