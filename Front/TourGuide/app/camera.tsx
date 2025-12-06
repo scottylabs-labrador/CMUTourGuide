@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import SummaryModal from '../components/SummaryModal';
+import { useBuildings } from '../contexts/BuildingContext';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function CameraScreen() {
@@ -14,8 +15,10 @@ export default function CameraScreen() {
   const [isCapturing, setIsCapturing] = useState(false);
   const [showSummaryPopup, setShowSummaryPopup] = useState(false)
   const [buildingId, setBuildingId] = useState("")
+  const [isNewUnlock, setIsNewUnlock] = useState(false)
   const router = useRouter();
   const camera = useRef<CameraView>(null);
+  const { unlockBuilding, isUnlocked } = useBuildings();
 
   if (!permission) {
     return <View />;
@@ -53,18 +56,34 @@ export default function CameraScreen() {
       quality: 1.0
     });
 
-    // const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ 
-    //     imageBase64: photo?.base64,
-    //   })
-    // });
+    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        imageBase64: photo?.base64,
+      })
+    });
 
-    // const data = await res.json()
-    // console.log(data)
+    const data = await res.json()
+    console.log(data)
     setIsCapturing(false);
-    setBuildingId("Tepper")
+    const identifiedBuildingId = data.building_name;
+    setBuildingId(identifiedBuildingId);
+    
+    // Check if building is already unlocked
+    const wasUnlocked = isUnlocked(identifiedBuildingId);
+    
+    // Unlock the building
+    if (identifiedBuildingId) {
+      await unlockBuilding(identifiedBuildingId);
+      
+      // If it was a new unlock, provide celebration feedback
+      if (!wasUnlocked) {
+        setIsNewUnlock(true);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    }
+    
     setShowSummaryPopup(true)
   };
 
@@ -93,6 +112,10 @@ export default function CameraScreen() {
             ref={camera}
             facing={facing}
           />
+        )}
+        {/* Dimming overlay when photo is taken */}
+        {(isCapturing || showSummaryPopup) && (
+          <View style={styles.dimmingOverlay} />
         )}
         <View style={styles.cameraOverlay}>
           {/* Scanning frame */}
@@ -135,8 +158,12 @@ export default function CameraScreen() {
 
       <SummaryModal
         visible={showSummaryPopup}
-        onClose={() => setShowSummaryPopup(false)}
+        onClose={() => {
+          setShowSummaryPopup(false);
+          setIsNewUnlock(false);
+        }}
         building_id={buildingId}
+        isNewUnlock={isNewUnlock}
       />
     </SafeAreaView>
   );
@@ -204,6 +231,15 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
+  dimmingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    zIndex: 1,
+  },
   cameraOverlay: {
     position: 'absolute',
     top: 0,
@@ -213,6 +249,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     pointerEvents: 'box-none',
+    zIndex: 2,
   },
   scanFrame: {
     width: SCREEN_WIDTH * 0.90,

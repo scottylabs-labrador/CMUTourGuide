@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Markdown from 'react-native-markdown-display';
 import buildings from "../components/buildings.json"
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -9,9 +10,10 @@ interface SummaryModalProps {
     visible: boolean;
     onClose: () => void;
     building_id: string;
+    isNewUnlock?: boolean;
 }
 
-export default function SummaryModal({ visible, onClose, building_id }: SummaryModalProps) {
+export default function SummaryModal({ visible, onClose, building_id, isNewUnlock = false }: SummaryModalProps) {
     const buildingData = buildings[building_id as keyof typeof buildings]
     const router = useRouter()
 
@@ -35,13 +37,27 @@ export default function SummaryModal({ visible, onClose, building_id }: SummaryM
         >
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
-                    {/* Close Button */}
-                    <TouchableOpacity
-                        style={styles.closeButton}
-                        onPress={onClose}
-                    >
-                        <Ionicons name="close" size={28} color="#666" />
-                    </TouchableOpacity>
+                    {/* Header Row with Close Button and Badge */}
+                    <View style={styles.headerRow}>
+                        {/* New Discovery Badge */}
+                        {isNewUnlock ? (
+                            <View style={styles.newDiscoveryBadge}>
+                                <Ionicons name="star" size={20} color="#FFD700" />
+                                <Text style={styles.newDiscoveryText}>New Discovery!</Text>
+                                <Ionicons name="star" size={20} color="#FFD700" />
+                            </View>
+                        ) : (
+                            <View style={styles.placeholder} />
+                        )}
+                        
+                        {/* Close Button */}
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={onClose}
+                        >
+                            <Ionicons name="close" size={28} color="#666" />
+                        </TouchableOpacity>
+                    </View>
 
                     {/* Image Placeholder */}
                     <View style={styles.imageContainer}>
@@ -59,8 +75,18 @@ export default function SummaryModal({ visible, onClose, building_id }: SummaryM
                     <ScrollView
                         style={styles.textContainer}
                     >
-                        <Text style={styles.description}>{buildingData.summary}
-                        </Text>
+                        <Markdown 
+                            style={{
+                                body: {
+                                    ...styles.description,
+                                },
+                                strong: styles.boldText,
+                            }}
+                        >
+                            {Array.isArray(buildingData.tour_guide) 
+                                ? buildingData.tour_guide.join('\n\n') 
+                                : buildingData.tour_guide}
+                        </Markdown>
                     </ScrollView>
 
                     <View style={styles.buttonContainer}>
@@ -107,9 +133,18 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 8,
     },
-    closeButton: {
-        alignSelf: 'flex-end',
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
         marginBottom: 5,
+    },
+    placeholder: {
+        flex: 1,
+    },
+    closeButton: {
+        padding: 4,
     },
     imageContainer: {
         width: '100%',
@@ -140,6 +175,10 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         textAlign: 'center',
     },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#333',
+    },
     buttonContainer: {
         flexDirection: 'row',
     },
@@ -156,5 +195,24 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: '600',
+    },
+    newDiscoveryBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFF9E6',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        borderWidth: 2,
+        borderColor: '#FFD700',
+        gap: 8,
+        flex: 1,
+        marginRight: 8,
+    },
+    newDiscoveryText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#C41E3A',
     },
 });
