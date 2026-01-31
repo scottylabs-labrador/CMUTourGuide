@@ -8,6 +8,12 @@ import io
 # Create Modal app
 app = modal.App("cmu-tour-guide-cv")
 
+# Minimal 1x1 PNG (base64) for keep-warm pings - avoids loading real images in cron
+TINY_PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+
+# Web URL for keep-warm pings (set VISION_WEB_URL in Modal Secrets if your workspace differs)
+VISION_WEB_URL = "https://ncdev1919--cmu-tour-guide-cv-recognize-building-lp.modal.run"
+
 # Define container image with all dependencies
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -39,7 +45,7 @@ _classifier_cache = None
     image=image,
     memory=4096,
     timeout=300,
-    container_idle_timeout=300
+    container_idle_timeout=900,  # 15 min - container stays warm longer between requests
 )
 @modal.fastapi_endpoint(method="POST")
 async def recognize_building_LP(request: dict) -> dict:
@@ -131,4 +137,19 @@ async def recognize_building_LP(request: dict) -> dict:
     except Exception as e:
         print(f"❌ Error: {str(e)}")
         return {"error": "PROCESSING_ERROR", "description": str(e)}
+
+
+@app.function(
+    schedule=modal.Period(minutes=2),
+    image=modal.Image.debian_slim().pip_install("httpx"),
+)
+def keep_warm():
+    """Ping the recognizer web endpoint every 2 min so its container stays warm (avoids cold starts)."""
+    import os
+    import httpx
+    url = os.environ.get("VISION_WEB_URL", VISION_WEB_URL)
+    try:
+        httpx.post(url, json={"imageBase64": TINY_PNG_BASE64}, timeout=30.0)
+    except Exception as e:
+        print(f"keep_warm ping failed: {e}")
 
