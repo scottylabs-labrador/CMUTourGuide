@@ -9,6 +9,20 @@ import SummaryModal from '../components/SummaryModal';
 import { useBuildings } from '../contexts/BuildingContext';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+// Map classifier labels to canonical building IDs used in buildings.json (case-insensitive)
+const BUILDING_ID_ALIASES: Record<string, string> = {
+  'Uc Side': 'Uc',
+  'Uc Side 2': 'Uc',
+  'Uc Front': 'Uc',
+  'Uc Back': 'Uc',
+  'Margaret Morrison Side': 'Margaret Morrison',
+};
+
+function canonicalBuildingId(raw: string): string {
+  const key = raw.trim().toLowerCase();
+  return BUILDING_ID_ALIASES[key] ?? raw;
+}
+
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
@@ -67,7 +81,7 @@ export default function CameraScreen() {
     const data = await res.json()
     console.log(data)
     setIsCapturing(false);
-    const identifiedBuildingId = data.building_name;
+    const identifiedBuildingId = canonicalBuildingId(data.building_name ?? '');
     setBuildingId(identifiedBuildingId);
     
     // Check if building is already unlocked

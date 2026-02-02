@@ -6,6 +6,20 @@ from model import BuildingRecognizer
 from tqdm import tqdm
 import joblib
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+from torchvision import transforms # NEW: For augmentation
+from PIL import Image # NEW: For loading images manually
+
+augmenter = transforms.Compose([
+    transforms.RandomHorizontalFlip(p=0.5),      # Mirroring (good for symmetry)
+    transforms.RandomRotation(degrees=15),       # Simulate holding phone crooked
+    transforms.ColorJitter(brightness=0.2, contrast=0.2), # Simulate different weather
+    transforms.RandomResizedCrop(
+        size=(224, 224), 
+        scale=(0.8, 1.0), 
+        ratio=(0.9, 1.1)
+    ) # Simulate zooming/cropping
+])
 
 def scan_directory(data_dir: str):
     """
@@ -14,7 +28,7 @@ def scan_directory(data_dir: str):
     Returns:
         List of tuples (building_name, image_path)
     """
-    buildings = []
+    images = []
     data_path = Path(data_dir)
     
     if not data_path.exists():
@@ -23,14 +37,14 @@ def scan_directory(data_dir: str):
     
     for building_dir in data_path.iterdir():
         if building_dir.is_dir():
-            if building_dir.name.lower() == "todo" or building_dir.name.lower() == "field":
+            if building_dir.name.lower() == "todo":
                 continue
             building_name = building_dir.name.replace("_", " ").title()
             for ext in ["*.jpg", "*.jpeg", "*.png", "*.JPG", "*.JPEG", "*.PNG"]:
                 for img_file in building_dir.glob(ext):
-                    buildings.append((building_name, str(img_file)))
+                    images.append((building_name, str(img_file)))
     
-    return buildings
+    return images
 
 def train_model(data_dir: str = "data"):
     print("🔍 Scanning for building images...")
@@ -55,20 +69,42 @@ def train_model(data_dir: str = "data"):
     X_train = []
     y_train_labels = []
     
-    print(f"🏛️  Processing {len(building_groups)} buildings...")
+    print(f"🏛️  Processing {len(building_images)} images...")
+
     for building_name, image_paths in tqdm(building_groups.items(), desc="Processing"):
         
-        # Process all images for the specific building
-        embeddings = recognizer.encode_images(image_paths)
+        # We need to load PIL images manually now to augment them
+        batch_images = []
+        
+        for img_path in image_paths:
+            try:
+                # 1. Load Original
+                original_img = Image.open(img_path).convert("RGB")
+                batch_images.append(original_img)
+                
+                # 2. Generate Augmentations (e.g., 5 per image)
+                # Only augment if you have < 100 images per class to prevent explosion
+                for _ in range(5):
+                    aug_img = augmenter(original_img)
+                    batch_images.append(aug_img)
+                    
+            except Exception as e:
+                print(f"⚠️ Error reading {img_path}: {e}")
+                continue
+
+        # 3. Batch Encode (Much faster than one by one)
+        # Your model.py's encode_images accepts PIL objects, so this works!
+        embeddings = recognizer.encode_images(batch_images)
+        
         # ensure 2D
         if embeddings.ndim == 1:
             embeddings = embeddings[None, :]
 
         for emb in embeddings:
             X_train.append(emb)
-            y_train_labels.append(building_name)
+            y_train_labels.append(building_name) # Label repeats for all augmented versions
 
-    print("\n🧠 Training Linear Probe Classifier...")
+    print(f"\n🧠 Training on {len(X_train)} embeddings (Original + Augmented)...")
     X = np.array(X_train)
 
     unique_buildings = sorted(list(set(y_train_labels)))
@@ -77,7 +113,16 @@ def train_model(data_dir: str = "data"):
 
     y = np.array([label_map[label] for label in y_train_labels])
 
-    classifier = LogisticRegression(random_state=42, solver='lbfgs', max_iter=1000, C=100.0)
+    classifier = LogisticRegression(
+        random_state=42, 
+        solver='lbfgs', 
+        max_iter=1000, 
+        C=100.0)
+
+    print("📊 Running 5-Fold Cross Validation...")
+    cv_scores = cross_val_score(classifier, X, y, cv=5)
+    print(f"✅ Estimated Real-World Accuracy: {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
+
     classifier.fit(X, y)
 
     acc = classifier.score(X, y)

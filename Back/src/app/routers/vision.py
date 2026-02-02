@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 import httpx
+from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional
+from services.s3Services import upload_interaction
 
 class VisionRequest(BaseModel):
 	imageBase64: str
@@ -11,12 +13,19 @@ class VisionResponse(BaseModel):
 	confidence: float
 	error: Optional[str] = None
 
-
 router = APIRouter(prefix="", tags=["image"])
 
 @router.post("/vision", response_model=VisionResponse)
-async def image(req: VisionRequest):
+async def image(req: VisionRequest, background_tasks: BackgroundTasks):
 	reply = await recognize_building(req.imageBase64)
+	if reply.error is None:
+		background_tasks.add_task(
+            upload_interaction, 
+            req.imageBase64, 
+            reply.building_name, 
+            reply.confidence
+        )
+
 	return reply
 
 async def recognize_building(image_base64: str) -> VisionResponse:
@@ -30,9 +39,9 @@ async def recognize_building(image_base64: str) -> VisionResponse:
 			response.raise_for_status()
 			res_json =  response.json()
 			print(res_json)
-			building = res_json.get("building", "Unknown")
+			raw_building = res_json.get("building", "Unknown")
 			confidence = float(res_json.get("confidence", 0.0))
-			return VisionResponse(building_name=building, confidence=confidence, error= None)
+			return VisionResponse(building_name=raw_building, confidence=confidence, error=None)
 	except httpx.TimeoutException:
 		return _error_response("Request to Modal API timed out", "TIMEOUT")
 	except httpx.HTTPStatusError as e:
