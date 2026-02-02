@@ -45,7 +45,7 @@ _classifier_cache = None
     image=image,
     memory=4096,
     timeout=300,
-    container_idle_timeout=900,  # 15 min - container stays warm longer between requests
+    container_idle_timeout=1800,  # 30 min - container stays warm longer between requests
 )
 @modal.fastapi_endpoint(method="POST")
 async def recognize_building_LP(request: dict) -> dict:
@@ -108,7 +108,7 @@ async def recognize_building_LP(request: dict) -> dict:
 
         if _classifier_cache is None:
             print("🤖 Loading linear probe (first time in this container)...")
-            _classifier_cache = joblib.load("src/cmu_building_classifier_20251205_1314.pkl")
+            _classifier_cache = joblib.load("src/cmu_building_classifier_20260201_1756.pkl")
         
         recognizer = _recognizer_cache
         classifier = _classifier_cache
@@ -140,11 +140,11 @@ async def recognize_building_LP(request: dict) -> dict:
 
 
 @app.function(
-    schedule=modal.Period(minutes=2),
+    schedule=modal.Period(minutes=29),
     image=modal.Image.debian_slim().pip_install("httpx"),
 )
 def keep_warm():
-    """Ping the recognizer web endpoint every 2 min so its container stays warm (avoids cold starts)."""
+    """Ping the recognizer web endpoint every 29 min so its container stays warm (avoids cold starts)."""
     import os
     import httpx
     url = os.environ.get("VISION_WEB_URL", VISION_WEB_URL)

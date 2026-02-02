@@ -10,7 +10,13 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bigboa19.TourGuide"
+      "bundleIdentifier": "com.bigboa19.TourGuide",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "config": {
+        "googleMapsApiKey":  "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -64,6 +70,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6ed9be8d-fbc9-4812-b934-99b2e359f21b"
+      }
     }
   }
 }
