@@ -195,13 +195,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   permissionTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 24,
-    fontWeight: 'bold',
     color: '#C41E3A',
     marginTop: 24,
     marginBottom: 16,
   },
   permissionText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
@@ -215,9 +216,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   permissionButtonText: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     color: 'white',
     fontSize: 16,
-    fontWeight: '600',
   },
   header: {
     flexDirection: 'row',
@@ -231,9 +232,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     color: 'white',
     fontSize: 18,
-    fontWeight: '600',
   },
   flipButton: {
     padding: 8,
@@ -317,6 +318,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   instructionText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
@@ -360,6 +362,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   processingText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     color: 'white',
     fontSize: 14,
     fontStyle: 'italic',
