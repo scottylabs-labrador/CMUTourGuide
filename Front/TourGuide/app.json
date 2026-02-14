@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bigboa19.TourGuide",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "CMUTourGuide uses your location to show your position on the campus map."
       },
       "config": {
         "googleMapsApiKey":  "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
@@ -29,7 +30,9 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "package": "com.bigboa19.TourGuide"
     },
@@ -61,6 +64,12 @@
         "expo-dev-client",
         {
           "addGeneratedScheme": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "CMUTourGuide uses your location to show your position on the campus map."
         }
       ]
     ],

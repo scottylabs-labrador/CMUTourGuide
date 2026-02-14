@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 import MapView, { Region } from 'react-native-maps';
 import { useBuildings } from '../contexts/BuildingContext';
 import buildings from '../components/buildings.json';
@@ -34,8 +35,44 @@ export default function MapScreen() {
   const { unlockedBuildings } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
+  const [locationGranted, setLocationGranted] = useState(false);
   const mapRef = useRef<MapView>(null);
-  
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      setLocationGranted(status === 'granted');
+    })();
+  }, []);
+
+  // Center map on user location on initial mount (same scale as clampRegion)
+  useEffect(() => {
+    if (!locationGranted) return;
+    const scale = 0.3;
+    const latDelta = INITIAL_REGION.latitudeDelta * scale;
+    const lngDelta = INITIAL_REGION.longitudeDelta * scale;
+    const halfLat = latDelta / 2;
+    const halfLng = lngDelta / 2;
+    const minLatCenter = CMU_BOUNDS.minLatitude + halfLat;
+    const maxLatCenter = CMU_BOUNDS.maxLatitude - halfLat;
+    const minLngCenter = CMU_BOUNDS.minLongitude + halfLng;
+    const maxLngCenter = CMU_BOUNDS.maxLongitude - halfLng;
+
+    const id = setTimeout(() => {
+      Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+        .then(({ coords }) => {
+          const latitude = Math.min(Math.max(coords.latitude, minLatCenter), maxLatCenter);
+          const longitude = Math.min(Math.max(coords.longitude, minLngCenter), maxLngCenter);
+          mapRef.current?.animateToRegion(
+            { latitude, longitude, latitudeDelta: latDelta, longitudeDelta: lngDelta },
+            300
+          );
+        })
+        .catch(() => {});
+    }, 100);
+    return () => clearTimeout(id);
+  }, [locationGranted]);
+
   const buildingKeys = Object.keys(buildings);
   const totalBuildings = buildingKeys.length;
   const unlockedCount = unlockedBuildings.length;
@@ -50,10 +87,10 @@ export default function MapScreen() {
   };
 
   const clampRegion = (region: Region): Region => {
-    const maxLatDelta = CMU_BOUNDS.maxLatitude - CMU_BOUNDS.minLatitude;
-    const maxLngDelta = CMU_BOUNDS.maxLongitude - CMU_BOUNDS.minLongitude;
-    const latitudeDelta = Math.min(region.latitudeDelta, maxLatDelta);
-    const longitudeDelta = Math.min(region.longitudeDelta, maxLngDelta);
+    const scale = 0.3;
+    // Keep zoom constant: always use initial deltas (no zoom in/out)
+    const latitudeDelta = INITIAL_REGION.latitudeDelta * scale;
+    const longitudeDelta = INITIAL_REGION.longitudeDelta * scale;
 
     const halfLat = latitudeDelta / 2;
     const halfLng = longitudeDelta / 2;
@@ -119,6 +156,9 @@ export default function MapScreen() {
           provider="google"
           customMapStyle={CMU_MAP_STYLE}
           onRegionChangeComplete={handleRegionChangeComplete}
+          zoomEnabled={false}
+          showsUserLocation={locationGranted}
+          showsMyLocationButton={locationGranted}
         />
       </View>
 
