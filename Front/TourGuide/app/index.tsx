@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, Animated } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -14,6 +14,7 @@ const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { unlockedBuildings, isUnlocked } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false)
   const [buildingId, setBuildingId] = React.useState("")
@@ -23,6 +24,13 @@ export default function HomeScreen() {
   const progressPercentage = totalBuildings > 0 ? (unlockedCount / totalBuildings) * 100 : 0;
 
   const scrollY = React.useRef(new Animated.Value(0)).current;
+  const [headerVisible, setHeaderVisible] = React.useState(false);
+  React.useEffect(() => {
+    const id = scrollY.addListener(({ value }) => {
+      setHeaderVisible(value > 100);
+    });
+    return () => scrollY.removeListener(id);
+  }, []);
   const scrollXBuildings = React.useRef(new Animated.Value(0)).current;
   const BUILDING_CARD_WIDTH = 210;
   const BUILDING_CARD_SPACING = 14;
@@ -54,31 +62,56 @@ export default function HomeScreen() {
     }
   };
 
+  const HEADER_SCROLL_RANGE = 260;
+  // Logo and above: red. Below the logo: white, sharp transition (no pinkish hue)
   const bgTopColor = scrollY.interpolate({
-    inputRange: [0, 400],
-    // Warm sunrise red at the very top, easing toward softer rose
-    outputRange: ['#FFC4CC', '#FFB3BF'],
+    inputRange: [0, HEADER_SCROLL_RANGE, 400],
+    outputRange: ['#C41230', '#F8F9FA', '#F8F9FA'],
     extrapolate: 'clamp',
   });
   const bgMiddleColor = scrollY.interpolate({
-    inputRange: [0, 400],
-    // Soft misty light rose in the middle of the screen
-    outputRange: ['#FFE8EE', '#FFDDE8'],
+    inputRange: [0, HEADER_SCROLL_RANGE, 400],
+    outputRange: ['#FFFFFF', '#F1F3F5', '#F1F3F5'],
     extrapolate: 'clamp',
   });
   const bgBottomColor = scrollY.interpolate({
-    inputRange: [0, 400],
-    // Gentle warm pink near bottom, slightly deepening as you scroll
-    outputRange: ['#FFEFF5', '#FFE0EC'],
+    inputRange: [0, HEADER_SCROLL_RANGE, 400],
+    outputRange: ['#FFFFFF', '#E9ECEF', '#E9ECEF'],
+    extrapolate: 'clamp',
+  });
+  const fixedHeaderOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_RANGE],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+  const heroLogoOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_RANGE],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+  const heroLogoScale = scrollY.interpolate({
+    inputRange: [0, HEADER_SCROLL_RANGE],
+    outputRange: [1, 0.5],
     extrapolate: 'clamp',
   });
 
   return (
     <AnimatedLinearGradient
       colors={[bgTopColor as any, bgMiddleColor as any, bgBottomColor as any]}
+      locations={[0, 0.12, 1]}
       style={styles.gradientBackground}
     >
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        <View style={[styles.topRedBar, { height: insets.top }]} />
+        <Animated.View style={[styles.fixedHeader, { opacity: fixedHeaderOpacity, top: 0 }]} pointerEvents={headerVisible ? 'box-none' : 'none'}>
+          <View style={[styles.fixedHeaderRedBar, { paddingTop: insets.top }]}>
+            <Text style={styles.fixedHeaderLogo} numberOfLines={1}>Carnegie Mellon University</Text>
+            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} style={styles.fixedHeaderInfoBtn}>
+              <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
         <Animated.ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -89,36 +122,18 @@ export default function HomeScreen() {
             { useNativeDriver: false }
           )}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.appTitle}>CMU Tour Guide</Text>
-            <BlurView intensity={40} tint="light" style={styles.infoBlur}>
-              <TouchableOpacity 
-                onPress={() => router.push('/info')}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="information-circle-outline" size={20} color="#C41E3A" />
-              </TouchableOpacity>
-            </BlurView>
-          </View>
+          <Animated.View style={[styles.heroLogoBlock, { opacity: heroLogoOpacity, transform: [{ scale: heroLogoScale }], paddingTop: insets.top + 12 }]}>
+            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} style={styles.heroLogoInfoBtn}>
+              <Ionicons name="information-circle-outline" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+            <Text style={styles.heroLogoLine1}>Carnegie</Text>
+            <Text style={styles.heroLogoLine2}>Mellon</Text>
+            <Text style={styles.heroLogoLine3}>University</Text>
+          </Animated.View>
 
-          {/* Hero section */}
           <View style={styles.heroSection}>
             <Text style={styles.heroSubtitle}>Ready to Explore</Text>
             <Text style={styles.heroTitle}>Carnegie Mellon!</Text>
-
-            {/* Search pill (non-functional for now) */}
-            <View style={styles.searchPill}>
-              <View style={styles.searchLeft}>
-                <Ionicons name="search" size={18} color="#8E9AAF" />
-                <Text style={styles.searchPlaceholder}>
-                  Find buildings…
-                </Text>
-              </View>
-              <View style={styles.micButton}>
-                <Ionicons name="mic-outline" size={18} color="#C41E3A" />
-              </View>
-            </View>
           </View>
 
           {/* Scan CTA card - camera icon is the button */}
@@ -129,7 +144,7 @@ export default function HomeScreen() {
                 onPress={handleScan}
                 activeOpacity={0.85}
               >
-                <Ionicons name="camera-outline" size={48} color="#C41E3A" />
+                <Ionicons name="camera-outline" size={48} color="#C41230" />
               </TouchableOpacity>
               <View style={styles.scanTextContainer}>
                 <Text style={styles.scanTitle} numberOfLines={1}>Scan a CMU marker</Text>
@@ -165,7 +180,7 @@ export default function HomeScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.actionIconCircle}>
-                  <Ionicons name="chatbubbles-outline" size={22} color="#C41E3A" />
+                  <Ionicons name="chatbubbles-outline" size={22} color="#C41230" />
                 </View>
                 <Text style={styles.actionTitle}>Chats</Text>
                 <Text style={styles.actionSubtitle}>
@@ -181,7 +196,7 @@ export default function HomeScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.actionIconCircle}>
-                  <Ionicons name="map-outline" size={22} color="#C41E3A" />
+                  <Ionicons name="map-outline" size={22} color="#C41230" />
                 </View>
                 <Text style={styles.actionTitle}>Map</Text>
                 <Text style={styles.actionSubtitle}>
@@ -306,8 +321,81 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: 0,
     paddingBottom: 40,
+  },
+  topRedBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#C41230',
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    paddingBottom: 12,
+  },
+  fixedHeaderRedBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#C41230',
+    paddingBottom: 12,
+    paddingHorizontal: 20,
+    borderRadius: 0,
+  },
+  fixedHeaderLogo: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 18,
+    color: '#FFFFFF',
+    flex: 1,
+  },
+  fixedHeaderInfoBtn: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  heroLogoBlock: {
+    backgroundColor: '#C41230',
+    paddingBottom: 32,
+    paddingHorizontal: 24,
+    marginHorizontal: -24,
+    marginBottom: 16,
+    alignSelf: 'stretch',
+    position: 'relative',
+  },
+  heroLogoInfoBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 16,
+    padding: 4,
+    zIndex: 1,
+  },
+  heroLogoLine1: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 36,
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+    lineHeight: 40,
+  },
+  heroLogoLine2: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 36,
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+    lineHeight: 40,
+    marginTop: -4,
+  },
+  heroLogoLine3: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 36,
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
+    lineHeight: 40,
+    marginTop: -4,
   },
   header: {
     flexDirection: 'row',
@@ -317,9 +405,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   appTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 36,
-    fontWeight: '700',
-    color: '#C41E3A',
+    color: '#C41230',
     letterSpacing: -0.5,
   },
   infoBlur: {
@@ -328,50 +416,19 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heroSection: {
-    marginBottom: 24,
+    marginBottom: 10,
   },
   heroSubtitle: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#7A8593',
     marginBottom: 4,
   },
   heroTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 28,
-    fontWeight: '700',
     color: '#1F2933',
-    marginBottom: 16,
-  },
-  searchPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  searchLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 8,
-  },
-  searchPlaceholder: {
-    color: '#8E9AAF',
-    fontSize: 14,
-  },
-  micButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(196,18,58,0.08)',
+    marginBottom: 8,
   },
   scanCard: {
     flexDirection: 'row',
@@ -380,8 +437,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingVertical: 28,
     paddingHorizontal: 24,
-    // very light pink, subtle tint
-    backgroundColor: '#FFF3F7',
+    backgroundColor: '#F1F3F5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -402,19 +458,20 @@ const styles = StyleSheet.create({
     borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(196,18,58,0.08)',
+    backgroundColor: 'rgba(196,18,48,0.08)',
     marginRight: 18,
   },
   scanTextContainer: {
     flex: 1,
   },
   scanTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'SourceSerifPro_700Bold',
+    fontSize: 17,
     color: '#1F2933',
     marginBottom: 4,
   },
   scanSubtitle: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 15,
     color: '#7A8593',
   },
@@ -426,8 +483,7 @@ const styles = StyleSheet.create({
   actionCard: {
     flex: 1,
     borderRadius: 26,
-    // same very light pink as other cards
-    backgroundColor: '#FFF3F7',
+    backgroundColor: '#F1F3F5',
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -445,16 +501,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(196,18,58,0.07)',
+    backgroundColor: 'rgba(196,18,48,0.07)',
     marginBottom: 10,
   },
   actionTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 15,
-    fontWeight: '600',
     color: '#1F2933',
     marginBottom: 3,
   },
   actionSubtitle: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 13,
     color: '#7A8593',
   },
@@ -471,10 +528,10 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   mapPlaceholderText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#999',
     marginTop: 12,
-    fontWeight: '500',
   },
   infoButton: {
     position: 'absolute',
@@ -482,8 +539,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   progressContainer: {
-    // subtle very light pink background, easier to see
-    backgroundColor: '#FFF3F7',
+    backgroundColor: '#F1F3F5',
     borderRadius: 26,
     padding: 20,
     marginBottom: 24,
@@ -498,20 +554,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   progressTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 18,
     textAlign: 'left',
-    fontWeight: '600',
     color: '#333',
   },
   progressHint: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 13,
     color: '#7A8593',
     marginTop: 2,
   },
   progressText: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 18,
-    fontWeight: '700',
-    color: '#C41E3A',
+    color: '#C41230',
     marginTop: 2,
   },
   progressBarContainer: {
@@ -524,12 +581,13 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#C41E3A',
+    backgroundColor: '#C41230',
     borderRadius: 4,
   },
   progressLink: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 13,
-    color: '#C41E3A',
+    color: '#C41230',
     marginTop: 2,
     alignSelf: 'flex-end',
   },
@@ -545,14 +603,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   sectionTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 20,
-    fontWeight: '700',
     color: '#333',
   },
   seeAllText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 13,
-    color: '#C41E3A',
-    fontWeight: '500',
+    color: '#C41230',
   },
   buildingsCarousel: {
     paddingHorizontal: 24,
@@ -561,8 +619,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     width: 210,
     borderRadius: 20,
-    // match the soft pink bubbly cards above
-    backgroundColor: '#FFF3F7',
+    backgroundColor: '#F1F3F5',
     marginRight: 14,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -602,10 +659,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   lockedText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     marginTop: 4,
     fontSize: 12,
     color: '#fff',
-    fontWeight: '500',
   },
   buildingGradientTop: {
     position: 'absolute',
@@ -631,22 +688,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.85)',
   },
   buildingBadgeText: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 11,
-    fontWeight: '600',
-    color: '#C41E3A',
+    color: '#C41230',
   },
   buildingInfo: {
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
   buildingName: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 14,
-    fontWeight: '600',
     color: '#333',
     marginBottom: 2,
     textAlign: 'center',
   },
   buildingSubtext: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 12,
     color: '#7A8593',
     textAlign: 'center',

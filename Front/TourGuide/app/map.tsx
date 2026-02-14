@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 20,
-    fontWeight: '700',
     color: '#C41E3A',
   },
   resetButton: {
@@ -183,13 +183,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   progressTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 14,
-    fontWeight: '600',
     color: '#333',
   },
   progressText: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 14,
-    fontWeight: '700',
     color: '#C41E3A',
   },
   progressBarContainer: {
@@ -230,9 +230,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   scanButtonText: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     color: 'white',
     fontSize: 16,
-    fontWeight: '600',
   },
 });
 

@@ -15,7 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "config": {
-        "googleMapsApiKey":  "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
+        "googleMapsApiKey": "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
       }
     },
     "android": {
@@ -62,7 +62,8 @@
         {
           "addGeneratedScheme": false
         }
-      ]
+      ],
+      "expo-font"
     ],
     "developmentClient": {
       "silentLaunch": true

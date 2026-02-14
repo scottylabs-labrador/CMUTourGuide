@@ -209,9 +209,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     color: 'white',
     fontSize: 18,
-    fontWeight: '600',
   },
   trashButton: {
     padding: 8,
@@ -260,23 +260,26 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   chatTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 16,
-    fontWeight: '600',
     color: '#333',
     flex: 1,
     marginRight: 8,
   },
   chatTime: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 12,
     color: '#999',
   },
   chatPreview: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 14,
     color: '#666',
     marginBottom: 4,
     lineHeight: 20,
   },
   messageCount: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 12,
     color: '#999',
     marginTop: 4,
@@ -291,12 +294,13 @@ const styles = StyleSheet.create({
     paddingVertical: 80,
   },
   emptyText: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 18,
-    fontWeight: '600',
     color: '#999',
     marginTop: 16,
   },
   emptySubtext: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 14,
     color: '#bbb',
     marginTop: 8,
