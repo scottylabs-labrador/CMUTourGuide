@@ -107,7 +107,7 @@ export default function HomeScreen() {
             <Text style={styles.heroSubtitle}>Ready to Explore</Text>
             <Text style={styles.heroTitle}>Carnegie Mellon!</Text>
 
-            Search pill (non-functional for now)
+            {/* Search pill (non-functional for now) */}
             <View style={styles.searchPill}>
               <View style={styles.searchLeft}>
                 <Ionicons name="search" size={18} color="#8E9AAF" />
@@ -121,26 +121,23 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Scan CTA card */}
+          {/* Scan CTA card - camera icon is the button */}
           <BlurView intensity={40} tint="light" style={styles.scanCard}>
             <View style={styles.scanLeft}>
-              <View style={styles.scanIconCircle}>
-                <Ionicons name="camera-outline" size={28} color="#C41E3A" />
-              </View>
+              <TouchableOpacity
+                style={styles.scanIconCircle}
+                onPress={handleScan}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="camera-outline" size={48} color="#C41E3A" />
+              </TouchableOpacity>
               <View style={styles.scanTextContainer}>
-                <Text style={styles.scanTitle}>Scan a CMU marker</Text>
+                <Text style={styles.scanTitle} numberOfLines={1}>Scan a CMU marker</Text>
                 <Text style={styles.scanSubtitle}>
                   Unlock building stories, trivia, and map pins.
                 </Text>
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.scanButton}
-              onPress={handleScan}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.scanButtonText}>Scan</Text>
-            </TouchableOpacity>
           </BlurView>
 
           {/* Discovery Progress */}
@@ -380,9 +377,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 26,
-    paddingVertical: 18,
-    paddingHorizontal: 18,
+    borderRadius: 28,
+    paddingVertical: 28,
+    paddingHorizontal: 24,
     // very light pink, subtle tint
     backgroundColor: '#FFF3F7',
     shadowColor: '#000',
@@ -397,40 +394,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 12,
+    marginRight: 16,
   },
   scanIconCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(196,18,58,0.08)',
-    marginRight: 12,
+    marginRight: 18,
   },
   scanTextContainer: {
     flex: 1,
   },
   scanTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#1F2933',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   scanSubtitle: {
-    fontSize: 13,
+    fontSize: 15,
     color: '#7A8593',
-  },
-  scanButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 999,
-    backgroundColor: '#C41E3A',
-  },
-  scanButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
   },
   actionsContainer: {
     flexDirection: 'row',
