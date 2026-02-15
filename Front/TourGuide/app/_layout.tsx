@@ -1,3 +1,4 @@
+import "../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts, SourceSerifPro_400Regular, SourceSerifPro_600SemiBold, SourceSerifPro_700Bold } from "@expo-google-fonts/source-serif-pro";
