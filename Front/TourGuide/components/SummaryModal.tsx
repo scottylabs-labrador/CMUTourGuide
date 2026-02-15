@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     title: {
+        fontFamily: 'SourceSerifPro_700Bold',
         fontSize: 24,
-        fontWeight: 'bold',
         color: '#C41E3A',
         marginBottom: 16,
         textAlign: 'center',
@@ -170,13 +170,14 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     description: {
+        fontFamily: 'SourceSerifPro_400Regular',
         fontSize: 16,
         color: '#333',
         lineHeight: 24,
         textAlign: 'center',
     },
     boldText: {
-        fontWeight: 'bold',
+        fontFamily: 'SourceSerifPro_700Bold',
         color: '#333',
     },
     buttonContainer: {
@@ -192,9 +193,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 4,
     },
     actionButtonText: {
+        fontFamily: 'SourceSerifPro_600SemiBold',
         color: 'white',
         fontSize: 16,
-        fontWeight: '600',
     },
     newDiscoveryBadge: {
         flexDirection: 'row',
@@ -211,8 +212,8 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     newDiscoveryText: {
+        fontFamily: 'SourceSerifPro_700Bold',
         fontSize: 16,
-        fontWeight: '700',
         color: '#C41E3A',
     },
 });

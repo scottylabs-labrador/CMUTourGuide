@@ -195,13 +195,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   permissionTitle: {
+<<<<<<< HEAD
     fontSize: 24,
     fontWeight: 'bold',
+=======
+    fontFamily: 'SourceSerifPro_700Bold',
+    fontSize: 24,
+>>>>>>> frontend-edit-made-by-krish
     color: '#C41E3A',
     marginTop: 24,
     marginBottom: 16,
   },
   permissionText: {
+<<<<<<< HEAD
+=======
+    fontFamily: 'SourceSerifPro_400Regular',
+>>>>>>> frontend-edit-made-by-krish
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
@@ -215,9 +224,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   permissionButtonText: {
+<<<<<<< HEAD
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+=======
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    color: 'white',
+    fontSize: 16,
+>>>>>>> frontend-edit-made-by-krish
   },
   header: {
     flexDirection: 'row',
@@ -231,9 +246,15 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
+<<<<<<< HEAD
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
+=======
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    color: 'white',
+    fontSize: 18,
+>>>>>>> frontend-edit-made-by-krish
   },
   flipButton: {
     padding: 8,
@@ -317,6 +338,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   instructionText: {
+<<<<<<< HEAD
+=======
+    fontFamily: 'SourceSerifPro_400Regular',
+>>>>>>> frontend-edit-made-by-krish
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
@@ -360,6 +385,10 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   processingText: {
+<<<<<<< HEAD
+=======
+    fontFamily: 'SourceSerifPro_400Regular',
+>>>>>>> frontend-edit-made-by-krish
     color: 'white',
     fontSize: 14,
     fontStyle: 'italic',

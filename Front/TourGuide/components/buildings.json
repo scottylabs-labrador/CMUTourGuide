@@ -182,6 +182,15 @@
         ],
         "image_url": "https://midcenturymundane.wordpress.com/wp-content/uploads/2014/07/img_7547.jpg"
     },
+    "Hamburg": {
+        "title": "Hamburg Hall",
+        "tour_guide": [
+            "Here is **Hamburg Hall**, home to the **Heinz College of Information Systems and Public Policy**.",
+            "**Purpose & Affiliation:**\nThis college focuses on the intersection of people, policy, and technology. It uniquely houses both the School of Information Systems & Management and the School of Public Policy & Management under one roof.",
+            "**History & Architecture:**\nDesigned by Henry Hornbostel in 1915, this building was actually the U.S. Bureau of Mines before CMU acquired it. The recent renovation added the stunning **Teresa Heinz Rotunda** and a 'floating' classroom in the courtyard that is an architectural marvel."
+        ],
+        "image_url": ""
+    },
     "Cyert": {
         "title": "Cyert Hall",
         "tour_guide": [
@@ -190,7 +199,7 @@
             "**History & Innovation:**\nIt is named after **Richard Cyert**, CMU's sixth president. He was a visionary who launched the 'Andrew' computing network, which was the first to link all computers on campus together. Fittingly, this building was originally known as the University Computing Center.",
             "**Student Life Tip:**\nNeed a quiet place to work or have a tech issue? Cyert has a computer cluster on the lower level that is often less crowded than the library. Plus, the IT Help Desk is located here if your laptop ever decides to quit on you during finals week!"
         ],
-        "image_url": "https://www.cmu.edu/osher/publications/weekly-essentials/2022/winter/cyert-hall.jpg"
+        "image_url": ""
     },
     "Uc": {
         "title": "Cohon University Center",

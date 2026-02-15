@@ -16,7 +16,7 @@
         "NSLocationWhenInUseUsageDescription": "CMUTourGuide uses your location to show your position on the campus map."
       },
       "config": {
-        "googleMapsApiKey":  "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
+        "googleMapsApiKey": "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
       }
     },
     "android": {
@@ -38,7 +38,8 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
@@ -71,7 +72,8 @@
         {
           "locationWhenInUsePermission": "CMUTourGuide uses your location to show your position on the campus map."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "developmentClient": {
       "silentLaunch": true

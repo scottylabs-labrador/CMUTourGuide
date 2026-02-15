@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 20,
-    fontWeight: '600',
     color: '#C41E3A',
   },
   placeholder: {
@@ -176,16 +176,16 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
+    fontFamily: 'SourceSerifPro_700Bold',
     fontSize: 32,
-    fontWeight: '700',
     color: '#C41E3A',
     marginBottom: 8,
     letterSpacing: -0.5,
   },
   subtitle: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#666',
-    fontWeight: '500',
   },
   section: {
     marginBottom: 32,
@@ -197,11 +197,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 20,
-    fontWeight: '600',
     color: '#C41E3A',
   },
   sectionText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#333',
     lineHeight: 24,
@@ -215,6 +216,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   featureText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     flex: 1,
     fontSize: 16,
     color: '#333',
@@ -228,9 +230,9 @@ const styles = StyleSheet.create({
     borderTopColor: '#e9ecef',
   },
   footerText: {
+    fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 14,
     color: '#999',
-    fontWeight: '500',
   },
   clearButton: {
     flexDirection: 'row',
@@ -243,8 +245,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   clearButtonText: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
     fontSize: 16,
-    fontWeight: '600',
     color: '#fff',
   },
 });

@@ -108,7 +108,7 @@ async def recognize_building_LP(request: dict) -> dict:
 
         if _classifier_cache is None:
             print("🤖 Loading linear probe (first time in this container)...")
-            _classifier_cache = joblib.load("src/cmu_building_classifier_20260203_1656.pkl")
+            _classifier_cache = joblib.load("src/cmu_building_classifier_20260201_1756.pkl")
         
         recognizer = _recognizer_cache
         classifier = _classifier_cache
