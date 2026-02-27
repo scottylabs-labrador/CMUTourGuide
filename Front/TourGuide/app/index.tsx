@@ -1,22 +1,12 @@
 import React from 'react';
-<<<<<<< HEAD
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-=======
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, Animated } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
->>>>>>> frontend-edit-made-by-krish
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useBuildings } from '../contexts/BuildingContext';
 import buildings from '../components/buildings.json';
 import SummaryModal from '../components/SummaryModal';
-<<<<<<< HEAD
-
-export default function HomeScreen() {
-  const router = useRouter();
-=======
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 
@@ -25,7 +15,6 @@ const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
->>>>>>> frontend-edit-made-by-krish
   const { unlockedBuildings, isUnlocked } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false)
   const [buildingId, setBuildingId] = React.useState("")
@@ -34,8 +23,6 @@ export default function HomeScreen() {
   const unlockedCount = unlockedBuildings.length;
   const progressPercentage = totalBuildings > 0 ? (unlockedCount / totalBuildings) * 100 : 0;
 
-<<<<<<< HEAD
-=======
   const scrollY = React.useRef(new Animated.Value(0)).current;
   const [headerVisible, setHeaderVisible] = React.useState(false);
   React.useEffect(() => {
@@ -49,7 +36,6 @@ export default function HomeScreen() {
   const BUILDING_CARD_SPACING = 14;
   const BUILDING_SNAP_INTERVAL = BUILDING_CARD_WIDTH + BUILDING_CARD_SPACING;
 
->>>>>>> frontend-edit-made-by-krish
   const handlePastChats = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push('/pastChats');
@@ -69,131 +55,13 @@ export default function HomeScreen() {
     if (isUnlocked(buildingId)) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setBuildingId(buildingId);
-<<<<<<< HEAD
-      setShowSummaryPopup(true)
-=======
       setShowSummaryPopup(true);
->>>>>>> frontend-edit-made-by-krish
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       Alert.alert("Building not unlocked", "Find the building to unlock it!");
     }
   };
 
-<<<<<<< HEAD
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>CMU Tour Guide</Text>
-          <TouchableOpacity 
-            style={styles.infoButton}
-            onPress={() => router.push('/info')}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="information-circle-outline" size={24} color="#C41E3A" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Main Action Button */}
-        <TouchableOpacity 
-          style={styles.mainButton}
-          onPress={handleScan}
-          activeOpacity={0.9}
-        >
-          <View style={styles.mainButtonIcon}>
-            <Ionicons name="camera" size={48} color="#C41E3A" />
-          </View>
-          <Text style={styles.mainButtonText}>Scan</Text>
-        </TouchableOpacity>
-
-        {/* Progress Section */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressTitle}>Discovery Progress</Text>
-            <Text style={styles.progressText}>{unlockedCount} / {totalBuildings}</Text>
-          </View>
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
-          </View>
-        </View>
-
-        {/* Secondary Actions */}
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={handlePastChats}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="chatbubbles-outline" size={24} color="#C41E3A" />
-            <Text style={styles.actionButtonText}>Chats</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={handleMapView}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="map-outline" size={24} color="#C41E3A" />
-            <Text style={styles.actionButtonText}>Map</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Buildings Grid */}
-        <View style={styles.buildingsSection}>
-          <Text style={styles.sectionTitle}>Buildings</Text>
-          <View style={styles.buildingsGrid}>
-            {buildingKeys.map((buildingId) => {
-              const building = buildings[buildingId as keyof typeof buildings];
-              const unlocked = isUnlocked(buildingId);
-              
-              return (
-                <TouchableOpacity
-                  key={buildingId}
-                  style={[styles.buildingCard, !unlocked && styles.buildingCardLocked]}
-                  onPress={() => handleBuildingPress(buildingId)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.buildingImageContainer}>
-                    {building.image_url ? (
-                      <Image
-                        source={{ uri: building.image_url }}
-                        style={[styles.buildingImage, !unlocked && styles.buildingImageLocked]}
-                        resizeMode="cover"
-                      />
-                    ) : (
-                      <View style={[styles.buildingImagePlaceholder, !unlocked && styles.buildingImageLocked]}>
-                        <Ionicons name="business-outline" size={32} color={unlocked ? "#C41E3A" : "#999"} />
-                      </View>
-                    )}
-                    {!unlocked && (
-                      <View style={styles.lockOverlay}>
-                        <Ionicons name="lock-closed" size={24} color="#fff" />
-                      </View>
-                    )}
-                  </View>
-                  <Text style={[styles.buildingName, !unlocked && styles.buildingNameLocked]} numberOfLines={2}>
-                    {building.title}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-      </ScrollView>
-      <SummaryModal
-        visible={showSummaryPopup}
-        onClose={() => setShowSummaryPopup(false)}
-        building_id={buildingId}
-        isNewUnlock={false}
-      />
-    </SafeAreaView>
-=======
   const HEADER_SCROLL_RANGE = 260;
   // Logo and above: red. Below the logo: white, sharp transition (no pinkish hue)
   const bgTopColor = scrollY.interpolate({
@@ -437,67 +305,22 @@ export default function HomeScreen() {
         />
       </SafeAreaView>
     </AnimatedLinearGradient>
->>>>>>> frontend-edit-made-by-krish
   );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-=======
   gradientBackground: {
     flex: 1,
   },
   container: {
     flex: 1,
     backgroundColor: 'transparent',
->>>>>>> frontend-edit-made-by-krish
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 24,
-<<<<<<< HEAD
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 48,
-    marginTop: 12,
-    position: 'relative',
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: '700',
-    color: '#C41E3A',
-    letterSpacing: -0.5,
-  },
-  mainButton: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 24,
-    paddingVertical: 48,
-    paddingHorizontal: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 32,
-    borderWidth: 2,
-    borderColor: '#C41E3A',
-    borderStyle: 'dashed',
-  },
-  mainButtonIcon: {
-    marginBottom: 16,
-  },
-  mainButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#C41E3A',
-=======
     paddingTop: 0,
     paddingBottom: 40,
   },
@@ -651,30 +474,10 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 15,
     color: '#7A8593',
->>>>>>> frontend-edit-made-by-krish
   },
   actionsContainer: {
     flexDirection: 'row',
     gap: 16,
-<<<<<<< HEAD
-    marginBottom: 32,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 16,
-    paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#C41E3A',
-    marginTop: 8,
-=======
     marginBottom: 28,
   },
   actionCard: {
@@ -711,7 +514,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 13,
     color: '#7A8593',
->>>>>>> frontend-edit-made-by-krish
   },
   mapContainer: {
     marginTop: 8,
@@ -726,17 +528,10 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   mapPlaceholderText: {
-<<<<<<< HEAD
-    fontSize: 16,
-    color: '#999',
-    marginTop: 12,
-    fontWeight: '500',
-=======
     fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 16,
     color: '#999',
     marginTop: 12,
->>>>>>> frontend-edit-made-by-krish
   },
   infoButton: {
     position: 'absolute',
@@ -744,30 +539,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   progressContainer: {
-<<<<<<< HEAD
-    backgroundColor: '#f8f9fa',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  progressTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  progressText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#C41E3A',
-=======
     backgroundColor: '#F1F3F5',
     borderRadius: 26,
     padding: 20,
@@ -799,49 +570,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#C41230',
     marginTop: 2,
->>>>>>> frontend-edit-made-by-krish
   },
   progressBarContainer: {
     height: 8,
     backgroundColor: '#e9ecef',
     borderRadius: 4,
     overflow: 'hidden',
-<<<<<<< HEAD
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#C41E3A',
-    borderRadius: 4,
-  },
-  buildingsSection: {
-    marginTop: 8,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#333',
-    marginBottom: 16,
-  },
-  buildingsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  buildingCard: {
-    width: '47%',
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  buildingCardLocked: {
-    opacity: 0.6,
-  },
-  buildingImageContainer: {
-    width: '100%',
-    height: 120,
-=======
     marginTop: 8,
     marginBottom: 8,
   },
@@ -897,7 +631,6 @@ const styles = StyleSheet.create({
   buildingImageContainer: {
     width: '100%',
     height: 130,
->>>>>>> frontend-edit-made-by-krish
     position: 'relative',
     backgroundColor: '#e9ecef',
   },
@@ -915,11 +648,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#e9ecef',
   },
-<<<<<<< HEAD
-  lockOverlay: {
-=======
   buildingLockedOverlay: {
->>>>>>> frontend-edit-made-by-krish
     position: 'absolute',
     top: 0,
     left: 0,
@@ -929,13 +658,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-<<<<<<< HEAD
-  buildingName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    padding: 12,
-=======
   lockedText: {
     fontFamily: 'SourceSerifPro_400Regular',
     marginTop: 4,
@@ -985,7 +707,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSerifPro_400Regular',
     fontSize: 12,
     color: '#7A8593',
->>>>>>> frontend-edit-made-by-krish
     textAlign: 'center',
   },
   buildingNameLocked: {

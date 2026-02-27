@@ -271,20 +271,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-<<<<<<< HEAD
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  headerSubtitle: {
-=======
     fontFamily: 'SourceSerifPro_600SemiBold',
     color: 'white',
     fontSize: 18,
   },
   headerSubtitle: {
     fontFamily: 'SourceSerifPro_400Regular',
->>>>>>> frontend-edit-made-by-krish
     color: 'rgba(255,255,255,0.8)',
     fontSize: 12,
   },
@@ -339,10 +331,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   messageText: {
-<<<<<<< HEAD
-=======
     fontFamily: 'SourceSerifPro_400Regular',
->>>>>>> frontend-edit-made-by-krish
     fontSize: 16,
     lineHeight: 22,
   },
@@ -353,18 +342,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   boldText: {
-<<<<<<< HEAD
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  timestamp: {
-=======
     fontFamily: 'SourceSerifPro_700Bold',
     color: '#333',
   },
   timestamp: {
     fontFamily: 'SourceSerifPro_400Regular',
->>>>>>> frontend-edit-made-by-krish
     fontSize: 12,
     marginTop: 4,
   },
@@ -380,10 +362,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   typingText: {
-<<<<<<< HEAD
-=======
     fontFamily: 'SourceSerifPro_400Regular',
->>>>>>> frontend-edit-made-by-krish
     color: '#666',
     fontSize: 14,
     fontStyle: 'italic',
@@ -426,10 +405,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginRight: 12,
     maxHeight: 100,
-<<<<<<< HEAD
-=======
     fontFamily: 'SourceSerifPro_400Regular',
->>>>>>> frontend-edit-made-by-krish
     fontSize: 16,
   },
   sendButton: {
