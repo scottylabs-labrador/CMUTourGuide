@@ -73,7 +73,8 @@
           "locationWhenInUsePermission": "CMUTourGuide uses your location to show your position on the campus map."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-web-browser"
     ],
     "developmentClient": {
       "silentLaunch": true
