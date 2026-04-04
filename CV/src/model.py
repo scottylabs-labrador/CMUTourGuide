@@ -4,7 +4,7 @@ CLIP is chosen for high accuracy with minimal training data requirements.
 """
 import torch
 import clip
-from PIL import Image
+from PIL import Image, ImageOps
 import ssl
 
 # Fix for SSL certificate issues on macOS
@@ -40,9 +40,9 @@ class BuildingRecognizer:
             Normalized embedding vector as numpy array
         """
         if isinstance(image_path, str):
-            image = Image.open(image_path).convert("RGB")
+            image = ImageOps.exif_transpose(Image.open(image_path).convert("RGB"))
         else:
-            image = image_path.convert("RGB")
+            image = ImageOps.exif_transpose(image_path).convert("RGB")
             
         image_tensor = self.preprocess(image).unsqueeze(0).to(self.device)
         
