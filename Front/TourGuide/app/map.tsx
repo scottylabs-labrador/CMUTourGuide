@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -215,17 +215,26 @@ export default function MapScreen() {
                 tracksViewChanges={false}
                 stopPropagation
                 onPress={() => {
-                  setSelectedBuildingId(id);
-                  setShowSummaryPopup(true);
+                  if (unlocked) {
+                    setSelectedBuildingId(id);
+                    setShowSummaryPopup(true);
+                  } else {
+                    Alert.alert("Locked", "Scan this building to unlock it!");
+                  }
                 }}
               >
                 <View style={markerStyles.container}>
-                  <Text style={[
-                    markerStyles.label,
-                    { color: unlocked ? '#C41E3A' : '#999' }
-                  ]} numberOfLines={1}>
-                    {b.title}
-                  </Text>
+                  <View style={markerStyles.labelRow}>
+                    {!unlocked && (
+                      <Ionicons name="lock-closed" size={10} color="#999" style={markerStyles.lockIcon} />
+                    )}
+                    <Text style={[
+                      markerStyles.label,
+                      { color: unlocked ? '#C41E3A' : '#999' }
+                    ]} numberOfLines={1}>
+                      {b.title}
+                    </Text>
+                  </View>
                   <View style={[
                     markerStyles.dot,
                     { backgroundColor: unlocked ? '#C41E3A' : '#999' }
@@ -288,16 +297,13 @@ const markerStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  label: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
-    fontSize: 11,
-    textAlign: 'center',
-    maxWidth: 100,
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.85)',
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 4,
-    overflow: 'hidden',
     marginBottom: 2,
     ...Platform.select({
       ios: {
@@ -310,6 +316,15 @@ const markerStyles = StyleSheet.create({
         elevation: 2,
       },
     }),
+  },
+  lockIcon: {
+    marginRight: 3,
+  },
+  label: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 11,
+    textAlign: 'center',
+    maxWidth: 100,
   },
   dot: {
     width: 10,
