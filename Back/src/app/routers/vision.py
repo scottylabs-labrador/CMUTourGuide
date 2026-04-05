@@ -1,4 +1,3 @@
-from fastapi import APIRouter
 import httpx
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel

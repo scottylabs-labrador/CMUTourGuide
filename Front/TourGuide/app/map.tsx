@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Region, Polygon } from 'react-native-maps';
+import MapView, { Region, Polygon, Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useBuildings } from '../contexts/BuildingContext';
 import buildings from '../components/buildings.json';
 import SummaryModal from '../components/SummaryModal';
+
+const USE_GOOGLE_MAPS = false;
 
 const INITIAL_REGION: Region = {
   latitude: 40.4440,
@@ -20,6 +22,7 @@ const CMU_MAP_STYLE = [
   { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
   { featureType: 'road', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { featureType: 'landscape.man_made', elementType: 'labels', stylers: [{ visibility: 'off' }] },
 ];
 
 const CMU_POLYGON = [
@@ -173,15 +176,22 @@ export default function MapScreen() {
       <View className="flex-1 bg-slate-100 overflow-hidden relative">
         <MapView
           ref={mapRef}
+          provider={USE_GOOGLE_MAPS ? PROVIDER_GOOGLE : undefined}
           style={{ flex: 1 }}
           initialRegion={INITIAL_REGION}
           customMapStyle={CMU_MAP_STYLE}
+          showsBuildings={true}
+          showsIndoors={false}
+          showsPointsOfInterest={false}
+          showsTraffic={false}
           onMapReady={async () => {
             if (!initialCameraRef.current && mapRef.current) {
               const camera = await mapRef.current.getCamera();
               initialCameraRef.current = camera;
             }
           }}
+          showsUserLocation
+          showsMyLocationButton={false}
           rotateEnabled
           pitchEnabled
           scrollEnabled
@@ -194,6 +204,39 @@ export default function MapScreen() {
             fillColor="rgba(196, 30, 58, 0)"
             lineDashPattern={[5, 3]}
           />
+          {buildingKeys.map((id) => {
+            const b = buildings[id as keyof typeof buildings];
+            if (!b.latitude || !b.longitude) return null;
+            const unlocked = unlockedBuildings.includes(id);
+            return (
+              <Marker
+                key={id}
+                coordinate={{ latitude: b.latitude, longitude: b.longitude }}
+                tracksViewChanges={false}
+                stopPropagation
+                onPress={() => {
+                  setSelectedBuildingId(id);
+                  setShowSummaryPopup(true);
+                }}
+              >
+                <View style={markerStyles.container}>
+                  <Text style={[
+                    markerStyles.label,
+                    { color: unlocked ? '#C41E3A' : '#999' }
+                  ]} numberOfLines={1}>
+                    {b.title}
+                  </Text>
+                  <View style={[
+                    markerStyles.dot,
+                    { backgroundColor: unlocked ? '#C41E3A' : '#999' }
+                  ]} />
+                </View>
+                <Callout tooltip>
+                  <View />
+                </Callout>
+              </Marker>
+            );
+          })}
         </MapView>
 
         {/* Floating controls (far top-right): HOME on top, COMPASS below */}
@@ -240,3 +283,39 @@ export default function MapScreen() {
     </SafeAreaView>
   );
 }
+
+const markerStyles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+  },
+  label: {
+    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontSize: 11,
+    textAlign: 'center',
+    maxWidth: 100,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.15,
+        shadowRadius: 2,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+});
