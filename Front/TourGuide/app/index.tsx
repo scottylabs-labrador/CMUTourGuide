@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, Animated } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,9 +8,6 @@ import { useBuildings } from '../contexts/BuildingContext';
 import buildings from '../components/buildings.json';
 import SummaryModal from '../components/SummaryModal';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -63,22 +60,6 @@ export default function HomeScreen() {
   };
 
   const HEADER_SCROLL_RANGE = 260;
-  // Logo and above: red. Below the logo: white, sharp transition (no pinkish hue)
-  const bgTopColor = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_RANGE, 400],
-    outputRange: ['#C41230', '#F8F9FA', '#F8F9FA'],
-    extrapolate: 'clamp',
-  });
-  const bgMiddleColor = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_RANGE, 400],
-    outputRange: ['#FFFFFF', '#F1F3F5', '#F1F3F5'],
-    extrapolate: 'clamp',
-  });
-  const bgBottomColor = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_RANGE, 400],
-    outputRange: ['#FFFFFF', '#E9ECEF', '#E9ECEF'],
-    extrapolate: 'clamp',
-  });
   const fixedHeaderOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_RANGE],
     outputRange: [0, 1],
@@ -96,11 +77,7 @@ export default function HomeScreen() {
   });
 
   return (
-    <AnimatedLinearGradient
-      colors={[bgTopColor as any, bgMiddleColor as any, bgBottomColor as any]}
-      locations={[0, 0.12, 1]}
-      style={styles.gradientBackground}
-    >
+    <View style={styles.gradientBackground}>
       <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
         <View style={[styles.topRedBar, { height: insets.top }]} />
         <Animated.View style={[styles.fixedHeader, { opacity: fixedHeaderOpacity, top: 0 }]} pointerEvents={headerVisible ? 'box-none' : 'none'}>
@@ -112,14 +89,14 @@ export default function HomeScreen() {
           </View>
         </Animated.View>
 
-        <Animated.ScrollView 
+        <Animated.ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
+            { useNativeDriver: true }
           )}
         >
           <Animated.View style={[styles.heroLogoBlock, { opacity: heroLogoOpacity, transform: [{ scale: heroLogoScale }], paddingTop: insets.top + 12 }]}>
@@ -137,7 +114,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Scan CTA card - camera icon is the button */}
-          <BlurView intensity={40} tint="light" style={styles.scanCard}>
+          <View style={styles.scanCard}>
             <View style={styles.scanLeft}>
               <TouchableOpacity
                 style={styles.scanIconCircle}
@@ -153,10 +130,10 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </View>
-          </BlurView>
+          </View>
 
           {/* Discovery Progress */}
-          <BlurView intensity={30} tint="light" style={styles.progressContainer}>
+          <View style={styles.progressContainer}>
             <View style={styles.progressHeader}>
               <View>
                 <Text style={styles.progressTitle}>Discovery Progress</Text>
@@ -169,11 +146,11 @@ export default function HomeScreen() {
             <View style={styles.progressBarContainer}>
               <View style={[styles.progressBarFill, { width: `${progressPercentage}%` }]} />
             </View>
-          </BlurView>
+          </View>
 
           {/* Quick actions */}
           <View style={styles.actionsContainer}>
-            <BlurView intensity={30} tint="light" style={styles.actionCard}>
+            <View style={styles.actionCard}>
               <TouchableOpacity
                 style={styles.actionInner}
                 onPress={handlePastChats}
@@ -187,9 +164,9 @@ export default function HomeScreen() {
                   Ask questions & get hints.
                 </Text>
               </TouchableOpacity>
-            </BlurView>
+            </View>
 
-            <BlurView intensity={30} tint="light" style={styles.actionCard}>
+            <View style={styles.actionCard}>
               <TouchableOpacity
                 style={styles.actionInner}
                 onPress={handleMapView}
@@ -203,7 +180,7 @@ export default function HomeScreen() {
                   Find nearby landmarks.
                 </Text>
               </TouchableOpacity>
-            </BlurView>
+            </View>
           </View>
 
           {/* Buildings carousel */}
@@ -304,13 +281,14 @@ export default function HomeScreen() {
           isNewUnlock={false}
         />
       </SafeAreaView>
-    </AnimatedLinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   gradientBackground: {
     flex: 1,
+    backgroundColor: '#F8F9FA',
   },
   container: {
     flex: 1,

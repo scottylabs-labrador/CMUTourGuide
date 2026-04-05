@@ -95,26 +95,40 @@ export default function ChatScreen() {
     setInputText('');
     setIsTyping(true);
 
-    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: updatedMessages,
-      })
-    });
+    try {
+      const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: updatedMessages,
+        })
+      });
 
-    const data = await res.json();
-    console.log(data)
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
 
-    const chatMessage: Message = {
-      id: Date.now().toString(),
-      text: data.reply,
-      isUser: false,
-      timestamp: new Date(),
+      const data = await res.json();
+
+      const chatMessage: Message = {
+        id: Date.now().toString(),
+        text: data.reply,
+        isUser: false,
+        timestamp: new Date(),
+      }
+
+      setMessages(prev => [...prev, chatMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        text: "Sorry, I couldn't get a response. Please try again.",
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
     }
-
-    setMessages(prev => [...prev, chatMessage]);
-    setIsTyping(false);
 
   };
 

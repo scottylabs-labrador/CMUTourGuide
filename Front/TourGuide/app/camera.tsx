@@ -65,40 +65,51 @@ export default function CameraScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    const photo = await camera.current?.takePictureAsync({
-      base64: true,
-      quality: 1.0
-    });
+    try {
+      const photo = await camera.current?.takePictureAsync({
+        base64: true,
+        quality: 1.0
+      });
 
-    const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        imageBase64: photo?.base64,
-      })
-    });
+      const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: photo?.base64,
+        })
+      });
 
-    const data = await res.json()
-    console.log(data)
-    setIsCapturing(false);
-    const identifiedBuildingId = canonicalBuildingId(data.building_name ?? '');
-    setBuildingId(identifiedBuildingId);
-    
-    // Check if building is already unlocked
-    const wasUnlocked = isUnlocked(identifiedBuildingId);
-    
-    // Unlock the building
-    if (identifiedBuildingId) {
-      await unlockBuilding(identifiedBuildingId);
-      
-      // If it was a new unlock, provide celebration feedback
-      if (!wasUnlocked) {
-        setIsNewUnlock(true);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
       }
+
+      const data = await res.json()
+      const identifiedBuildingId = canonicalBuildingId(data.building_name ?? '');
+      setBuildingId(identifiedBuildingId);
+
+      // Check if building is already unlocked
+      const wasUnlocked = isUnlocked(identifiedBuildingId);
+
+      // Unlock the building
+      if (identifiedBuildingId) {
+        await unlockBuilding(identifiedBuildingId);
+
+        // If it was a new unlock, provide celebration feedback
+        if (!wasUnlocked) {
+          setIsNewUnlock(true);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+      }
+
+      setShowSummaryPopup(true);
+    } catch (error) {
+      Alert.alert(
+        "Scan Failed",
+        "Could not identify the building. Please try again.",
+      );
+    } finally {
+      setIsCapturing(false);
     }
-    
-    setShowSummaryPopup(true)
   };
 
   return (
