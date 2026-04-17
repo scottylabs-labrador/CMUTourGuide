@@ -28,6 +28,7 @@ export default function RootLayout() {
         <Stack.Screen name="camera" options={{ headerShown: false }} />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ headerShown: false }} />
+        <Stack.Screen name="blog" options={{ headerShown: false }} />
       </Stack>
     </BuildingProvider>
   );

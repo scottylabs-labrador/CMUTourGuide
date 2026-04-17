@@ -43,6 +43,11 @@ export default function HomeScreen() {
     router.push('/map');
   };
 
+  const handleBlog = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push('/blog');
+  };
+
   const handleScan = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push('/camera');
@@ -181,6 +186,25 @@ export default function HomeScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
+          </View>
+
+          {/* Blog card */}
+          <View style={styles.blogCard}>
+            <TouchableOpacity
+              style={styles.blogInner}
+              onPress={handleBlog}
+              activeOpacity={0.8}
+            >
+              <View style={styles.actionIconCircle}>
+                <Ionicons name="newspaper-outline" size={22} color="#C41230" />
+              </View>
+              <View style={styles.blogTextContainer}>
+                <Text style={styles.actionTitle}>Blog</Text>
+                <Text style={styles.actionSubtitle}>
+                  Stories, history, and campus trivia.
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           {/* Buildings carousel */}
@@ -456,7 +480,28 @@ const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     gap: 16,
+    marginBottom: 16,
+  },
+  blogCard: {
+    borderRadius: 26,
+    backgroundColor: '#F1F3F5',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
     marginBottom: 28,
+  },
+  blogInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+  },
+  blogTextContainer: {
+    flex: 1,
+    marginLeft: 14,
   },
   actionCard: {
     flex: 1,
