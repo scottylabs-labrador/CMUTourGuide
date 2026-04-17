@@ -4,6 +4,9 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useBuildings } from '../contexts/BuildingContext';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { RADIUS } from '../constants/layout';
 
 export default function InfoScreen() {
   const router = useRouter();
@@ -41,7 +44,7 @@ export default function InfoScreen() {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={24} color="#C41E3A" />
+          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>About</Text>
         <View style={styles.placeholder} />
@@ -61,7 +64,7 @@ export default function InfoScreen() {
         {/* What is it */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="information-circle" size={24} color="#C41E3A" />
+            <Ionicons name="information-circle" size={24} color={CMU_RED} />
             <Text style={styles.sectionTitle}>What is it?</Text>
           </View>
           <Text style={styles.sectionText}>
@@ -72,7 +75,7 @@ export default function InfoScreen() {
         {/* Who is it for */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="people" size={24} color="#C41E3A" />
+            <Ionicons name="people" size={24} color={CMU_RED} />
             <Text style={styles.sectionTitle}>Who is it for?</Text>
           </View>
           <Text style={styles.sectionText}>
@@ -83,24 +86,24 @@ export default function InfoScreen() {
         {/* What it does */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="sparkles" size={24} color="#C41E3A" />
+            <Ionicons name="sparkles" size={24} color={CMU_RED} />
             <Text style={styles.sectionTitle}>What it does</Text>
           </View>
           <View style={styles.featureList}>
             <View style={styles.featureItem}>
-              <Ionicons name="camera" size={20} color="#C41E3A" />
+              <Ionicons name="camera" size={20} color={CMU_RED} />
               <Text style={styles.featureText}>Scan buildings and landmarks with your camera</Text>
             </View>
             <View style={styles.featureItem}>
-              <Ionicons name="bulb" size={20} color="#C41E3A" />
+              <Ionicons name="bulb" size={20} color={CMU_RED} />
               <Text style={styles.featureText}>Get instant AI-powered insights and history</Text>
             </View>
             <View style={styles.featureItem}>
-              <Ionicons name="chatbubbles" size={20} color="#C41E3A" />
+              <Ionicons name="chatbubbles" size={20} color={CMU_RED} />
               <Text style={styles.featureText}>Save and review past conversations</Text>
             </View>
             <View style={styles.featureItem}>
-              <Ionicons name="map" size={20} color="#C41E3A" />
+              <Ionicons name="map" size={20} color={CMU_RED} />
               <Text style={styles.featureText}>Explore campus with interactive maps</Text>
             </View>
           </View>
@@ -109,7 +112,7 @@ export default function InfoScreen() {
         {/* How it works */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="settings" size={24} color="#C41E3A" />
+            <Ionicons name="settings" size={24} color={CMU_RED} />
             <Text style={styles.sectionTitle}>How it works</Text>
           </View>
           <Text style={styles.sectionText}>
@@ -141,7 +144,7 @@ export default function InfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
   },
   header: {
     flexDirection: 'row',
@@ -150,15 +153,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: COLORS.border,
   },
   backButton: {
     padding: 8,
   },
   headerTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 20,
-    color: '#C41E3A',
+    color: CMU_RED,
   },
   placeholder: {
     width: 40,
@@ -176,14 +179,14 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 32,
-    color: '#C41E3A',
+    color: CMU_RED,
     marginBottom: 8,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
     color: '#666',
   },
@@ -197,14 +200,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 20,
-    color: '#C41E3A',
+    color: CMU_RED,
   },
   sectionText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
-    color: '#333',
+    color: COLORS.textPrimary,
     lineHeight: 24,
   },
   featureList: {
@@ -216,10 +219,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   featureText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: COLORS.textPrimary,
     lineHeight: 24,
   },
   footer: {
@@ -227,26 +230,26 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingTop: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
+    borderTopColor: COLORS.border,
   },
   footerText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 14,
-    color: '#999',
+    color: COLORS.textMuted,
   },
   clearButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#dc3545',
-    borderRadius: 12,
+    backgroundColor: COLORS.danger,
+    borderRadius: RADIUS.md,
     paddingVertical: 16,
     paddingHorizontal: 24,
     gap: 8,
   },
   clearButtonText: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 16,
-    color: '#fff',
+    color: COLORS.white,
   },
 });

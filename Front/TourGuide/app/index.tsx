@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Animated } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +7,11 @@ import * as Haptics from 'expo-haptics';
 import { useBuildings } from '../contexts/BuildingContext';
 import { getAllBuildingIds, getBuilding } from '../services/buildingService';
 import SummaryModal from '../components/SummaryModal';
-import { LinearGradient } from 'expo-linear-gradient';
+import BuildingCard from '../components/BuildingCard';
+import ProgressBar from '../components/ProgressBar';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { SHADOWS } from '../constants/layout';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -21,9 +25,6 @@ export default function HomeScreen() {
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false)
   const [buildingId, setBuildingId] = React.useState("")
   const buildingKeys = getAllBuildingIds();
-  const progressPercentage = totalScannableCount > 0
-    ? (unlockedScannableCount / totalScannableCount) * 100
-    : 0;
 
   const scrollY = React.useRef(new Animated.Value(0)).current;
   const [headerVisible, setHeaderVisible] = React.useState(false);
@@ -131,7 +132,7 @@ export default function HomeScreen() {
                 onPress={handleScan}
                 activeOpacity={0.85}
               >
-                <Ionicons name="camera-outline" size={48} color="#C41230" />
+                <Ionicons name="camera-outline" size={48} color={CMU_RED} />
               </TouchableOpacity>
               <View style={styles.scanTextContainer}>
                 <Text style={styles.scanTitle} numberOfLines={1}>Scan a CMU marker</Text>
@@ -143,19 +144,12 @@ export default function HomeScreen() {
           </View>
 
           {/* Discovery Progress */}
-          <View style={styles.progressContainer}>
-            <View style={styles.progressHeader}>
-              <View>
-                <Text style={styles.progressTitle}>Discovery Progress</Text>
-                <Text style={styles.progressText}>{unlockedScannableCount} / {totalScannableCount}</Text>
-                <Text style={styles.progressHint}>
-                  Unlock more buildings to reveal campus stories.
-                </Text>
-              </View>
-            </View>
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBarFill, { width: `${progressPercentage}%` }]} />
-            </View>
+          <View style={styles.progressWrapper}>
+            <ProgressBar
+              current={unlockedScannableCount}
+              total={totalScannableCount}
+              hint="Unlock more buildings to reveal campus stories."
+            />
           </View>
 
           {/* Quick actions */}
@@ -167,7 +161,7 @@ export default function HomeScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.actionIconCircle}>
-                  <Ionicons name="chatbubbles-outline" size={22} color="#C41230" />
+                  <Ionicons name="chatbubbles-outline" size={22} color={CMU_RED} />
                 </View>
                 <Text style={styles.actionTitle}>Chats</Text>
                 <Text style={styles.actionSubtitle}>
@@ -183,7 +177,7 @@ export default function HomeScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.actionIconCircle}>
-                  <Ionicons name="map-outline" size={22} color="#C41230" />
+                  <Ionicons name="map-outline" size={22} color={CMU_RED} />
                 </View>
                 <Text style={styles.actionTitle}>Map</Text>
                 <Text style={styles.actionSubtitle}>
@@ -201,7 +195,7 @@ export default function HomeScreen() {
               activeOpacity={0.8}
             >
               <View style={styles.actionIconCircle}>
-                <Ionicons name="newspaper-outline" size={22} color="#C41230" />
+                <Ionicons name="newspaper-outline" size={22} color={CMU_RED} />
               </View>
               <View style={styles.blogTextContainer}>
                 <Text style={styles.actionTitle}>Blog</Text>
@@ -243,7 +237,6 @@ export default function HomeScreen() {
                 if (!building) return null;
                 const unlocked = isUnlocked(buildingId);
                 const scannable = isScannable(buildingId);
-                const showLockedOverlay = scannable && !unlocked;
 
                 const scale = scrollXBuildings.interpolate({
                   inputRange: [
@@ -251,7 +244,6 @@ export default function HomeScreen() {
                     index * BUILDING_SNAP_INTERVAL,
                     (index + 1) * BUILDING_SNAP_INTERVAL,
                   ],
-                  // center card largest, neighbors slightly smaller
                   outputRange: [0.9, 1.1, 0.9],
                   extrapolate: 'clamp',
                 });
@@ -261,52 +253,14 @@ export default function HomeScreen() {
                     key={buildingId}
                     style={{ transform: [{ scale }] }}
                   >
-                    <TouchableOpacity
-                      style={styles.buildingCard}
+                    <BuildingCard
+                      title={building.title}
+                      imageUrl={building.image_url}
+                      unlocked={unlocked}
+                      scannable={scannable}
                       onPress={() => handleBuildingPress(buildingId)}
-                      activeOpacity={0.9}
-                    >
-                      <View style={styles.buildingImageContainer}>
-                        {building.image_url ? (
-                          <Image
-                            source={{ uri: building.image_url }}
-                            style={styles.buildingImage}
-                            resizeMode="cover"
-                          />
-                        ) : (
-                          <View style={styles.buildingImagePlaceholder}>
-                            <Ionicons name="business-outline" size={32} color="#999" />
-                          </View>
-                        )}
-                        {showLockedOverlay && (
-                          <View style={styles.buildingLockedOverlay}>
-                            <Ionicons name="lock-closed" size={18} color="#fff" />
-                            <Text style={styles.lockedText}>Scan to unlock</Text>
-                          </View>
-                        )}
-                        <LinearGradient
-                          colors={['rgba(0,0,0,0.35)', 'transparent']}
-                          style={styles.buildingGradientTop}
-                        />
-                        <LinearGradient
-                          colors={['transparent', 'rgba(0,0,0,0.55)']}
-                          style={styles.buildingGradientBottom}
-                        />
-                        <View style={styles.buildingBadge}>
-                          <Text style={styles.buildingBadgeText}>
-                            {scannable ? (unlocked ? 'Unlocked' : 'Must‑See') : 'Explore'}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.buildingInfo}>
-                        <Text style={styles.buildingName}>{building.title}</Text>
-                        <Text style={styles.buildingSubtext}>
-                          {scannable && !unlocked
-                            ? 'Scan to reveal fun facts.'
-                            : 'Tap to learn more.'}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
+                      style={{ marginRight: 14 }}
+                    />
                   </Animated.View>
                 );
               })}
@@ -328,7 +282,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   gradientBackground: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: COLORS.background,
   },
   container: {
     flex: 1,
@@ -347,7 +301,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#C41230',
+    backgroundColor: CMU_RED,
   },
   fixedHeader: {
     position: 'absolute',
@@ -361,13 +315,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#C41230',
+    backgroundColor: CMU_RED,
     paddingBottom: 12,
     paddingHorizontal: 20,
     borderRadius: 0,
   },
   fixedHeaderLogo: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 18,
     color: '#FFFFFF',
     flex: 1,
@@ -377,7 +331,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   heroLogoBlock: {
-    backgroundColor: '#C41230',
+    backgroundColor: CMU_RED,
     paddingBottom: 32,
     paddingHorizontal: 24,
     marginHorizontal: -24,
@@ -393,14 +347,14 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   heroLogoLine1: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 36,
     color: '#FFFFFF',
     letterSpacing: -0.5,
     lineHeight: 40,
   },
   heroLogoLine2: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 36,
     color: '#FFFFFF',
     letterSpacing: -0.5,
@@ -408,7 +362,7 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   heroLogoLine3: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 36,
     color: '#FFFFFF',
     letterSpacing: -0.5,
@@ -423,9 +377,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   appTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 36,
-    color: '#C41230',
+    color: CMU_RED,
     letterSpacing: -0.5,
   },
   infoBlur: {
@@ -437,15 +391,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   heroSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   heroTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 28,
-    color: '#1F2933',
+    color: COLORS.textPrimary,
     marginBottom: 8,
   },
   scanCard: {
@@ -455,12 +409,8 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingVertical: 28,
     paddingHorizontal: 24,
-    backgroundColor: '#F1F3F5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    backgroundColor: COLORS.card,
+    ...SHADOWS.card,
     overflow: 'hidden',
     marginBottom: 24,
   },
@@ -483,15 +433,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scanTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 17,
-    color: '#1F2933',
+    color: COLORS.textPrimary,
     marginBottom: 4,
   },
   scanSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 15,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -500,13 +450,9 @@ const styles = StyleSheet.create({
   },
   blogCard: {
     borderRadius: 26,
-    backgroundColor: '#F1F3F5',
+    backgroundColor: COLORS.card,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    ...SHADOWS.card,
     marginBottom: 28,
   },
   blogInner: {
@@ -522,13 +468,9 @@ const styles = StyleSheet.create({
   actionCard: {
     flex: 1,
     borderRadius: 26,
-    backgroundColor: '#F1F3F5',
+    backgroundColor: COLORS.card,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    ...SHADOWS.card,
   },
   actionInner: {
     paddingVertical: 18,
@@ -544,32 +486,32 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   actionTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 15,
-    color: '#1F2933',
+    color: COLORS.textPrimary,
     marginBottom: 3,
   },
   actionSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 13,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
   },
   mapContainer: {
     marginTop: 8,
   },
   mapPlaceholder: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: COLORS.background,
     borderRadius: 16,
     height: 300,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: COLORS.border,
   },
   mapPlaceholderText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
-    color: '#999',
+    color: COLORS.textMuted,
     marginTop: 12,
   },
   infoButton: {
@@ -577,58 +519,8 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 8,
   },
-  progressContainer: {
-    backgroundColor: '#F1F3F5',
-    borderRadius: 26,
-    padding: 20,
+  progressWrapper: {
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-    overflow: 'hidden',
-  },
-  progressHeader: {
-    marginBottom: 10,
-  },
-  progressTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 18,
-    textAlign: 'left',
-    color: '#333',
-  },
-  progressHint: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    fontSize: 13,
-    color: '#7A8593',
-    marginTop: 2,
-  },
-  progressText: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 18,
-    color: '#C41230',
-    marginTop: 2,
-  },
-  progressBarContainer: {
-    height: 8,
-    backgroundColor: '#e9ecef',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#C41230',
-    borderRadius: 4,
-  },
-  progressLink: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    fontSize: 13,
-    color: '#C41230',
-    marginTop: 2,
-    alignSelf: 'flex-end',
   },
   buildingsSection: {
     marginTop: 0,
@@ -642,113 +534,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   sectionTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 20,
-    color: '#333',
+    color: COLORS.textPrimary,
   },
   seeAllText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 13,
-    color: '#C41230',
+    color: CMU_RED,
   },
   buildingsCarousel: {
     paddingHorizontal: 24,
-  },
-  buildingCard: {
-    marginTop: 12,
-    width: 210,
-    borderRadius: 20,
-    backgroundColor: '#F1F3F5',
-    marginRight: 14,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  buildingImageContainer: {
-    width: '100%',
-    height: 130,
-    position: 'relative',
-    backgroundColor: '#e9ecef',
-  },
-  buildingImage: {
-    width: '100%',
-    height: '100%',
-  },
-  buildingImageLocked: {
-    opacity: 0.4,
-  },
-  buildingImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e9ecef',
-  },
-  buildingLockedOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  lockedText: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    marginTop: 4,
-    fontSize: 12,
-    color: '#fff',
-  },
-  buildingGradientTop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-  },
-  buildingGradientBottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-  },
-  buildingBadge: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.85)',
-  },
-  buildingBadgeText: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 11,
-    color: '#C41230',
-  },
-  buildingInfo: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  buildingName: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 2,
-    textAlign: 'center',
-  },
-  buildingSubtext: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    fontSize: 12,
-    color: '#7A8593',
-    textAlign: 'center',
-  },
-  buildingNameLocked: {
-    color: '#999',
   },
 });

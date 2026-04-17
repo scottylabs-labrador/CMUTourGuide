@@ -1,4 +1,4 @@
-import type { BuildingCategory } from '../components/buildingCategories';
+import type { BuildingCategory } from '../constants/colors';
 
 export type BuildingId = string;
 

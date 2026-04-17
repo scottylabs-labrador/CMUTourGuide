@@ -17,6 +17,10 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getBlogPostsByCategory } from '../services/blogService';
 import type { BlogPost } from '../types/blog';
+import ScreenHeader from '../components/ScreenHeader';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { SHADOWS, RADIUS } from '../constants/layout';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -112,7 +116,7 @@ export default function BlogScreen() {
           <Text style={styles.postSubtitle} numberOfLines={2}>{item.subtitle}</Text>
           <Text style={styles.postDate}>{formatDate(item.date)}</Text>
         </View>
-        <Ionicons name="chevron-forward" size={20} color="#999" />
+        <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
       </TouchableOpacity>
     );
   };
@@ -120,15 +124,10 @@ export default function BlogScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>Blog</Text>
-        </View>
-        <View style={styles.headerPlaceholder} />
-      </View>
+      <ScreenHeader
+        title="Blog"
+        onBack={() => router.back()}
+      />
 
       {/* Category Filters */}
       <ScrollView
@@ -184,7 +183,7 @@ export default function BlogScreen() {
               style={styles.modalCloseButton}
               onPress={() => setSelectedPost(null)}
             >
-              <Ionicons name="close" size={24} color="#333" />
+              <Ionicons name="close" size={24} color={COLORS.textPrimary} />
             </TouchableOpacity>
           </View>
           {selectedPost && (
@@ -220,34 +219,7 @@ export default function BlogScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#C41E3A',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerInfo: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
-    color: 'white',
-    fontSize: 18,
-  },
-  headerPlaceholder: {
-    width: 40,
+    backgroundColor: COLORS.background,
   },
   filterContainer: {
     paddingHorizontal: 16,
@@ -258,15 +230,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#F1F3F5',
+    backgroundColor: COLORS.card,
   },
   filterChipActive: {
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
   },
   filterChipText: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 13,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
   },
   filterChipTextActive: {
     color: '#fff',
@@ -277,20 +249,16 @@ const styles = StyleSheet.create({
   // Featured post
   featuredCard: {
     margin: 16,
-    borderRadius: 20,
+    borderRadius: RADIUS.xl,
     overflow: 'hidden',
-    backgroundColor: '#F1F3F5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    backgroundColor: COLORS.card,
+    ...SHADOWS.card,
   },
   featuredImageContainer: {
     width: '100%',
     height: 220,
     position: 'relative',
-    backgroundColor: '#e9ecef',
+    backgroundColor: COLORS.border,
   },
   featuredImage: {
     width: '100%',
@@ -309,13 +277,13 @@ const styles = StyleSheet.create({
     left: 12,
     paddingHorizontal: 12,
     paddingVertical: 5,
-    borderRadius: 999,
-    backgroundColor: '#C41E3A',
+    borderRadius: RADIUS.pill,
+    backgroundColor: CMU_RED,
   },
   featuredBadgeText: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 11,
-    color: '#fff',
+    color: COLORS.white,
   },
   featuredOverlay: {
     position: 'absolute',
@@ -325,13 +293,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   featuredTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 20,
     color: '#fff',
     marginBottom: 4,
   },
   featuredSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 14,
     color: 'rgba(255,255,255,0.85)',
   },
@@ -339,23 +307,19 @@ const styles = StyleSheet.create({
   postCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     marginHorizontal: 16,
     marginVertical: 6,
     padding: 12,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    borderRadius: RADIUS.lg,
+    ...SHADOWS.small,
   },
   postImageContainer: {
     width: 80,
     height: 80,
-    borderRadius: 12,
+    borderRadius: RADIUS.md,
     overflow: 'hidden',
-    backgroundColor: '#e9ecef',
+    backgroundColor: COLORS.border,
     marginRight: 12,
   },
   postImage: {
@@ -367,7 +331,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e9ecef',
+    backgroundColor: COLORS.border,
   },
   postImagePlaceholder: {
     width: 80,
@@ -377,26 +341,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   postTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 15,
-    color: '#333',
+    color: COLORS.textPrimary,
     marginBottom: 3,
   },
   postSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 13,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
     marginBottom: 6,
   },
   postDate: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 12,
-    color: '#999',
+    color: COLORS.textMuted,
   },
   // Modal
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -408,7 +372,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#f1f3f5',
+    backgroundColor: COLORS.card,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -427,33 +391,33 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   modalDate: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 13,
-    color: '#999',
+    color: COLORS.textMuted,
     marginBottom: 8,
   },
   modalTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 26,
-    color: '#1F2933',
+    color: COLORS.textPrimary,
     marginBottom: 6,
     lineHeight: 32,
   },
   modalSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
-    color: '#7A8593',
+    color: COLORS.textSecondary,
     marginBottom: 16,
   },
   modalDivider: {
     height: 1,
-    backgroundColor: '#e9ecef',
+    backgroundColor: COLORS.border,
     marginBottom: 20,
   },
   modalContent: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
-    color: '#333',
+    color: COLORS.textPrimary,
     lineHeight: 26,
   },
 });

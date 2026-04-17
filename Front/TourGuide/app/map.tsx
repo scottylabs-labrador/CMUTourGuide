@@ -14,11 +14,15 @@ import {
 import {
   getCategoryColors,
   getBaseOutlineColors,
-  BuildingCategory,
-} from '../components/buildingCategories';
+  CMU_RED,
+  COLORS,
+} from '../constants/colors';
+import type { BuildingCategory } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { SHADOWS } from '../constants/layout';
 import SummaryModal from '../components/SummaryModal';
 
-const USE_GOOGLE_MAPS = true;
+const USE_GOOGLE_MAPS = false;
 
 const INITIAL_REGION: Region = {
   latitude: 40.4440,
@@ -161,10 +165,10 @@ export default function MapScreen() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-5 py-3 border-b border-slate-200">
         <TouchableOpacity className="p-2" onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#C41E3A" />
+          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
         </TouchableOpacity>
 
-        <Text className="text-[20px] text-[#C41E3A]" style={{ fontFamily: 'SourceSerifPro_700Bold' }}>
+        <Text className="text-[20px]" style={{ fontFamily: FONTS.bold, color: CMU_RED }}>
           Campus Map
         </Text>
 
@@ -175,16 +179,16 @@ export default function MapScreen() {
       {/* Progress */}
       <View className="bg-slate-50 px-5 py-3 border-b border-slate-200">
         <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-[14px] text-slate-800" style={{ fontFamily: 'SourceSerifPro_600SemiBold' }}>
+          <Text className="text-[14px] text-slate-800" style={{ fontFamily: FONTS.semiBold }}>
             Discovery Progress
           </Text>
-          <Text className="text-[14px] text-[#C41E3A]" style={{ fontFamily: 'SourceSerifPro_700Bold' }}>
+          <Text className="text-[14px]" style={{ fontFamily: FONTS.bold, color: CMU_RED }}>
             {unlockedScannableCount} / {totalScannableCount}
           </Text>
         </View>
 
         <View className="h-[6px] bg-slate-200 rounded-full overflow-hidden">
-          <View className="h-full bg-[#C41E3A]" style={{ width: `${progressPercentage}%` }} />
+          <View className="h-full" style={{ width: `${progressPercentage}%`, backgroundColor: CMU_RED }} />
         </View>
       </View>
 
@@ -215,7 +219,7 @@ export default function MapScreen() {
         >
           <Polygon
             coordinates={CMU_POLYGON}
-            strokeColor="#C41E3A"
+            strokeColor={CMU_RED}
             strokeWidth={1}
             fillColor="rgba(196, 30, 58, 0)"
             lineDashPattern={[5, 3]}
@@ -279,11 +283,11 @@ export default function MapScreen() {
                 <View style={markerStyles.container}>
                   <View style={markerStyles.labelRow}>
                     {showLocked && (
-                      <Ionicons name="lock-closed" size={10} color="#999" style={markerStyles.lockIcon} />
+                      <Ionicons name="lock-closed" size={10} color={COLORS.locked} style={markerStyles.lockIcon} />
                     )}
                     <Text style={[
                       markerStyles.label,
-                      { color: showLocked ? '#999' : '#C41E3A' }
+                      { color: showLocked ? COLORS.locked : CMU_RED }
                     ]} numberOfLines={1}>
                       {b.title}
                     </Text>
@@ -308,7 +312,7 @@ export default function MapScreen() {
             activeOpacity={0.9}
             className="h-12 w-12 rounded-xl bg-white items-center justify-center shadow"
           >
-            <Ionicons name="home" size={24} color="#C41E3A" />
+            <Ionicons name="home" size={24} color={CMU_RED} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -316,7 +320,7 @@ export default function MapScreen() {
             activeOpacity={0.9}
             className="h-12 w-12 rounded-xl bg-white items-center justify-center shadow"
           >
-            <Ionicons name="compass" size={24} color="#C41E3A" />
+            <Ionicons name="compass" size={24} color={CMU_RED} />
           </TouchableOpacity>
         </View>
 
@@ -325,12 +329,13 @@ export default function MapScreen() {
       {/* Bottom controls */}
       <View className="px-5 py-3 border-t border-slate-200 bg-white">
         <TouchableOpacity
-          className="bg-[#C41E3A] rounded-xl py-3 px-5 flex-row items-center justify-center"
+          className="rounded-xl py-3 px-5 flex-row items-center justify-center"
+          style={{ backgroundColor: CMU_RED }}
           onPress={handleScan}
           activeOpacity={0.9}
         >
           <Ionicons name="camera" size={20} color="white" />
-          <Text className="ml-2 text-white text-[16px]" style={{ fontFamily: 'SourceSerifPro_600SemiBold' }}>
+          <Text className="ml-2 text-white text-[16px]" style={{ fontFamily: FONTS.semiBold }}>
             Scan
           </Text>
         </TouchableOpacity>
@@ -358,23 +363,13 @@ const markerStyles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     marginBottom: 2,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    ...SHADOWS.marker,
   },
   lockIcon: {
     marginRight: 3,
   },
   label: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 11,
     textAlign: 'center',
     maxWidth: 100,

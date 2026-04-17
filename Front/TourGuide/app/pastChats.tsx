@@ -14,6 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { getAllChatSessions, clearAllChatSessions } from '../utils/chatStorage';
 import { ChatSession } from '../types/chat';
 import * as Haptics from 'expo-haptics';
+import ScreenHeader from '../components/ScreenHeader';
+import EmptyState from '../components/EmptyState';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { SHADOWS } from '../constants/layout';
 
 export default function PastChatsScreen() {
   const router = useRouter();
@@ -108,7 +113,7 @@ export default function PastChatsScreen() {
       activeOpacity={0.7}
     >
       <View style={styles.chatIcon}>
-        <Ionicons name="chatbubble" size={24} color="#C41E3A" />
+        <Ionicons name="chatbubble" size={24} color={CMU_RED} />
       </View>
       <View style={styles.chatContent}>
         <View style={styles.chatHeader}>
@@ -124,48 +129,35 @@ export default function PastChatsScreen() {
           {item.messages.length} {item.messages.length === 1 ? 'message' : 'messages'}
         </Text>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#999" />
+      <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
     </TouchableOpacity>
   );
 
   const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Ionicons name="chatbubbles-outline" size={64} color="#ddd" />
-      <Text style={styles.emptyText}>No past chats</Text>
-      <Text style={styles.emptySubtext}>Start a conversation to see it here</Text>
-    </View>
+    <EmptyState
+      icon="chatbubbles-outline"
+      title="No past chats"
+      subtitle="Start a conversation to see it here"
+    />
   );
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <View style={styles.headerInfo}>
-          <Text style={styles.headerTitle}>Past Chats</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.trashButton}
-          onPress={handleClearAll}
-          disabled={sessions.length === 0}
-        >
-          <Ionicons
-            name="trash-outline"
-            size={24}
-            color={sessions.length === 0 ? 'rgba(255,255,255,0.3)' : 'white'}
-          />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title="Past Chats"
+        onBack={() => router.back()}
+        rightAction={{
+          icon: 'trash-outline',
+          onPress: handleClearAll,
+          disabled: sessions.length === 0,
+        }}
+      />
 
       {/* Content */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#C41E3A" />
+          <ActivityIndicator size="large" color={CMU_RED} />
         </View>
       ) : (
         <FlatList
@@ -184,37 +176,7 @@ export default function PastChatsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#C41E3A',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerInfo: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
-    color: 'white',
-    fontSize: 18,
-  },
-  trashButton: {
-    padding: 8,
+    backgroundColor: COLORS.background,
   },
   loadingContainer: {
     flex: 1,
@@ -227,25 +189,18 @@ const styles = StyleSheet.create({
   chatItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     marginHorizontal: 16,
     marginVertical: 6,
     padding: 16,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    ...SHADOWS.small,
   },
   chatIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -260,50 +215,32 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   chatTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 16,
-    color: '#333',
+    color: COLORS.textPrimary,
     flex: 1,
     marginRight: 8,
   },
   chatTime: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 12,
-    color: '#999',
+    color: COLORS.textMuted,
   },
   chatPreview: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 14,
     color: '#666',
     marginBottom: 4,
     lineHeight: 20,
   },
   messageCount: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 12,
-    color: '#999',
+    color: COLORS.textMuted,
     marginTop: 4,
   },
   emptyList: {
     flexGrow: 1,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 80,
-  },
-  emptyText: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
-    fontSize: 18,
-    color: '#999',
-    marginTop: 16,
-  },
-  emptySubtext: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    fontSize: 14,
-    color: '#bbb',
-    marginTop: 8,
   },
 });
 

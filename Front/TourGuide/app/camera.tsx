@@ -7,41 +7,11 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import SummaryModal from '../components/SummaryModal';
 import { useBuildings } from '../contexts/BuildingContext';
+import { canonicalBuildingId } from '../config/buildingIdMap';
+import { scanBuilding } from '../services/visionService';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// Map classifier labels to building codes used in buildings.json
-const BUILDING_ID_MAP: Record<string, string> = {
-  'Tepper': 'TEP',
-  'Tcs': 'TCS',
-  'Gates': 'GHC',
-  'Warner': 'WH',
-  'Purnell': 'PCA',
-  'Doherty': 'DH',
-  'Hamerschlag': 'HH',
-  'ANSYS': 'AN',
-  'Scaife': 'SH',
-  'Baker': 'BH',
-  'Cfa': 'CFA',
-  'Posner': 'POS',
-  'Margaret Morrison': 'MM',
-  'Margaret Morrison Side': 'MM',
-  'Highmark': 'HWC',
-  'Hunt': 'HL',
-  'Hamburg': 'HBH',
-  'Cyert': 'CYH',
-  'Uc': 'CUC',
-  'Uc Side': 'CUC',
-  'Uc Side 2': 'CUC',
-  'Uc Front': 'CUC',
-  'Uc Back': 'CUC',
-  'Wean': 'WEH',
-  'Porter': 'PH',
-};
-
-function canonicalBuildingId(raw: string): string {
-  const trimmed = raw.trim();
-  return BUILDING_ID_MAP[trimmed] ?? trimmed;
-}
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -62,7 +32,7 @@ export default function CameraScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Ionicons name="camera-outline" size={80} color="#C41E3A" />
+          <Ionicons name="camera-outline" size={80} color={CMU_RED} />
           <Text style={styles.permissionTitle}>Camera Permission Required</Text>
           <Text style={styles.permissionText}>
             We need access to your camera to scan campus buildings and landmarks.
@@ -91,20 +61,7 @@ export default function CameraScreen() {
         quality: 1.0
       });
 
-      const res = await fetch('https://cmutourguide-backend-production.up.railway.app/vision', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64: photo?.base64,
-        })
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
-      }
-
-      const data = await res.json()
-      const identifiedBuildingId = canonicalBuildingId(data.building_name ?? '');
+      const identifiedBuildingId = await scanBuilding(photo?.base64 ?? '');
       setBuildingId(identifiedBuildingId);
 
       // Check if building is already unlocked
@@ -226,14 +183,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   permissionTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 24,
-    color: '#C41E3A',
+    color: CMU_RED,
     marginTop: 24,
     marginBottom: 16,
   },
   permissionText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
@@ -241,13 +198,13 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   permissionButton: {
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 25,
   },
   permissionButtonText: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     color: 'white',
     fontSize: 16,
   },
@@ -263,7 +220,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     color: 'white',
     fontSize: 18,
   },
@@ -306,7 +263,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 40,
     height: 40,
-    borderColor: '#C41E3A',
+    borderColor: CMU_RED,
     borderWidth: 5,
   },
   topLeft: {
@@ -367,10 +324,10 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#C41E3A',
+    shadowColor: CMU_RED,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -392,7 +349,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   processingText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     color: 'white',
     fontSize: 14,
     fontStyle: 'italic',

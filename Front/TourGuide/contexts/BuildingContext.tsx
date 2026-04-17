@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { getUnlockedBuildings, unlockBuilding as unlockBuildingStorage, resetProgress } from '../utils/buildingStorage';
-import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../components/scannableBuildings';
+import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../config/scannableBuildings';
 
 interface BuildingContextType {
   /** Scannable buildings the user has explicitly unlocked (persisted). */

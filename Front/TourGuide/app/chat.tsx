@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,121 +15,29 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 import { Image } from 'expo-image';
-import { saveChatSession, getChatSession } from '../utils/chatStorage';
-import { Message, ChatSession } from '../types/chat';
+import { Message } from '../types/chat';
+import { useChatSession } from '../hooks/useChatSession';
+import ScreenHeader from '../components/ScreenHeader';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { SHADOWS } from '../constants/layout';
 
 export default function ChatScreen() {
   const { sessionId, imageUri, building_name } = useLocalSearchParams();
-  const [sessionIdState, setSessionIdState] = useState<string>(
-    sessionId ? String(sessionId) : `chat_${Date.now()}`
-  );
-  const [imageUriState, setImageUriState] = useState<string | undefined>(
-    imageUri ? String(imageUri) : undefined
-  );
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi, Welcome to CMU! Im your personal AI campus Tour Guide. What would you like to know about " + building_name + "?",
-      isUser: false,
-      timestamp: new Date(),
-    }
-  ]);
   const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    // Load existing session if sessionId is provided
-    const loadSession = async () => {
-      if (sessionId) {
-        const session = await getChatSession(String(sessionId));
-        if (session && session.messages.length > 0) {
-          setMessages(session.messages);
-          setSessionIdState(session.id);
-          if (session.imageUri) {
-            setImageUriState(session.imageUri);
-          }
-        }
-      }
-    };
-    loadSession();
-  }, [sessionId]);
+  const { messages, isTyping, flatListRef, imageUriState, sendMessage } = useChatSession({
+    sessionId: sessionId ? String(sessionId) : undefined,
+    imageUri: imageUri ? String(imageUri) : undefined,
+    buildingName: building_name ? String(building_name) : undefined,
+  });
 
-  useEffect(() => {
-    // Auto-scroll to bottom when new messages are added
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  }, [messages]);
-
-  useEffect(() => {
-    // Save chat session whenever messages change
-    const saveSession = async () => {
-      if (messages.length > 0) {
-        const session: ChatSession = {
-          id: sessionIdState,
-          messages: messages,
-          createdAt: messages[0].timestamp.toISOString(),
-          updatedAt: messages[messages.length - 1].timestamp.toISOString(),
-          imageUri: imageUriState,
-        };
-        await saveChatSession(session);
-      }
-    };
-    saveSession();
-  }, [messages, sessionIdState, imageUriState]);
-
-  const sendMessage = async () => {
+  const handleSend = async () => {
     if (inputText.trim() === '') return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText.trim(),
-      isUser: true,
-      timestamp: new Date(),
-    };
-
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    const text = inputText.trim();
     setInputText('');
-    setIsTyping(true);
-
-    try {
-      const res = await fetch('https://cmutourguide-backend-production.up.railway.app/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: updatedMessages,
-        })
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      const chatMessage: Message = {
-        id: Date.now().toString(),
-        text: data.reply,
-        isUser: false,
-        timestamp: new Date(),
-      }
-
-      setMessages(prev => [...prev, chatMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        text: "Sorry, I couldn't get a response. Please try again.",
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsTyping(false);
-    }
-
+    await sendMessage(text);
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
@@ -198,24 +106,14 @@ export default function ChatScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>CMU Tour Guide</Text>
-            <Text style={styles.headerSubtitle}>AI Assistant</Text>
-          </View>
-          <TouchableOpacity 
-            style={styles.newChatButton}
-            onPress={() => router.dismissTo("/camera")}
-          >
-            <Ionicons name="add" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
+        <ScreenHeader
+          title="CMU Tour Guide"
+          onBack={() => router.back()}
+          rightAction={{
+            icon: 'add',
+            onPress: () => router.dismissTo("/camera"),
+          }}
+        />
 
         {/* Messages */}
         <FlatList
@@ -242,7 +140,7 @@ export default function ChatScreen() {
           />
           <TouchableOpacity 
             style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
-            onPress={sendMessage}
+            onPress={handleSend}
             disabled={inputText.trim() === ''}
           >
             <Ionicons 
@@ -260,42 +158,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#C41E3A',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerInfo: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
-    color: 'white',
-    fontSize: 18,
-  },
-  headerSubtitle: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 12,
-  },
-  newChatButton: {
-    padding: 8,
+    backgroundColor: COLORS.background,
   },
   messagesList: {
     flex: 1,
@@ -320,7 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   userBubble: {
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
     borderBottomRightRadius: 4,
   },
   imageBubble: {
@@ -333,19 +196,12 @@ const styles = StyleSheet.create({
     height: 250,
   },
   aiBubble: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     borderBottomLeftRadius: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    ...SHADOWS.small,
   },
   messageText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
     lineHeight: 22,
   },
@@ -353,14 +209,14 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   aiText: {
-    color: '#333',
+    color: COLORS.textPrimary,
   },
   boldText: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    color: '#333',
+    fontFamily: FONTS.bold,
+    color: COLORS.textPrimary,
   },
   timestamp: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 12,
     marginTop: 4,
   },
@@ -369,14 +225,14 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   aiTimestamp: {
-    color: '#999',
+    color: COLORS.textMuted,
   },
   typingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   typingText: {
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     color: '#666',
     fontSize: 14,
     fontStyle: 'italic',
@@ -389,7 +245,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
     marginHorizontal: 2,
   },
   dot1: {
@@ -406,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
   },
@@ -419,11 +275,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginRight: 12,
     maxHeight: 100,
-    fontFamily: 'SourceSerifPro_400Regular',
+    fontFamily: FONTS.regular,
     fontSize: 16,
   },
   sendButton: {
-    backgroundColor: '#C41E3A',
+    backgroundColor: CMU_RED,
     width: 44,
     height: 44,
     borderRadius: 22,

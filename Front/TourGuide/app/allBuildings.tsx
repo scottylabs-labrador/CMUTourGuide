@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   Alert,
   FlatList,
   Dimensions,
@@ -13,11 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useBuildings } from '../contexts/BuildingContext';
 import SummaryModal from '../components/SummaryModal';
+import BuildingCard from '../components/BuildingCard';
 import { getAllBuildingIds, getBuilding } from '../services/buildingService';
 import type { BuildingId } from '../types/building';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20;
@@ -53,56 +54,18 @@ export default function AllBuildingsScreen() {
     if (!building) return null;
     const unlocked = isUnlocked(buildingId);
     const scannable = isScannable(buildingId);
-    const showLockedOverlay = scannable && !unlocked;
     const isLeftColumn = index % 2 === 0;
 
     return (
-      <TouchableOpacity
-        style={[
-          styles.card,
-          { marginRight: isLeftColumn ? COLUMN_GAP : 0 },
-        ]}
+      <BuildingCard
+        title={building.title}
+        imageUrl={building.image_url}
+        unlocked={unlocked}
+        scannable={scannable}
         onPress={() => handlePress(buildingId)}
-        activeOpacity={0.9}
-      >
-        <View style={styles.imageContainer}>
-          {building.image_url ? (
-            <Image
-              source={{ uri: building.image_url }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.imagePlaceholder}>
-              <Ionicons name="business-outline" size={32} color="#999" />
-            </View>
-          )}
-          {showLockedOverlay && (
-            <View style={styles.lockedOverlay}>
-              <Ionicons name="lock-closed" size={18} color="#fff" />
-              <Text style={styles.lockedText}>Scan to unlock</Text>
-            </View>
-          )}
-          <LinearGradient
-            colors={['rgba(0,0,0,0.35)', 'transparent']}
-            style={styles.gradientTop}
-          />
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.55)']}
-            style={styles.gradientBottom}
-          />
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {scannable ? (unlocked ? 'Unlocked' : 'Must‑See') : 'Explore'}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.info}>
-          <Text style={styles.name} numberOfLines={2}>
-            {building.title}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        width={CARD_WIDTH}
+        style={{ marginRight: isLeftColumn ? COLUMN_GAP : 0 }}
+      />
     );
   };
 
@@ -114,7 +77,7 @@ export default function AllBuildingsScreen() {
           onPress={() => router.back()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color="#C41E3A" />
+          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>All Buildings</Text>
         <View style={styles.headerSpacer} />
@@ -150,7 +113,7 @@ export default function AllBuildingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
@@ -159,17 +122,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: HORIZONTAL_PADDING,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-    backgroundColor: '#ffffff',
+    borderBottomColor: COLORS.border,
+    backgroundColor: COLORS.white,
   },
   backButton: {
     padding: 6,
     width: 40,
   },
   headerTitle: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 20,
-    color: '#C41E3A',
+    color: CMU_RED,
   },
   headerSpacer: {
     width: 40,
@@ -180,19 +143,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: HORIZONTAL_PADDING,
     paddingVertical: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: COLORS.border,
   },
   progressLabel: {
-    fontFamily: 'SourceSerifPro_600SemiBold',
+    fontFamily: FONTS.semiBold,
     fontSize: 14,
-    color: '#1F2933',
+    color: COLORS.textPrimary,
   },
   progressValue: {
-    fontFamily: 'SourceSerifPro_700Bold',
+    fontFamily: FONTS.bold,
     fontSize: 14,
-    color: '#C41E3A',
+    color: CMU_RED,
   },
   listContent: {
     paddingHorizontal: HORIZONTAL_PADDING,
@@ -201,89 +164,5 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     marginBottom: COLUMN_GAP,
-  },
-  card: {
-    width: CARD_WIDTH,
-    borderRadius: 20,
-    backgroundColor: '#F1F3F5',
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 130,
-    position: 'relative',
-    backgroundColor: '#e9ecef',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e9ecef',
-  },
-  lockedOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 2,
-  },
-  lockedText: {
-    fontFamily: 'SourceSerifPro_400Regular',
-    marginTop: 4,
-    fontSize: 12,
-    color: '#fff',
-  },
-  gradientTop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-  },
-  gradientBottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-  },
-  badge: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.85)',
-  },
-  badgeText: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 11,
-    color: '#C41E3A',
-  },
-  info: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    minHeight: 52,
-  },
-  name: {
-    fontFamily: 'SourceSerifPro_700Bold',
-    fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
   },
 });

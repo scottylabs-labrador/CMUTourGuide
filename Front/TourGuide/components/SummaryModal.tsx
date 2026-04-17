@@ -4,6 +4,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
 import { getBuilding } from '../services/buildingService';
+import { CMU_RED, COLORS } from '../constants/colors';
+import { FONTS } from '../constants/typography';
+import { RADIUS } from '../constants/layout';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
@@ -120,8 +123,8 @@ const styles = StyleSheet.create({
     modalContainer: {
         width: SCREEN_WIDTH * 0.9,
         height: SCREEN_HEIGHT * 0.7,
-        backgroundColor: 'white',
-        borderRadius: 20,
+        backgroundColor: COLORS.white,
+        borderRadius: RADIUS.xl,
         padding: 20,
         alignItems: 'center',
         shadowColor: '#000',
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: '100%',
         height: 200,
-        borderRadius: 12,
+        borderRadius: RADIUS.md,
         overflow: 'hidden',
         marginBottom: 20,
         backgroundColor: '#f0f0f0',
@@ -159,9 +162,9 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     title: {
-        fontFamily: 'SourceSerifPro_700Bold',
+        fontFamily: FONTS.bold,
         fontSize: 24,
-        color: '#C41E3A',
+        color: CMU_RED,
         marginBottom: 16,
         textAlign: 'center',
     },
@@ -170,21 +173,21 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     description: {
-        fontFamily: 'SourceSerifPro_400Regular',
+        fontFamily: FONTS.regular,
         fontSize: 16,
-        color: '#333',
+        color: COLORS.textPrimary,
         lineHeight: 24,
         textAlign: 'center',
     },
     boldText: {
-        fontFamily: 'SourceSerifPro_700Bold',
-        color: '#333',
+        fontFamily: FONTS.bold,
+        color: COLORS.textPrimary,
     },
     buttonContainer: {
         flexDirection: 'row',
     },
     actionButton: {
-        backgroundColor: '#C41E3A',
+        backgroundColor: CMU_RED,
         paddingHorizontal: 10,
         paddingVertical: 14,
         borderRadius: 25,
@@ -193,8 +196,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 4,
     },
     actionButtonText: {
-        fontFamily: 'SourceSerifPro_600SemiBold',
-        color: 'white',
+        fontFamily: FONTS.semiBold,
+        color: COLORS.white,
         fontSize: 16,
     },
     newDiscoveryBadge: {
@@ -212,8 +215,8 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     newDiscoveryText: {
-        fontFamily: 'SourceSerifPro_700Bold',
+        fontFamily: FONTS.bold,
         fontSize: 16,
-        color: '#C41E3A',
+        color: CMU_RED,
     },
 });
