@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   Alert,
   FlatList,
   Dimensions,
@@ -17,8 +16,7 @@ import SummaryModal from '../components/SummaryModal';
 import BuildingCard from '../components/BuildingCard';
 import { getAllBuildingIds, getBuilding } from '../services/buildingService';
 import type { BuildingId } from '../types/building';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
+import { CMU_RED } from '../constants/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20;
@@ -70,22 +68,28 @@ export default function AllBuildingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
-      <View style={styles.header}>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right', 'bottom']}>
+      <View
+        className="flex-row items-center justify-between py-[14px] bg-white border-b border-border"
+        style={{ paddingHorizontal: HORIZONTAL_PADDING }}
+      >
         <TouchableOpacity
-          style={styles.backButton}
+          className="p-[6px] w-10"
           onPress={() => router.back()}
           activeOpacity={0.7}
         >
           <Ionicons name="arrow-back" size={24} color={CMU_RED} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>All Buildings</Text>
-        <View style={styles.headerSpacer} />
+        <Text className="font-serif-bold text-[20px] text-cmu-red">All Buildings</Text>
+        <View className="w-10" />
       </View>
 
-      <View style={styles.progressBlock}>
-        <Text style={styles.progressLabel}>Discovery Progress</Text>
-        <Text style={styles.progressValue}>
+      <View
+        className="flex-row items-center justify-between py-3 bg-white border-b border-border"
+        style={{ paddingHorizontal: HORIZONTAL_PADDING }}
+      >
+        <Text className="font-serif-semi text-sm text-[#1F2933]">Discovery Progress</Text>
+        <Text className="font-serif-bold text-sm text-cmu-red">
           {unlockedScannableCount} / {totalScannableCount}
         </Text>
       </View>
@@ -95,8 +99,12 @@ export default function AllBuildingsScreen() {
         renderItem={renderItem}
         keyExtractor={(item) => item}
         numColumns={2}
-        contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={{
+          paddingHorizontal: HORIZONTAL_PADDING,
+          paddingTop: 16,
+          paddingBottom: 32,
+        }}
+        columnWrapperStyle={{ marginBottom: COLUMN_GAP }}
         showsVerticalScrollIndicator={false}
       />
 
@@ -109,60 +117,3 @@ export default function AllBuildingsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: HORIZONTAL_PADDING,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.white,
-  },
-  backButton: {
-    padding: 6,
-    width: 40,
-  },
-  headerTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 20,
-    color: CMU_RED,
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  progressBlock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: HORIZONTAL_PADDING,
-    paddingVertical: 12,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  progressLabel: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 14,
-    color: COLORS.textPrimary,
-  },
-  progressValue: {
-    fontFamily: FONTS.bold,
-    fontSize: 14,
-    color: CMU_RED,
-  },
-  listContent: {
-    paddingHorizontal: HORIZONTAL_PADDING,
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  columnWrapper: {
-    marginBottom: COLUMN_GAP,
-  },
-});

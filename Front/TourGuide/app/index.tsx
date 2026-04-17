@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Animated } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,8 +9,7 @@ import { getAllBuildingIds, getBuilding } from '../services/buildingService';
 import SummaryModal from '../components/SummaryModal';
 import BuildingCard from '../components/BuildingCard';
 import ProgressBar from '../components/ProgressBar';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
+import { CMU_RED } from '../constants/colors';
 import { SHADOWS } from '../constants/layout';
 
 export default function HomeScreen() {
@@ -88,21 +87,39 @@ export default function HomeScreen() {
   });
 
   return (
-    <View style={styles.gradientBackground}>
-      <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-        <View style={[styles.topRedBar, { height: insets.top }]} />
-        <Animated.View style={[styles.fixedHeader, { opacity: fixedHeaderOpacity, top: 0 }]} pointerEvents={headerVisible ? 'box-none' : 'none'}>
-          <View style={[styles.fixedHeaderRedBar, { paddingTop: insets.top }]}>
-            <Text style={styles.fixedHeaderLogo} numberOfLines={1}>Carnegie Mellon University</Text>
-            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} style={styles.fixedHeaderInfoBtn}>
+    <View className="flex-1 bg-[#F8F9FA]">
+      <SafeAreaView className="flex-1 bg-transparent" edges={['left', 'right', 'bottom']}>
+        <View className="absolute top-0 left-0 right-0 bg-cmu-red" style={{ height: insets.top }} />
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              paddingBottom: 12,
+              opacity: fixedHeaderOpacity,
+            },
+          ]}
+          pointerEvents={headerVisible ? 'box-none' : 'none'}
+        >
+          <View
+            className="flex-row items-center justify-between bg-cmu-red px-5 pb-3"
+            style={{ paddingTop: insets.top }}
+          >
+            <Text className="font-serif-semi text-lg text-white flex-1" numberOfLines={1}>
+              Carnegie Mellon University
+            </Text>
+            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} className="p-1 ml-2">
               <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </Animated.View>
 
         <Animated.ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 0, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={Animated.event(
@@ -110,33 +127,58 @@ export default function HomeScreen() {
             { useNativeDriver: true }
           )}
         >
-          <Animated.View style={[styles.heroLogoBlock, { opacity: heroLogoOpacity, transform: [{ scale: heroLogoScale }], paddingTop: insets.top + 12 }]}>
-            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} style={styles.heroLogoInfoBtn}>
+          <Animated.View
+            style={{
+              backgroundColor: CMU_RED,
+              paddingBottom: 32,
+              paddingHorizontal: 24,
+              marginHorizontal: -24,
+              marginBottom: 16,
+              alignSelf: 'stretch',
+              position: 'relative',
+              opacity: heroLogoOpacity,
+              transform: [{ scale: heroLogoScale }],
+              paddingTop: insets.top + 12,
+            }}
+          >
+            <TouchableOpacity className="absolute top-3 right-4 p-1 z-[1]" onPress={() => router.push('/info')} activeOpacity={0.8}>
               <Ionicons name="information-circle-outline" size={24} color="#FFFFFF" />
             </TouchableOpacity>
-            <Text style={styles.heroLogoLine1}>Carnegie</Text>
-            <Text style={styles.heroLogoLine2}>Mellon</Text>
-            <Text style={styles.heroLogoLine3}>University</Text>
+            <Text className="font-serif-semi text-[36px] text-white" style={{ letterSpacing: -0.5, lineHeight: 40 }}>
+              Carnegie
+            </Text>
+            <Text className="font-serif-semi text-[36px] text-white -mt-1" style={{ letterSpacing: -0.5, lineHeight: 40 }}>
+              Mellon
+            </Text>
+            <Text className="font-serif-semi text-[36px] text-white -mt-1" style={{ letterSpacing: -0.5, lineHeight: 40 }}>
+              University
+            </Text>
           </Animated.View>
 
-          <View style={styles.heroSection}>
-            <Text style={styles.heroSubtitle}>Ready to Explore</Text>
-            <Text style={styles.heroTitle}>Carnegie Mellon!</Text>
+          <View className="mb-[10px]">
+            <Text className="font-serif text-[16px] text-[#7A8593] mb-1">Ready to Explore</Text>
+            <Text className="font-serif-bold text-[28px] text-[#1F2933] mb-2">Carnegie Mellon!</Text>
           </View>
 
-          {/* Scan CTA card - camera icon is the button */}
-          <View style={styles.scanCard}>
-            <View style={styles.scanLeft}>
+          {/* Scan CTA card */}
+          <View
+            className="flex-row items-center justify-between rounded-[28px] py-7 px-6 bg-card overflow-hidden mb-6"
+            style={SHADOWS.card}
+          >
+            <View className="flex-row items-center flex-1 mr-4">
               <TouchableOpacity
-                style={styles.scanIconCircle}
+                className="w-[88px] h-[88px] rounded-[44px] items-center justify-center mr-[18px]"
+                style={{ backgroundColor: 'rgba(196,18,48,0.08)' }}
                 onPress={handleScan}
                 activeOpacity={0.85}
               >
                 <Ionicons name="camera-outline" size={48} color={CMU_RED} />
               </TouchableOpacity>
-              <View style={styles.scanTextContainer}>
-                <Text style={styles.scanTitle} numberOfLines={1}>Scan a CMU marker</Text>
-                <Text style={styles.scanSubtitle}>
+              <View className="flex-1">
+                <Text className="font-serif-bold text-[17px] text-[#1F2933] mb-1" numberOfLines={1}>
+                  Scan a CMU marker
+                </Text>
+                <Text className="font-serif text-[15px] text-[#7A8593]">
                   Unlock building stories, trivia, and map pins.
                 </Text>
               </View>
@@ -144,7 +186,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Discovery Progress */}
-          <View style={styles.progressWrapper}>
+          <View className="mb-6">
             <ProgressBar
               current={unlockedScannableCount}
               total={totalScannableCount}
@@ -153,34 +195,40 @@ export default function HomeScreen() {
           </View>
 
           {/* Quick actions */}
-          <View style={styles.actionsContainer}>
-            <View style={styles.actionCard}>
+          <View className="flex-row gap-4 mb-4">
+            <View className="flex-1 rounded-[26px] bg-card overflow-hidden" style={SHADOWS.card}>
               <TouchableOpacity
-                style={styles.actionInner}
+                className="py-[18px] px-[18px]"
                 onPress={handlePastChats}
                 activeOpacity={0.8}
               >
-                <View style={styles.actionIconCircle}>
+                <View
+                  className="w-9 h-9 rounded-[18px] items-center justify-center mb-[10px]"
+                  style={{ backgroundColor: 'rgba(196,18,48,0.07)' }}
+                >
                   <Ionicons name="chatbubbles-outline" size={22} color={CMU_RED} />
                 </View>
-                <Text style={styles.actionTitle}>Chats</Text>
-                <Text style={styles.actionSubtitle}>
+                <Text className="font-serif-bold text-[15px] text-[#1F2933] mb-[3px]">Chats</Text>
+                <Text className="font-serif text-[13px] text-[#7A8593]">
                   Ask questions & get hints.
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <View style={styles.actionCard}>
+            <View className="flex-1 rounded-[26px] bg-card overflow-hidden" style={SHADOWS.card}>
               <TouchableOpacity
-                style={styles.actionInner}
+                className="py-[18px] px-[18px]"
                 onPress={handleMapView}
                 activeOpacity={0.8}
               >
-                <View style={styles.actionIconCircle}>
+                <View
+                  className="w-9 h-9 rounded-[18px] items-center justify-center mb-[10px]"
+                  style={{ backgroundColor: 'rgba(196,18,48,0.07)' }}
+                >
                   <Ionicons name="map-outline" size={22} color={CMU_RED} />
                 </View>
-                <Text style={styles.actionTitle}>Map</Text>
-                <Text style={styles.actionSubtitle}>
+                <Text className="font-serif-bold text-[15px] text-[#1F2933] mb-[3px]">Map</Text>
+                <Text className="font-serif text-[13px] text-[#7A8593]">
                   Find nearby landmarks.
                 </Text>
               </TouchableOpacity>
@@ -188,18 +236,21 @@ export default function HomeScreen() {
           </View>
 
           {/* Blog card */}
-          <View style={styles.blogCard}>
+          <View className="rounded-[26px] bg-card overflow-hidden mb-7" style={SHADOWS.card}>
             <TouchableOpacity
-              style={styles.blogInner}
+              className="flex-row items-center py-[18px] px-[18px]"
               onPress={handleBlog}
               activeOpacity={0.8}
             >
-              <View style={styles.actionIconCircle}>
+              <View
+                className="w-9 h-9 rounded-[18px] items-center justify-center mb-[10px]"
+                style={{ backgroundColor: 'rgba(196,18,48,0.07)' }}
+              >
                 <Ionicons name="newspaper-outline" size={22} color={CMU_RED} />
               </View>
-              <View style={styles.blogTextContainer}>
-                <Text style={styles.actionTitle}>Blog</Text>
-                <Text style={styles.actionSubtitle}>
+              <View className="flex-1 ml-[14px]">
+                <Text className="font-serif-bold text-[15px] text-[#1F2933] mb-[3px]">Blog</Text>
+                <Text className="font-serif text-[13px] text-[#7A8593]">
                   Stories, history, and campus trivia.
                 </Text>
               </View>
@@ -207,9 +258,9 @@ export default function HomeScreen() {
           </View>
 
           {/* Buildings carousel */}
-          <View style={styles.buildingsSection}>
-            <View style={styles.buildingsHeaderRow}>
-              <Text style={styles.sectionTitle}>Buildings</Text>
+          <View className="mt-0 -mx-6">
+            <View className="flex-row justify-between items-center mb-3 px-6">
+              <Text className="font-serif-bold text-[20px] text-[#1F2933]">Buildings</Text>
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
@@ -217,13 +268,13 @@ export default function HomeScreen() {
                   router.push('/allBuildings');
                 }}
               >
-                <Text style={styles.seeAllText}>See all</Text>
+                <Text className="font-serif text-[13px] text-cmu-red">See all</Text>
               </TouchableOpacity>
             </View>
             <Animated.ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.buildingsCarousel}
+              contentContainerStyle={{ paddingHorizontal: 24 }}
               snapToInterval={BUILDING_SNAP_INTERVAL}
               decelerationRate="fast"
               scrollEventThrottle={16}
@@ -278,272 +329,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  gradientBackground: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 0,
-    paddingBottom: 40,
-  },
-  topRedBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: CMU_RED,
-  },
-  fixedHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    paddingBottom: 12,
-  },
-  fixedHeaderRedBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: CMU_RED,
-    paddingBottom: 12,
-    paddingHorizontal: 20,
-    borderRadius: 0,
-  },
-  fixedHeaderLogo: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 18,
-    color: '#FFFFFF',
-    flex: 1,
-  },
-  fixedHeaderInfoBtn: {
-    padding: 4,
-    marginLeft: 8,
-  },
-  heroLogoBlock: {
-    backgroundColor: CMU_RED,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
-    marginHorizontal: -24,
-    marginBottom: 16,
-    alignSelf: 'stretch',
-    position: 'relative',
-  },
-  heroLogoInfoBtn: {
-    position: 'absolute',
-    top: 12,
-    right: 16,
-    padding: 4,
-    zIndex: 1,
-  },
-  heroLogoLine1: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 36,
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
-    lineHeight: 40,
-  },
-  heroLogoLine2: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 36,
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
-    lineHeight: 40,
-    marginTop: -4,
-  },
-  heroLogoLine3: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 36,
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
-    lineHeight: 40,
-    marginTop: -4,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-    marginTop: 8,
-  },
-  appTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 36,
-    color: CMU_RED,
-    letterSpacing: -0.5,
-  },
-  infoBlur: {
-    borderRadius: 999,
-    padding: 6,
-    overflow: 'hidden',
-  },
-  heroSection: {
-    marginBottom: 10,
-  },
-  heroSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    marginBottom: 4,
-  },
-  heroTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 28,
-    color: COLORS.textPrimary,
-    marginBottom: 8,
-  },
-  scanCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 28,
-    paddingVertical: 28,
-    paddingHorizontal: 24,
-    backgroundColor: COLORS.card,
-    ...SHADOWS.card,
-    overflow: 'hidden',
-    marginBottom: 24,
-  },
-  scanLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 16,
-  },
-  scanIconCircle: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(196,18,48,0.08)',
-    marginRight: 18,
-  },
-  scanTextContainer: {
-    flex: 1,
-  },
-  scanTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 17,
-    color: COLORS.textPrimary,
-    marginBottom: 4,
-  },
-  scanSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 15,
-    color: COLORS.textSecondary,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 16,
-  },
-  blogCard: {
-    borderRadius: 26,
-    backgroundColor: COLORS.card,
-    overflow: 'hidden',
-    ...SHADOWS.card,
-    marginBottom: 28,
-  },
-  blogInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-  },
-  blogTextContainer: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  actionCard: {
-    flex: 1,
-    borderRadius: 26,
-    backgroundColor: COLORS.card,
-    overflow: 'hidden',
-    ...SHADOWS.card,
-  },
-  actionInner: {
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-  },
-  actionIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(196,18,48,0.07)',
-    marginBottom: 10,
-  },
-  actionTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-    marginBottom: 3,
-  },
-  actionSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: COLORS.textSecondary,
-  },
-  mapContainer: {
-    marginTop: 8,
-  },
-  mapPlaceholder: {
-    backgroundColor: COLORS.background,
-    borderRadius: 16,
-    height: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  mapPlaceholderText: {
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-    color: COLORS.textMuted,
-    marginTop: 12,
-  },
-  infoButton: {
-    position: 'absolute',
-    right: 0,
-    padding: 8,
-  },
-  progressWrapper: {
-    marginBottom: 24,
-  },
-  buildingsSection: {
-    marginTop: 0,
-    marginHorizontal: -24,
-  },
-  buildingsHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 20,
-    color: COLORS.textPrimary,
-  },
-  seeAllText: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: CMU_RED,
-  },
-  buildingsCarousel: {
-    paddingHorizontal: 24,
-  },
-});

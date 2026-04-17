@@ -86,16 +86,16 @@ const CMU_POLYGON = [
   { latitude: 40.441428, longitude: -79.940515}, // margaret morrison skibo
   { latitude: 40.441310, longitude: -79.940853}, // highmark high right
   { latitude: 40.440213, longitude: -79.941324}, // frew st bottom right
-  { latitude: 40.440395, longitude: -79.942324}, // frew tech 
-  { latitude: 40.440438, longitude: -79.942370}, // frew tech 
-  { latitude: 40.440509, longitude: -79.942570}, // frew tech 
-  { latitude: 40.440555, longitude: -79.942817}, // frew tech 
+  { latitude: 40.440395, longitude: -79.942324}, // frew tech
+  { latitude: 40.440438, longitude: -79.942370}, // frew tech
+  { latitude: 40.440509, longitude: -79.942570}, // frew tech
+  { latitude: 40.440555, longitude: -79.942817}, // frew tech
   { latitude: 40.440537, longitude: -79.942823}, // frew runway
   { latitude: 40.441419, longitude: -79.947033}, // frew runway
-  { latitude: 40.441439, longitude: -79.947023}, // frew runway left 
-  { latitude: 40.441439, longitude: -79.947198}, // frew runway left 
-  { latitude: 40.441412, longitude: -79.947295}, // frew runway left 
-  { latitude: 40.441241, longitude: -79.947543}, // frew runway left 
+  { latitude: 40.441439, longitude: -79.947023}, // frew runway left
+  { latitude: 40.441439, longitude: -79.947198}, // frew runway left
+  { latitude: 40.441412, longitude: -79.947295}, // frew runway left
+  { latitude: 40.441241, longitude: -79.947543}, // frew runway left
   { latitude: 40.440666, longitude: -79.948241}, // frew schenely
   { latitude: 40.441295, longitude: -79.949325}, // S neville schenley
   { latitude: 40.441956, longitude: -79.948879}, // boundary street
@@ -144,7 +144,7 @@ export default function MapScreen() {
 
   const resetHome = () => {
     if (!initialCameraRef.current || !mapRef.current) return;
-  
+
     mapRef.current.animateCamera(
       {
         ...initialCameraRef.current,
@@ -168,21 +168,20 @@ export default function MapScreen() {
           <Ionicons name="arrow-back" size={24} color={CMU_RED} />
         </TouchableOpacity>
 
-        <Text className="text-[20px]" style={{ fontFamily: FONTS.bold, color: CMU_RED }}>
+        <Text className="text-[20px] font-serif-bold text-cmu-red">
           Campus Map
         </Text>
 
-        {/* You can keep header refresh, or remove since we now have Home inside map */}
         <View className="w-10" />
       </View>
 
       {/* Progress */}
       <View className="bg-slate-50 px-5 py-3 border-b border-slate-200">
         <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-[14px] text-slate-800" style={{ fontFamily: FONTS.semiBold }}>
+          <Text className="text-[14px] text-slate-800 font-serif-semi">
             Discovery Progress
           </Text>
-          <Text className="text-[14px]" style={{ fontFamily: FONTS.bold, color: CMU_RED }}>
+          <Text className="text-[14px] font-serif-bold text-cmu-red">
             {unlockedScannableCount} / {totalScannableCount}
           </Text>
         </View>
@@ -280,22 +279,26 @@ export default function MapScreen() {
                   }
                 }}
               >
-                <View style={markerStyles.container}>
-                  <View style={markerStyles.labelRow}>
+                <View className="items-center">
+                  <View
+                    className="flex-row items-center px-1 py-[2px] rounded-[4px] mb-[2px]"
+                    style={[{ backgroundColor: 'rgba(255,255,255,0.85)' }, SHADOWS.marker]}
+                  >
                     {showLocked && (
-                      <Ionicons name="lock-closed" size={10} color={COLORS.locked} style={markerStyles.lockIcon} />
+                      <Ionicons name="lock-closed" size={10} color={COLORS.locked} style={{ marginRight: 3 }} />
                     )}
-                    <Text style={[
-                      markerStyles.label,
-                      { color: showLocked ? COLORS.locked : CMU_RED }
-                    ]} numberOfLines={1}>
+                    <Text
+                      className="font-serif-semi text-[11px] text-center"
+                      style={{ color: showLocked ? COLORS.locked : CMU_RED, maxWidth: 100 }}
+                      numberOfLines={1}
+                    >
                       {b.title}
                     </Text>
                   </View>
-                  <View style={[
-                    markerStyles.dot,
-                    { backgroundColor: colors.dot }
-                  ]} />
+                  <View
+                    className="w-[10px] h-[10px] rounded-[5px] border-2 border-white"
+                    style={{ backgroundColor: colors.dot }}
+                  />
                 </View>
                 <Callout tooltip>
                   <View />
@@ -329,13 +332,12 @@ export default function MapScreen() {
       {/* Bottom controls */}
       <View className="px-5 py-3 border-t border-slate-200 bg-white">
         <TouchableOpacity
-          className="rounded-xl py-3 px-5 flex-row items-center justify-center"
-          style={{ backgroundColor: CMU_RED }}
+          className="rounded-xl py-3 px-5 flex-row items-center justify-center bg-cmu-red"
           onPress={handleScan}
           activeOpacity={0.9}
         >
           <Ionicons name="camera" size={20} color="white" />
-          <Text className="ml-2 text-white text-[16px]" style={{ fontFamily: FONTS.semiBold }}>
+          <Text className="ml-2 text-white text-[16px] font-serif-semi">
             Scan
           </Text>
         </TouchableOpacity>
@@ -350,35 +352,3 @@ export default function MapScreen() {
     </SafeAreaView>
   );
 }
-
-const markerStyles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  labelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginBottom: 2,
-    ...SHADOWS.marker,
-  },
-  lockIcon: {
-    marginRight: 3,
-  },
-  label: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 11,
-    textAlign: 'center',
-    maxWidth: 100,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-});

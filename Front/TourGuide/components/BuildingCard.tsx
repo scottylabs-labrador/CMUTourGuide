@@ -1,10 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
-import { SHADOWS, RADIUS } from '../constants/layout';
 
 type Props = {
   title: string;
@@ -21,134 +18,57 @@ export default function BuildingCard({ title, imageUrl, unlocked, scannable, onP
 
   return (
     <TouchableOpacity
-      style={[styles.card, { width }, style]}
+      className="mt-3 rounded-[20px] bg-card overflow-hidden"
+      style={[
+        {
+          width,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          elevation: 4,
+        },
+        style,
+      ]}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <View style={styles.imageContainer}>
+      <View className="w-full h-[130px] relative bg-border">
         {imageUrl ? (
           <Image
             source={{ uri: imageUrl }}
-            style={styles.image}
+            className="w-full h-full"
             resizeMode="cover"
           />
         ) : (
-          <View style={styles.imagePlaceholder}>
-            <Ionicons name="business-outline" size={32} color={COLORS.textMuted} />
+          <View className="w-full h-full justify-center items-center bg-border">
+            <Ionicons name="business-outline" size={32} color="#999" />
           </View>
         )}
         {!unlocked && scannable && (
-          <View style={styles.lockedOverlay}>
+          <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center bg-black/50">
             <Ionicons name="lock-closed" size={18} color="#fff" />
-            <Text style={styles.lockedText}>Scan to unlock</Text>
+            <Text className="font-serif mt-1 text-xs text-white">Scan to unlock</Text>
           </View>
         )}
         <LinearGradient
           colors={['rgba(0,0,0,0.35)', 'transparent']}
-          style={styles.gradientTop}
+          className="absolute top-0 left-0 right-0 h-10"
         />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.55)']}
-          style={styles.gradientBottom}
+          className="absolute bottom-0 left-0 right-0 h-[60px]"
         />
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badgeText}</Text>
+        <View className="absolute top-[10px] left-[10px] px-[10px] py-1 rounded-full bg-white/85">
+          <Text className="font-serif-bold text-[11px] text-cmu-red">{badgeText}</Text>
         </View>
       </View>
-      <View style={styles.info}>
-        <Text style={styles.name}>{title}</Text>
-        <Text style={styles.subtext}>
+      <View className="px-3 py-[10px]">
+        <Text className="font-serif-bold text-sm text-[#1F2933] mb-0.5 text-center">{title}</Text>
+        <Text className="font-serif text-xs text-[#7A8593] text-center">
           {scannable ? 'Scan to reveal fun facts.' : 'Explore this building.'}
         </Text>
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginTop: 12,
-    borderRadius: RADIUS.xl,
-    backgroundColor: COLORS.card,
-    overflow: 'hidden',
-    ...SHADOWS.card,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 130,
-    position: 'relative',
-    backgroundColor: COLORS.border,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.border,
-  },
-  lockedOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  lockedText: {
-    fontFamily: FONTS.regular,
-    marginTop: 4,
-    fontSize: 12,
-    color: '#fff',
-  },
-  gradientTop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-  },
-  gradientBottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-  },
-  badge: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: RADIUS.pill,
-    backgroundColor: 'rgba(255,255,255,0.85)',
-  },
-  badgeText: {
-    fontFamily: FONTS.bold,
-    fontSize: 11,
-    color: CMU_RED,
-  },
-  info: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  name: {
-    fontFamily: FONTS.bold,
-    fontSize: 14,
-    color: COLORS.textPrimary,
-    marginBottom: 2,
-    textAlign: 'center',
-  },
-  subtext: {
-    fontFamily: FONTS.regular,
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-  },
-});

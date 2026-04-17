@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
   Image,
   ScrollView,
@@ -18,9 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { getBlogPostsByCategory } from '../services/blogService';
 import type { BlogPost } from '../types/blog';
 import ScreenHeader from '../components/ScreenHeader';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
-import { SHADOWS, RADIUS } from '../constants/layout';
+import { COLORS } from '../constants/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -58,32 +55,39 @@ export default function BlogScreen() {
     if (!featured) return null;
     return (
       <TouchableOpacity
-        style={styles.featuredCard}
+        className="m-4 rounded-[20px] overflow-hidden bg-card"
+        style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          elevation: 4,
+        }}
         onPress={() => handlePostPress(featured)}
         activeOpacity={0.9}
       >
-        <View style={styles.featuredImageContainer}>
+        <View className="w-full h-[220px] relative bg-border">
           {featured.image ? (
             <Image
               source={{ uri: featured.image }}
-              style={styles.featuredImage}
+              className="w-full h-full"
               resizeMode="cover"
             />
           ) : (
-            <View style={styles.imagePlaceholder}>
+            <View className="w-full h-full justify-center items-center bg-border">
               <Ionicons name="newspaper-outline" size={48} color="#999" />
             </View>
           )}
           <LinearGradient
             colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.featuredGradient}
+            className="absolute bottom-0 left-0 right-0 h-[140px]"
           />
-          <View style={styles.featuredBadge}>
-            <Text style={styles.featuredBadgeText}>Latest</Text>
+          <View className="absolute top-3 left-3 px-3 py-[5px] rounded-full bg-cmu-red">
+            <Text className="font-serif-bold text-[11px] text-white">Latest</Text>
           </View>
-          <View style={styles.featuredOverlay}>
-            <Text style={styles.featuredTitle}>{featured.title}</Text>
-            <Text style={styles.featuredSubtitle}>{featured.subtitle}</Text>
+          <View className="absolute bottom-0 left-0 right-0 p-4">
+            <Text className="font-serif-bold text-[20px] text-white mb-1">{featured.title}</Text>
+            <Text className="font-serif text-sm text-white/85">{featured.subtitle}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -94,27 +98,34 @@ export default function BlogScreen() {
     if (index === 0) return null;
     return (
       <TouchableOpacity
-        style={styles.postCard}
+        className="flex-row items-center bg-white mx-4 my-[6px] p-3 rounded-[16px]"
+        style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.05,
+          shadowRadius: 3,
+          elevation: 2,
+        }}
         onPress={() => handlePostPress(item)}
         activeOpacity={0.8}
       >
-        <View style={styles.postImageContainer}>
+        <View className="w-[80px] h-[80px] rounded-[12px] overflow-hidden bg-border mr-3">
           {item.image ? (
             <Image
               source={{ uri: item.image }}
-              style={styles.postImage}
+              className="w-full h-full"
               resizeMode="cover"
             />
           ) : (
-            <View style={[styles.imagePlaceholder, styles.postImagePlaceholder]}>
+            <View className="w-[80px] h-[80px] justify-center items-center bg-border">
               <Ionicons name="newspaper-outline" size={24} color="#999" />
             </View>
           )}
         </View>
-        <View style={styles.postContent}>
-          <Text style={styles.postTitle} numberOfLines={2}>{item.title}</Text>
-          <Text style={styles.postSubtitle} numberOfLines={2}>{item.subtitle}</Text>
-          <Text style={styles.postDate}>{formatDate(item.date)}</Text>
+        <View className="flex-1">
+          <Text className="font-serif-bold text-[15px] text-[#1F2933] mb-[3px]" numberOfLines={2}>{item.title}</Text>
+          <Text className="font-serif text-[13px] text-[#7A8593] mb-[6px]" numberOfLines={2}>{item.subtitle}</Text>
+          <Text className="font-serif text-xs text-muted">{formatDate(item.date)}</Text>
         </View>
         <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
       </TouchableOpacity>
@@ -122,7 +133,7 @@ export default function BlogScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
       {/* Header */}
       <ScreenHeader
         title="Blog"
@@ -133,15 +144,14 @@ export default function BlogScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterContainer}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}
       >
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat.key}
-            style={[
-              styles.filterChip,
-              activeCategory === cat.key && styles.filterChipActive,
-            ]}
+            className={`px-4 py-2 rounded-[20px] ${
+              activeCategory === cat.key ? 'bg-cmu-red' : 'bg-card'
+            }`}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setActiveCategory(cat.key);
@@ -149,10 +159,9 @@ export default function BlogScreen() {
             activeOpacity={0.8}
           >
             <Text
-              style={[
-                styles.filterChipText,
-                activeCategory === cat.key && styles.filterChipTextActive,
-              ]}
+              className={`font-serif-semi text-[13px] ${
+                activeCategory === cat.key ? 'text-white' : 'text-[#7A8593]'
+              }`}
             >
               {cat.label}
             </Text>
@@ -166,7 +175,7 @@ export default function BlogScreen() {
         renderItem={renderPostItem}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderFeaturedPost}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       />
 
@@ -177,10 +186,10 @@ export default function BlogScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setSelectedPost(null)}
       >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
+        <SafeAreaView className="flex-1 bg-white">
+          <View className="flex-row justify-end px-4 py-2">
             <TouchableOpacity
-              style={styles.modalCloseButton}
+              className="w-9 h-9 rounded-[18px] bg-card justify-center items-center"
               onPress={() => setSelectedPost(null)}
             >
               <Ionicons name="close" size={24} color={COLORS.textPrimary} />
@@ -188,25 +197,25 @@ export default function BlogScreen() {
           </View>
           {selectedPost && (
             <ScrollView
-              style={styles.modalScroll}
-              contentContainerStyle={styles.modalScrollContent}
+              className="flex-1"
+              contentContainerStyle={{ paddingBottom: 40 }}
               showsVerticalScrollIndicator={false}
             >
               {selectedPost.image && (
                 <Image
                   source={{ uri: selectedPost.image }}
-                  style={styles.modalImage}
+                  style={{ width: SCREEN_WIDTH, height: 240 }}
                   resizeMode="cover"
                 />
               )}
-              <View style={styles.modalBody}>
-                <Text style={styles.modalDate}>
+              <View className="px-6 pt-5">
+                <Text className="font-serif text-[13px] text-muted mb-2">
                   {formatDate(selectedPost.date)} — {selectedPost.author}
                 </Text>
-                <Text style={styles.modalTitle}>{selectedPost.title}</Text>
-                <Text style={styles.modalSubtitle}>{selectedPost.subtitle}</Text>
-                <View style={styles.modalDivider} />
-                <Text style={styles.modalContent}>{selectedPost.content}</Text>
+                <Text className="font-serif-bold text-[26px] text-[#1F2933] mb-[6px] leading-[32px]">{selectedPost.title}</Text>
+                <Text className="font-serif text-[16px] text-[#7A8593] mb-4">{selectedPost.subtitle}</Text>
+                <View className="h-[1px] bg-border mb-5" />
+                <Text className="font-serif text-[16px] text-[#1F2933] leading-[26px]">{selectedPost.content}</Text>
               </View>
             </ScrollView>
           )}
@@ -215,209 +224,3 @@ export default function BlogScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  filterContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: COLORS.card,
-  },
-  filterChipActive: {
-    backgroundColor: CMU_RED,
-  },
-  filterChipText: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 13,
-    color: COLORS.textSecondary,
-  },
-  filterChipTextActive: {
-    color: '#fff',
-  },
-  listContent: {
-    paddingBottom: 24,
-  },
-  // Featured post
-  featuredCard: {
-    margin: 16,
-    borderRadius: RADIUS.xl,
-    overflow: 'hidden',
-    backgroundColor: COLORS.card,
-    ...SHADOWS.card,
-  },
-  featuredImageContainer: {
-    width: '100%',
-    height: 220,
-    position: 'relative',
-    backgroundColor: COLORS.border,
-  },
-  featuredImage: {
-    width: '100%',
-    height: '100%',
-  },
-  featuredGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 140,
-  },
-  featuredBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: RADIUS.pill,
-    backgroundColor: CMU_RED,
-  },
-  featuredBadgeText: {
-    fontFamily: FONTS.bold,
-    fontSize: 11,
-    color: COLORS.white,
-  },
-  featuredOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 16,
-  },
-  featuredTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 20,
-    color: '#fff',
-    marginBottom: 4,
-  },
-  featuredSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.85)',
-  },
-  // Post list items
-  postCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.white,
-    marginHorizontal: 16,
-    marginVertical: 6,
-    padding: 12,
-    borderRadius: RADIUS.lg,
-    ...SHADOWS.small,
-  },
-  postImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: RADIUS.md,
-    overflow: 'hidden',
-    backgroundColor: COLORS.border,
-    marginRight: 12,
-  },
-  postImage: {
-    width: '100%',
-    height: '100%',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.border,
-  },
-  postImagePlaceholder: {
-    width: 80,
-    height: 80,
-  },
-  postContent: {
-    flex: 1,
-  },
-  postTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-    marginBottom: 3,
-  },
-  postSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginBottom: 6,
-  },
-  postDate: {
-    fontFamily: FONTS.regular,
-    fontSize: 12,
-    color: COLORS.textMuted,
-  },
-  // Modal
-  modalContainer: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  modalCloseButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLORS.card,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalScroll: {
-    flex: 1,
-  },
-  modalScrollContent: {
-    paddingBottom: 40,
-  },
-  modalImage: {
-    width: SCREEN_WIDTH,
-    height: 240,
-  },
-  modalBody: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-  },
-  modalDate: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: COLORS.textMuted,
-    marginBottom: 8,
-  },
-  modalTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 26,
-    color: COLORS.textPrimary,
-    marginBottom: 6,
-    lineHeight: 32,
-  },
-  modalSubtitle: {
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-    color: COLORS.textSecondary,
-    marginBottom: 16,
-  },
-  modalDivider: {
-    height: 1,
-    backgroundColor: COLORS.border,
-    marginBottom: 20,
-  },
-  modalContent: {
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-    color: COLORS.textPrimary,
-    lineHeight: 26,
-  },
-});

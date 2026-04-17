@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
   ActivityIndicator,
   Alert,
@@ -17,8 +16,6 @@ import * as Haptics from 'expo-haptics';
 import ScreenHeader from '../components/ScreenHeader';
 import EmptyState from '../components/EmptyState';
 import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
-import { SHADOWS } from '../constants/layout';
 
 export default function PastChatsScreen() {
   const router = useRouter();
@@ -108,24 +105,31 @@ export default function PastChatsScreen() {
 
   const renderChatItem = ({ item }: { item: ChatSession }) => (
     <TouchableOpacity
-      style={styles.chatItem}
+      className="flex-row items-center bg-white mx-4 my-[6px] p-4 rounded-[12px]"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
+        elevation: 2,
+      }}
       onPress={() => handleChatPress(item.id)}
       activeOpacity={0.7}
     >
-      <View style={styles.chatIcon}>
+      <View className="w-12 h-12 rounded-full bg-[#F8F9FA] justify-center items-center mr-3">
         <Ionicons name="chatbubble" size={24} color={CMU_RED} />
       </View>
-      <View style={styles.chatContent}>
-        <View style={styles.chatHeader}>
-          <Text style={styles.chatTitle} numberOfLines={1}>
+      <View className="flex-1">
+        <View className="flex-row justify-between items-center mb-1">
+          <Text className="font-serif-semi text-[16px] text-[#1F2933] flex-1 mr-2" numberOfLines={1}>
             {getChatTitle(item)}
           </Text>
-          <Text style={styles.chatTime}>{formatDate(item.updatedAt)}</Text>
+          <Text className="font-serif text-xs text-muted">{formatDate(item.updatedAt)}</Text>
         </View>
-        <Text style={styles.chatPreview} numberOfLines={2}>
+        <Text className="font-serif text-sm text-[#666] mb-1 leading-5" numberOfLines={2}>
           {getChatPreview(item)}
         </Text>
-        <Text style={styles.messageCount}>
+        <Text className="font-serif text-xs text-muted mt-1">
           {item.messages.length} {item.messages.length === 1 ? 'message' : 'messages'}
         </Text>
       </View>
@@ -142,7 +146,7 @@ export default function PastChatsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
       {/* Header */}
       <ScreenHeader
         title="Past Chats"
@@ -156,7 +160,7 @@ export default function PastChatsScreen() {
 
       {/* Content */}
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={CMU_RED} />
         </View>
       ) : (
@@ -164,7 +168,7 @@ export default function PastChatsScreen() {
           data={sessions}
           renderItem={renderChatItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={sessions.length === 0 ? styles.emptyList : styles.listContent}
+          contentContainerStyle={sessions.length === 0 ? { flexGrow: 1 } : { paddingVertical: 8 }}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
         />
@@ -172,75 +176,3 @@ export default function PastChatsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listContent: {
-    paddingVertical: 8,
-  },
-  chatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.white,
-    marginHorizontal: 16,
-    marginVertical: 6,
-    padding: 16,
-    borderRadius: 12,
-    ...SHADOWS.small,
-  },
-  chatIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: COLORS.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  chatContent: {
-    flex: 1,
-  },
-  chatHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  chatTitle: {
-    fontFamily: FONTS.semiBold,
-    fontSize: 16,
-    color: COLORS.textPrimary,
-    flex: 1,
-    marginRight: 8,
-  },
-  chatTime: {
-    fontFamily: FONTS.regular,
-    fontSize: 12,
-    color: COLORS.textMuted,
-  },
-  chatPreview: {
-    fontFamily: FONTS.regular,
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-    lineHeight: 20,
-  },
-  messageCount: {
-    fontFamily: FONTS.regular,
-    fontSize: 12,
-    color: COLORS.textMuted,
-    marginTop: 4,
-  },
-  emptyList: {
-    flexGrow: 1,
-  },
-});
-

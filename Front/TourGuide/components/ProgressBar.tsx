@@ -1,8 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
-import { SHADOWS, RADIUS } from '../constants/layout';
+import { View, Text } from 'react-native';
 
 type Props = {
   current: number;
@@ -15,61 +12,29 @@ export default function ProgressBar({ current, total, label = 'Discovery Progres
   const percentage = total > 0 ? (current / total) * 100 : 0;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View
+      className="bg-card rounded-[26px] p-5 overflow-hidden"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
+      }}
+    >
+      <View className="mb-[10px]">
         <View>
-          <Text style={styles.label}>{label}</Text>
-          <Text style={styles.count}>{current} / {total}</Text>
-          {hint && <Text style={styles.hint}>{hint}</Text>}
+          <Text className="font-serif-bold text-lg text-left text-[#1F2933]">{label}</Text>
+          <Text className="font-serif-bold text-lg text-cmu-red mt-0.5">{current} / {total}</Text>
+          {hint && <Text className="font-serif text-[13px] text-[#7A8593] mt-0.5">{hint}</Text>}
         </View>
       </View>
-      <View style={styles.barContainer}>
-        <View style={[styles.barFill, { width: `${percentage}%` }]} />
+      <View className="h-2 bg-border rounded-[4px] overflow-hidden mt-2 mb-2">
+        <View
+          className="h-full bg-cmu-red rounded-[4px]"
+          style={{ width: `${percentage}%` }}
+        />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: COLORS.card,
-    borderRadius: RADIUS.xxl,
-    padding: 20,
-    ...SHADOWS.card,
-    overflow: 'hidden',
-  },
-  header: {
-    marginBottom: 10,
-  },
-  label: {
-    fontFamily: FONTS.bold,
-    fontSize: 18,
-    textAlign: 'left',
-    color: COLORS.textPrimary,
-  },
-  count: {
-    fontFamily: FONTS.bold,
-    fontSize: 18,
-    color: CMU_RED,
-    marginTop: 2,
-  },
-  hint: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    marginTop: 2,
-  },
-  barContainer: {
-    height: 8,
-    backgroundColor: COLORS.border,
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  barFill: {
-    height: '100%',
-    backgroundColor: CMU_RED,
-    borderRadius: 4,
-  },
-});

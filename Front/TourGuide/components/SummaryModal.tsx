@@ -1,12 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Text, Image, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
 import { getBuilding } from '../services/buildingService';
-import { CMU_RED, COLORS } from '../constants/colors';
-import { FONTS } from '../constants/typography';
-import { RADIUS } from '../constants/layout';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
@@ -38,24 +35,35 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
             transparent={true}
             onRequestClose={onClose}
         >
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
+            <View className="flex-1 bg-black/70 justify-center items-center">
+                <View
+                    className="bg-white rounded-[20px] p-5 items-center"
+                    style={{
+                        width: SCREEN_WIDTH * 0.9,
+                        height: SCREEN_HEIGHT * 0.7,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 8,
+                        elevation: 8,
+                    }}
+                >
                     {/* Header Row with Close Button and Badge */}
-                    <View style={styles.headerRow}>
+                    <View className="flex-row items-center justify-between w-full mb-[5px]">
                         {/* New Discovery Badge */}
                         {isNewUnlock ? (
-                            <View style={styles.newDiscoveryBadge}>
+                            <View className="flex-row items-center justify-center bg-[#FFF9E6] py-2 px-4 rounded-[20px] border-2 border-[#FFD700] gap-2 flex-1 mr-2">
                                 <Ionicons name="star" size={20} color="#FFD700" />
-                                <Text style={styles.newDiscoveryText}>New Discovery!</Text>
+                                <Text className="font-serif-bold text-base text-cmu-red">New Discovery!</Text>
                                 <Ionicons name="star" size={20} color="#FFD700" />
                             </View>
                         ) : (
-                            <View style={styles.placeholder} />
+                            <View className="flex-1" />
                         )}
-                        
+
                         {/* Close Button */}
                         <TouchableOpacity
-                            style={styles.closeButton}
+                            className="p-1"
                             onPress={onClose}
                         >
                             <Ionicons name="close" size={28} color="#666" />
@@ -63,47 +71,54 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                     </View>
 
                     {/* Image Placeholder */}
-                    <View style={styles.imageContainer}>
+                    <View className="w-full h-[200px] rounded-[12px] overflow-hidden mb-5 bg-[#f0f0f0]">
                         <Image
                             source={{ uri: buildingData.image_url }}
-                            style={styles.image}
+                            className="w-full h-full"
                             resizeMode="cover"
                         />
                     </View>
 
                     {/* Title */}
-                    <Text style={styles.title}>{buildingData.title}</Text>
+                    <Text className="font-serif-bold text-2xl text-cmu-red mb-4 text-center">{buildingData.title}</Text>
 
                     {/* Description Text Placeholder */}
                     <ScrollView
-                        style={styles.textContainer}
+                        className="w-full mb-6"
                     >
-                        <Markdown 
+                        <Markdown
                             style={{
                                 body: {
-                                    ...styles.description,
+                                    fontFamily: 'SourceSerifPro_400Regular',
+                                    fontSize: 16,
+                                    color: '#1F2933',
+                                    lineHeight: 24,
+                                    textAlign: 'center',
                                 },
-                                strong: styles.boldText,
+                                strong: {
+                                    fontFamily: 'SourceSerifPro_700Bold',
+                                    color: '#1F2933',
+                                },
                             }}
                         >
-                            {Array.isArray(buildingData.tour_guide) 
-                                ? buildingData.tour_guide.join('\n\n') 
+                            {Array.isArray(buildingData.tour_guide)
+                                ? buildingData.tour_guide.join('\n\n')
                                 : buildingData.tour_guide}
                         </Markdown>
                     </ScrollView>
 
-                    <View style={styles.buttonContainer}>
+                    <View className="flex-row">
                         <TouchableOpacity
-                            style={styles.actionButton}
+                            className="bg-cmu-red px-[10px] py-[14px] rounded-[25px] w-1/2 items-center mx-1"
                             onPress={pushChat}
                         >
-                            <Text style={styles.actionButtonText}>Chat More</Text>
+                            <Text className="font-serif-semi text-white text-base">Chat More</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.actionButton}
+                            className="bg-cmu-red px-[10px] py-[14px] rounded-[25px] w-1/2 items-center mx-1"
                             onPress={onClose}
                         >
-                            <Text style={styles.actionButtonText}>Look Inside</Text>
+                            <Text className="font-serif-semi text-white text-base">Look Inside</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -112,111 +127,3 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
         </Modal>
     );
 }
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContainer: {
-        width: SCREEN_WIDTH * 0.9,
-        height: SCREEN_HEIGHT * 0.7,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 5,
-    },
-    placeholder: {
-        flex: 1,
-    },
-    closeButton: {
-        padding: 4,
-    },
-    imageContainer: {
-        width: '100%',
-        height: 200,
-        borderRadius: RADIUS.md,
-        overflow: 'hidden',
-        marginBottom: 20,
-        backgroundColor: '#f0f0f0',
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-    },
-    title: {
-        fontFamily: FONTS.bold,
-        fontSize: 24,
-        color: CMU_RED,
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    textContainer: {
-        width: '100%',
-        marginBottom: 24,
-    },
-    description: {
-        fontFamily: FONTS.regular,
-        fontSize: 16,
-        color: COLORS.textPrimary,
-        lineHeight: 24,
-        textAlign: 'center',
-    },
-    boldText: {
-        fontFamily: FONTS.bold,
-        color: COLORS.textPrimary,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-    },
-    actionButton: {
-        backgroundColor: CMU_RED,
-        paddingHorizontal: 10,
-        paddingVertical: 14,
-        borderRadius: 25,
-        width: '50%',
-        alignItems: 'center',
-        marginHorizontal: 4,
-    },
-    actionButtonText: {
-        fontFamily: FONTS.semiBold,
-        color: COLORS.white,
-        fontSize: 16,
-    },
-    newDiscoveryBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#FFF9E6',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        borderWidth: 2,
-        borderColor: '#FFD700',
-        gap: 8,
-        flex: 1,
-        marginRight: 8,
-    },
-    newDiscoveryText: {
-        fontFamily: FONTS.bold,
-        fontSize: 16,
-        color: CMU_RED,
-    },
-});

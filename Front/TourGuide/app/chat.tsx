@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   FlatList,
   TextInput,
   KeyboardAvoidingView,
@@ -41,26 +40,41 @@ export default function ChatScreen() {
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[styles.messageContainer, item.isUser ? styles.userMessage : styles.aiMessage]}>
-      <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.aiBubble]}>
+    <View className={`my-1 px-4 ${item.isUser ? 'items-end' : 'items-start'}`}>
+      <View
+        className={`max-w-[80%] px-[10px] py-[10px] rounded-[20px] ${
+          item.isUser ? 'bg-cmu-red rounded-br-[4px]' : 'bg-white rounded-bl-[4px]'
+        }`}
+        style={item.isUser ? undefined : SHADOWS.small}
+      >
         {item.isUser ? (
-          <Text style={[styles.messageText, styles.userText]}>
+          <Text className="font-serif text-[16px] text-white" style={{ lineHeight: 22 }}>
             {item.text}
           </Text>
         ) : (
-          <Markdown 
+          <Markdown
             style={{
               body: {
-                ...styles.messageText,
-                ...styles.aiText,
+                fontFamily: FONTS.regular,
+                fontSize: 16,
+                lineHeight: 22,
+                color: COLORS.textPrimary,
               },
-              strong: styles.boldText,
+              strong: {
+                fontFamily: FONTS.bold,
+                color: COLORS.textPrimary,
+              },
             }}
           >
             {item.text}
           </Markdown>
         )}
-        <Text style={[styles.timestamp, item.isUser ? styles.userTimestamp : styles.aiTimestamp]}>
+        <Text
+          className={`font-serif text-xs mt-1 ${
+            item.isUser ? 'text-right' : 'text-muted'
+          }`}
+          style={item.isUser ? { color: 'rgba(255,255,255,0.7)' } : undefined}
+        >
           {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </View>
@@ -69,13 +83,13 @@ export default function ChatScreen() {
 
   const renderImageMessage = () => {
     if (!imageUriState) return null;
-    
+
     return (
-      <View style={[styles.messageContainer, styles.userMessage]}>
-        <View style={[styles.messageBubble, styles.userBubble, styles.imageBubble]}>
+      <View className="my-1 px-4 items-end">
+        <View className="max-w-[250px] rounded-[20px] bg-cmu-red rounded-br-[4px] p-0 overflow-hidden">
           <Image
             source={{ uri: imageUriState }}
-            style={styles.chatImage}
+            style={{ width: 180, height: 250 }}
             contentFit="contain"
             transition={200}
           />
@@ -85,14 +99,14 @@ export default function ChatScreen() {
   };
 
   const renderTypingIndicator = () => (
-    <View style={[styles.messageContainer, styles.aiMessage]}>
-      <View style={[styles.messageBubble, styles.aiBubble]}>
-        <View style={styles.typingContainer}>
-          <Text style={styles.typingText}>AI is typing</Text>
-          <View style={styles.typingDots}>
-            <View style={[styles.dot, styles.dot1]} />
-            <View style={[styles.dot, styles.dot2]} />
-            <View style={[styles.dot, styles.dot3]} />
+    <View className="my-1 px-4 items-start">
+      <View className="max-w-[80%] px-[10px] py-[10px] rounded-[20px] bg-white rounded-bl-[4px]" style={SHADOWS.small}>
+        <View className="flex-row items-center">
+          <Text className="font-serif text-[#666] text-sm italic mr-2">AI is typing</Text>
+          <View className="flex-row">
+            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
+            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
+            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
           </View>
         </View>
       </View>
@@ -100,9 +114,9 @@ export default function ChatScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        style={styles.container} 
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
+      <KeyboardAvoidingView
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Header */}
@@ -121,16 +135,17 @@ export default function ChatScreen() {
           data={messages}
           renderItem={renderMessage}
           keyExtractor={(item) => item.id}
-          style={styles.messagesList}
-          contentContainerStyle={styles.messagesContent}
+          className="flex-1"
+          contentContainerStyle={{ paddingVertical: 16 }}
           ListHeaderComponent={renderImageMessage}
           ListFooterComponent={isTyping ? renderTypingIndicator : null}
         />
 
         {/* Input */}
-        <View style={styles.inputContainer}>
+        <View className="flex-row items-end px-4 py-3 bg-white border-t border-[#e0e0e0]">
           <TextInput
-            style={styles.textInput}
+            className="flex-1 border border-[#e0e0e0] rounded-[20px] px-4 py-3 mr-3 font-serif text-[16px]"
+            style={{ maxHeight: 100 }}
             value={inputText}
             onChangeText={setInputText}
             placeholder="Ask about the building..."
@@ -138,15 +153,16 @@ export default function ChatScreen() {
             multiline
             maxLength={500}
           />
-          <TouchableOpacity 
-            style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
+          <TouchableOpacity
+            className="w-11 h-11 rounded-[22px] justify-center items-center"
+            style={{ backgroundColor: inputText.trim() === '' ? '#e0e0e0' : CMU_RED }}
             onPress={handleSend}
             disabled={inputText.trim() === ''}
           >
-            <Ionicons 
-              name="send" 
-              size={20} 
-              color={inputText.trim() === '' ? '#999' : 'white'} 
+            <Ionicons
+              name="send"
+              size={20}
+              color={inputText.trim() === '' ? '#999' : 'white'}
             />
           </TouchableOpacity>
         </View>
@@ -154,139 +170,3 @@ export default function ChatScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  messagesList: {
-    flex: 1,
-  },
-  messagesContent: {
-    paddingVertical: 16,
-  },
-  messageContainer: {
-    marginVertical: 4,
-    paddingHorizontal: 16,
-  },
-  userMessage: {
-    alignItems: 'flex-end',
-  },
-  aiMessage: {
-    alignItems: 'flex-start',
-  },
-  messageBubble: {
-    maxWidth: '80%',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  userBubble: {
-    backgroundColor: CMU_RED,
-    borderBottomRightRadius: 4,
-  },
-  imageBubble: {
-    padding: 0,
-    overflow: 'hidden',
-    maxWidth: 250,
-  },
-  chatImage: {
-    width: 180,
-    height: 250,
-  },
-  aiBubble: {
-    backgroundColor: COLORS.white,
-    borderBottomLeftRadius: 4,
-    ...SHADOWS.small,
-  },
-  messageText: {
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  userText: {
-    color: 'white',
-  },
-  aiText: {
-    color: COLORS.textPrimary,
-  },
-  boldText: {
-    fontFamily: FONTS.bold,
-    color: COLORS.textPrimary,
-  },
-  timestamp: {
-    fontFamily: FONTS.regular,
-    fontSize: 12,
-    marginTop: 4,
-  },
-  userTimestamp: {
-    color: 'rgba(255,255,255,0.7)',
-    textAlign: 'right',
-  },
-  aiTimestamp: {
-    color: COLORS.textMuted,
-  },
-  typingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  typingText: {
-    fontFamily: FONTS.regular,
-    color: '#666',
-    fontSize: 14,
-    fontStyle: 'italic',
-    marginRight: 8,
-  },
-  typingDots: {
-    flexDirection: 'row',
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: CMU_RED,
-    marginHorizontal: 2,
-  },
-  dot1: {
-    animationDelay: '0s',
-  },
-  dot2: {
-    animationDelay: '0.2s',
-  },
-  dot3: {
-    animationDelay: '0.4s',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: COLORS.white,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  textInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginRight: 12,
-    maxHeight: 100,
-    fontFamily: FONTS.regular,
-    fontSize: 16,
-  },
-  sendButton: {
-    backgroundColor: CMU_RED,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#e0e0e0',
-  },
-});
