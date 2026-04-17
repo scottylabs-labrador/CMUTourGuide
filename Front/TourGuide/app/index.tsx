@@ -12,13 +12,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { unlockedBuildings, isUnlocked } = useBuildings();
+  const {
+    isUnlocked,
+    isScannable,
+    unlockedScannableCount,
+    totalScannableCount,
+  } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false)
   const [buildingId, setBuildingId] = React.useState("")
   const buildingKeys = Object.keys(buildings);
-  const totalBuildings = buildingKeys.length;
-  const unlockedCount = unlockedBuildings.length;
-  const progressPercentage = totalBuildings > 0 ? (unlockedCount / totalBuildings) * 100 : 0;
+  const progressPercentage = totalScannableCount > 0
+    ? (unlockedScannableCount / totalScannableCount) * 100
+    : 0;
 
   const scrollY = React.useRef(new Animated.Value(0)).current;
   const [headerVisible, setHeaderVisible] = React.useState(false);
@@ -142,7 +147,7 @@ export default function HomeScreen() {
             <View style={styles.progressHeader}>
               <View>
                 <Text style={styles.progressTitle}>Discovery Progress</Text>
-                <Text style={styles.progressText}>{unlockedCount} / {totalBuildings}</Text>
+                <Text style={styles.progressText}>{unlockedScannableCount} / {totalScannableCount}</Text>
                 <Text style={styles.progressHint}>
                   Unlock more buildings to reveal campus stories.
                 </Text>
@@ -211,7 +216,13 @@ export default function HomeScreen() {
           <View style={styles.buildingsSection}>
             <View style={styles.buildingsHeaderRow}>
               <Text style={styles.sectionTitle}>Buildings</Text>
-              <TouchableOpacity activeOpacity={0.7}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push('/allBuildings');
+                }}
+              >
                 <Text style={styles.seeAllText}>See all</Text>
               </TouchableOpacity>
             </View>
@@ -230,6 +241,8 @@ export default function HomeScreen() {
               {buildingKeys.map((buildingId, index) => {
                 const building = buildings[buildingId as keyof typeof buildings];
                 const unlocked = isUnlocked(buildingId);
+                const scannable = isScannable(buildingId);
+                const showLockedOverlay = scannable && !unlocked;
 
                 const scale = scrollXBuildings.interpolate({
                   inputRange: [
@@ -264,7 +277,7 @@ export default function HomeScreen() {
                             <Ionicons name="business-outline" size={32} color="#999" />
                           </View>
                         )}
-                        {!unlocked && (
+                        {showLockedOverlay && (
                           <View style={styles.buildingLockedOverlay}>
                             <Ionicons name="lock-closed" size={18} color="#fff" />
                             <Text style={styles.lockedText}>Scan to unlock</Text>
@@ -280,14 +293,16 @@ export default function HomeScreen() {
                         />
                         <View style={styles.buildingBadge}>
                           <Text style={styles.buildingBadgeText}>
-                            {unlocked ? 'Unlocked' : 'Must‑See'}
+                            {scannable ? (unlocked ? 'Unlocked' : 'Must‑See') : 'Explore'}
                           </Text>
                         </View>
                       </View>
                       <View style={styles.buildingInfo}>
                         <Text style={styles.buildingName}>{building.title}</Text>
                         <Text style={styles.buildingSubtext}>
-                          Scan to reveal fun facts.
+                          {scannable && !unlocked
+                            ? 'Scan to reveal fun facts.'
+                            : 'Tap to learn more.'}
                         </Text>
                       </View>
                     </TouchableOpacity>

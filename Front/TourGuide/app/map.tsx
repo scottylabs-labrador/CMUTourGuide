@@ -10,7 +10,7 @@ import allOutlines from '../components/allOutlines.json';
 import { getCategoryColors, getBaseOutlineColors, BuildingCategory } from '../components/buildingCategories';
 import SummaryModal from '../components/SummaryModal';
 
-const USE_GOOGLE_MAPS = false;
+const USE_GOOGLE_MAPS = true;
 
 const INITIAL_REGION: Region = {
   latitude: 40.4440,
@@ -108,15 +108,20 @@ const CMU_POLYGON = [
 
 export default function MapScreen() {
   const router = useRouter();
-  const { unlockedBuildings } = useBuildings();
+  const {
+    isUnlocked,
+    isScannable,
+    unlockedScannableCount,
+    totalScannableCount,
+  } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
   const mapRef = useRef<MapView>(null);
-  
+
   const buildingKeys = Object.keys(buildings);
-  const totalBuildings = buildingKeys.length;
-  const unlockedCount = unlockedBuildings.length;
-  const progressPercentage = totalBuildings > 0 ? (unlockedCount / totalBuildings) * 100 : 0;
+  const progressPercentage = totalScannableCount > 0
+    ? (unlockedScannableCount / totalScannableCount) * 100
+    : 0;
 
   const initialCameraRef = useRef<any>(null);
 
@@ -165,7 +170,7 @@ export default function MapScreen() {
             Discovery Progress
           </Text>
           <Text className="text-[14px] text-[#C41E3A]" style={{ fontFamily: 'SourceSerifPro_700Bold' }}>
-            {unlockedCount} / {totalBuildings}
+            {unlockedScannableCount} / {totalScannableCount}
           </Text>
         </View>
 
@@ -226,7 +231,7 @@ export default function MapScreen() {
             const outlineData = allOutlines[id as keyof typeof allOutlines];
             if (!outlineData) return null;
             const { category, shapes } = outlineData as { category: string; shapes: { latitude: number; longitude: number }[][] };
-            const unlocked = unlockedBuildings.includes(id);
+            const unlocked = isUnlocked(id);
             const colors = getCategoryColors(category as BuildingCategory, unlocked);
             return shapes.map((shape, i) => (
               <Polygon
@@ -241,7 +246,9 @@ export default function MapScreen() {
           {buildingKeys.map((id) => {
             const b = buildings[id as keyof typeof buildings];
             if (!b.latitude || !b.longitude) return null;
-            const unlocked = unlockedBuildings.includes(id);
+            const unlocked = isUnlocked(id);
+            const scannable = isScannable(id);
+            const showLocked = scannable && !unlocked;
             const outlineData = allOutlines[id as keyof typeof allOutlines];
             const category = (outlineData as any)?.category || 'academic';
             const colors = getCategoryColors(category as BuildingCategory, unlocked);
@@ -262,12 +269,12 @@ export default function MapScreen() {
               >
                 <View style={markerStyles.container}>
                   <View style={markerStyles.labelRow}>
-                    {!unlocked && (
+                    {showLocked && (
                       <Ionicons name="lock-closed" size={10} color="#999" style={markerStyles.lockIcon} />
                     )}
                     <Text style={[
                       markerStyles.label,
-                      { color: unlocked ? '#C41E3A' : '#999' }
+                      { color: showLocked ? '#999' : '#C41E3A' }
                     ]} numberOfLines={1}>
                       {b.title}
                     </Text>

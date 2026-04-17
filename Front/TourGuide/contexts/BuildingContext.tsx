@@ -1,10 +1,24 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { getUnlockedBuildings, unlockBuilding as unlockBuildingStorage, resetProgress } from '../utils/buildingStorage';
+import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../components/scannableBuildings';
 
 interface BuildingContextType {
+  /** Scannable buildings the user has explicitly unlocked (persisted). */
   unlockedBuildings: string[];
   unlockBuilding: (buildingId: string) => Promise<void>;
+  /**
+   * True if the building is unlocked for viewing. Non-scannable buildings are
+   * always unlocked; scannable buildings must be found via camera scan.
+   */
   isUnlocked: (buildingId: string) => boolean;
+  /** True if the building is part of the scan-to-unlock set. */
+  isScannable: (buildingId: string) => boolean;
+  /** The canonical list of scannable building IDs. */
+  scannableBuildingIds: readonly string[];
+  /** Number of scannable buildings the user has unlocked. */
+  unlockedScannableCount: number;
+  /** Total number of scannable buildings. */
+  totalScannableCount: number;
   clearStorage: () => Promise<void>;
   isLoading: boolean;
 }
@@ -46,8 +60,11 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
     if (buildingId == "Error") {
       return;
     }
+    // Non-scannable buildings are always unlocked; no need to persist them.
+    if (!isScannableBuilding(buildingId)) {
+      return;
+    }
     try {
-      // Check if already unlocked
       if (!unlockedBuildings.includes(buildingId)) {
         await unlockBuildingStorage(buildingId);
         setUnlockedBuildings(prev => [...prev, buildingId]);
@@ -58,8 +75,14 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
   };
 
   const isUnlocked = (buildingId: string): boolean => {
+    if (!isScannableBuilding(buildingId)) return true;
     return unlockedBuildings.includes(buildingId);
   };
+
+  const unlockedScannableCount = useMemo(
+    () => unlockedBuildings.filter(isScannableBuilding).length,
+    [unlockedBuildings]
+  );
 
   const clearStorage = async () => {
     try {
@@ -77,6 +100,10 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
         unlockedBuildings,
         unlockBuilding,
         isUnlocked,
+        isScannable: isScannableBuilding,
+        scannableBuildingIds: SCANNABLE_BUILDING_IDS,
+        unlockedScannableCount,
+        totalScannableCount: SCANNABLE_BUILDING_IDS.length,
         clearStorage,
         isLoading,
       }}
@@ -85,4 +112,3 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
     </BuildingContext.Provider>
   );
 };
-
