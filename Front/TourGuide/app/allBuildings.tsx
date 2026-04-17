@@ -15,10 +15,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useBuildings } from '../contexts/BuildingContext';
-import buildings from '../components/buildings.json';
 import SummaryModal from '../components/SummaryModal';
-
-type BuildingId = keyof typeof buildings;
+import { getAllBuildingIds, getBuilding } from '../services/buildingService';
+import type { BuildingId } from '../types/building';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20;
@@ -36,7 +35,7 @@ export default function AllBuildingsScreen() {
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = React.useState('');
 
-  const buildingIds = Object.keys(buildings) as BuildingId[];
+  const buildingIds = getAllBuildingIds();
 
   const handlePress = (buildingId: string) => {
     if (isUnlocked(buildingId)) {
@@ -50,7 +49,8 @@ export default function AllBuildingsScreen() {
   };
 
   const renderItem = ({ item: buildingId, index }: { item: BuildingId; index: number }) => {
-    const building = buildings[buildingId];
+    const building = getBuilding(buildingId);
+    if (!building) return null;
     const unlocked = isUnlocked(buildingId);
     const scannable = isScannable(buildingId);
     const showLockedOverlay = scannable && !unlocked;

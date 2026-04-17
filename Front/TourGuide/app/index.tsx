@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useBuildings } from '../contexts/BuildingContext';
-import buildings from '../components/buildings.json';
+import { getAllBuildingIds, getBuilding } from '../services/buildingService';
 import SummaryModal from '../components/SummaryModal';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -20,7 +20,7 @@ export default function HomeScreen() {
   } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false)
   const [buildingId, setBuildingId] = React.useState("")
-  const buildingKeys = Object.keys(buildings);
+  const buildingKeys = getAllBuildingIds();
   const progressPercentage = totalScannableCount > 0
     ? (unlockedScannableCount / totalScannableCount) * 100
     : 0;
@@ -239,7 +239,8 @@ export default function HomeScreen() {
               )}
             >
               {buildingKeys.map((buildingId, index) => {
-                const building = buildings[buildingId as keyof typeof buildings];
+                const building = getBuilding(buildingId);
+                if (!building) return null;
                 const unlocked = isUnlocked(buildingId);
                 const scannable = isScannable(buildingId);
                 const showLockedOverlay = scannable && !unlocked;

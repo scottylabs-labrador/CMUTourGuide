@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, Modal, TouchableOpacity, Dimensions, Scr
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
-import buildings from "../components/buildings.json"
+import { getBuilding } from '../services/buildingService';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
@@ -14,7 +14,7 @@ interface SummaryModalProps {
 }
 
 export default function SummaryModal({ visible, onClose, building_id, isNewUnlock = false }: SummaryModalProps) {
-    const buildingData = buildings[building_id as keyof typeof buildings]
+    const buildingData = getBuilding(building_id);
     const router = useRouter()
 
     if (!buildingData) {

@@ -1,7 +1,7 @@
 // Buildings that must be unlocked by scanning. Every other building in
 // `buildings.json` is treated as unlocked by default.
 //
-// IDs map to keys in `Front/TourGuide/components/buildings.json`.
+// IDs map to keys in `Front/TourGuide/data/buildings.json`.
 export const SCANNABLE_BUILDING_IDS: readonly string[] = [
   'AN',   // Ansys Hall
   'BH',   // Baker Hall

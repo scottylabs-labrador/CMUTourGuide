@@ -5,9 +5,17 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Region, Polygon, Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useBuildings } from '../contexts/BuildingContext';
-import buildings from '../components/buildings.json';
-import allOutlines from '../components/allOutlines.json';
-import { getCategoryColors, getBaseOutlineColors, BuildingCategory } from '../components/buildingCategories';
+import {
+  getAllBuildingIds,
+  getBuilding,
+  getBuildingOutline,
+  getAllOutlineEntries,
+} from '../services/buildingService';
+import {
+  getCategoryColors,
+  getBaseOutlineColors,
+  BuildingCategory,
+} from '../components/buildingCategories';
 import SummaryModal from '../components/SummaryModal';
 
 const USE_GOOGLE_MAPS = true;
@@ -118,7 +126,8 @@ export default function MapScreen() {
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
   const mapRef = useRef<MapView>(null);
 
-  const buildingKeys = Object.keys(buildings);
+  const buildingKeys = getAllBuildingIds();
+  const buildingKeySet = new Set(buildingKeys);
   const progressPercentage = totalScannableCount > 0
     ? (unlockedScannableCount / totalScannableCount) * 100
     : 0;
@@ -212,10 +221,10 @@ export default function MapScreen() {
             lineDashPattern={[5, 3]}
           />
           {/* Base outlines for non-app buildings by category */}
-          {Object.entries(allOutlines).map(([code, data]) => {
-            const { category, shapes } = data as { category: string; shapes: { latitude: number; longitude: number }[][] };
-            if (buildingKeys.includes(code)) return null;
-            const colors = getBaseOutlineColors(category as BuildingCategory);
+          {getAllOutlineEntries().map(([code, data]) => {
+            if (buildingKeySet.has(code)) return null;
+            const { category, shapes } = data;
+            const colors = getBaseOutlineColors(category);
             return shapes.map((shape, i) => (
               <Polygon
                 key={`outline-${code}-${i}`}
@@ -228,11 +237,11 @@ export default function MapScreen() {
           })}
           {/* App buildings with category colors on top */}
           {buildingKeys.map((id) => {
-            const outlineData = allOutlines[id as keyof typeof allOutlines];
+            const outlineData = getBuildingOutline(id);
             if (!outlineData) return null;
-            const { category, shapes } = outlineData as { category: string; shapes: { latitude: number; longitude: number }[][] };
+            const { category, shapes } = outlineData;
             const unlocked = isUnlocked(id);
-            const colors = getCategoryColors(category as BuildingCategory, unlocked);
+            const colors = getCategoryColors(category, unlocked);
             return shapes.map((shape, i) => (
               <Polygon
                 key={`app-${id}-${i}`}
@@ -244,14 +253,14 @@ export default function MapScreen() {
             ));
           })}
           {buildingKeys.map((id) => {
-            const b = buildings[id as keyof typeof buildings];
-            if (!b.latitude || !b.longitude) return null;
+            const b = getBuilding(id);
+            if (!b || !b.latitude || !b.longitude) return null;
             const unlocked = isUnlocked(id);
             const scannable = isScannable(id);
             const showLocked = scannable && !unlocked;
-            const outlineData = allOutlines[id as keyof typeof allOutlines];
-            const category = (outlineData as any)?.category || 'academic';
-            const colors = getCategoryColors(category as BuildingCategory, unlocked);
+            const category: BuildingCategory =
+              getBuildingOutline(id)?.category ?? 'academic';
+            const colors = getCategoryColors(category, unlocked);
             return (
               <Marker
                 key={id}

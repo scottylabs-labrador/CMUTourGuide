@@ -15,11 +15,10 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import blogPosts from '../components/blogPosts.json';
+import { getBlogPostsByCategory } from '../services/blogService';
+import type { BlogPost } from '../types/blog';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-type BlogPost = typeof blogPosts[number];
 
 const CATEGORIES = [
   { key: 'all', label: 'All' },
@@ -34,9 +33,7 @@ export default function BlogScreen() {
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
-  const filteredPosts = activeCategory === 'all'
-    ? blogPosts
-    : blogPosts.filter((p) => p.category === activeCategory);
+  const filteredPosts = getBlogPostsByCategory(activeCategory);
 
   const handlePostPress = (post: BlogPost) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
