@@ -1599,6 +1599,58 @@
       ]
     ]
   },
+  "HWC": {
+    "name": "Highmark Center for Health, Wellness and Athletics",
+    "category": "student-life",
+    "shapes": [
+      [
+        {
+          "latitude": 40.4404544,
+          "longitude": -79.941642
+        },
+        {
+          "latitude": 40.4403836,
+          "longitude": -79.941285
+        },
+        {
+          "latitude": 40.4408845,
+          "longitude": -79.9411107
+        },
+        {
+          "latitude": 40.4409717,
+          "longitude": -79.9410616
+        },
+        {
+          "latitude": 40.4412684,
+          "longitude": -79.9409568
+        },
+        {
+          "latitude": 40.4412814,
+          "longitude": -79.941011
+        },
+        {
+          "latitude": 40.4414417,
+          "longitude": -79.940953
+        },
+        {
+          "latitude": 40.4415021,
+          "longitude": -79.9412692
+        },
+        {
+          "latitude": 40.4413363,
+          "longitude": -79.9413314
+        },
+        {
+          "latitude": 40.4413432,
+          "longitude": -79.9413816
+        },
+        {
+          "latitude": 40.4404544,
+          "longitude": -79.941642
+        }
+      ]
+    ]
+  },
   "MM": {
     "name": "Margaret Morrison Carnegie Hall",
     "category": "academic",
