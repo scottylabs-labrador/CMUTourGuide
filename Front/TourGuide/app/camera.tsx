@@ -9,18 +9,38 @@ import SummaryModal from '../components/SummaryModal';
 import { useBuildings } from '../contexts/BuildingContext';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Map classifier labels to canonical building IDs used in buildings.json (case-insensitive)
-const BUILDING_ID_ALIASES: Record<string, string> = {
-  'Uc Side': 'Uc',
-  'Uc Side 2': 'Uc',
-  'Uc Front': 'Uc',
-  'Uc Back': 'Uc',
-  'Margaret Morrison Side': 'Margaret Morrison',
+// Map classifier labels to building codes used in buildings.json
+const BUILDING_ID_MAP: Record<string, string> = {
+  'Tepper': 'TEP',
+  'Tcs': 'TCS',
+  'Gates': 'GHC',
+  'Warner': 'WH',
+  'Purnell': 'PCA',
+  'Doherty': 'DH',
+  'Hamerschlag': 'HH',
+  'ANSYS': 'AN',
+  'Scaife': 'SH',
+  'Baker': 'BH',
+  'Cfa': 'CFA',
+  'Posner': 'POS',
+  'Margaret Morrison': 'MM',
+  'Margaret Morrison Side': 'MM',
+  'Highmark': 'HWC',
+  'Hunt': 'HL',
+  'Hamburg': 'HBH',
+  'Cyert': 'CYH',
+  'Uc': 'CUC',
+  'Uc Side': 'CUC',
+  'Uc Side 2': 'CUC',
+  'Uc Front': 'CUC',
+  'Uc Back': 'CUC',
+  'Wean': 'WEH',
+  'Porter': 'PH',
 };
 
 function canonicalBuildingId(raw: string): string {
-  const key = raw.trim().toLowerCase();
-  return BUILDING_ID_ALIASES[key] ?? raw;
+  const trimmed = raw.trim();
+  return BUILDING_ID_MAP[trimmed] ?? trimmed;
 }
 
 export default function CameraScreen() {

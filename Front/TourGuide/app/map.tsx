@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import MapView, { Region, Polygon, Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useBuildings } from '../contexts/BuildingContext';
 import buildings from '../components/buildings.json';
+import allOutlines from '../components/allOutlines.json';
+import { getCategoryColors, getBaseOutlineColors, BuildingCategory } from '../components/buildingCategories';
 import SummaryModal from '../components/SummaryModal';
 
 const USE_GOOGLE_MAPS = false;
@@ -204,10 +206,45 @@ export default function MapScreen() {
             fillColor="rgba(196, 30, 58, 0)"
             lineDashPattern={[5, 3]}
           />
+          {/* Base outlines for non-app buildings by category */}
+          {Object.entries(allOutlines).map(([code, data]) => {
+            const { category, shapes } = data as { category: string; shapes: { latitude: number; longitude: number }[][] };
+            if (buildingKeys.includes(code)) return null;
+            const colors = getBaseOutlineColors(category as BuildingCategory);
+            return shapes.map((shape, i) => (
+              <Polygon
+                key={`outline-${code}-${i}`}
+                coordinates={shape}
+                strokeColor={colors.stroke}
+                strokeWidth={1}
+                fillColor={colors.fill}
+              />
+            ));
+          })}
+          {/* App buildings with category colors on top */}
+          {buildingKeys.map((id) => {
+            const outlineData = allOutlines[id as keyof typeof allOutlines];
+            if (!outlineData) return null;
+            const { category, shapes } = outlineData as { category: string; shapes: { latitude: number; longitude: number }[][] };
+            const unlocked = unlockedBuildings.includes(id);
+            const colors = getCategoryColors(category as BuildingCategory, unlocked);
+            return shapes.map((shape, i) => (
+              <Polygon
+                key={`app-${id}-${i}`}
+                coordinates={shape}
+                strokeColor={colors.stroke}
+                strokeWidth={1.5}
+                fillColor={colors.fill}
+              />
+            ));
+          })}
           {buildingKeys.map((id) => {
             const b = buildings[id as keyof typeof buildings];
             if (!b.latitude || !b.longitude) return null;
             const unlocked = unlockedBuildings.includes(id);
+            const outlineData = allOutlines[id as keyof typeof allOutlines];
+            const category = (outlineData as any)?.category || 'academic';
+            const colors = getCategoryColors(category as BuildingCategory, unlocked);
             return (
               <Marker
                 key={id}
@@ -237,7 +274,7 @@ export default function MapScreen() {
                   </View>
                   <View style={[
                     markerStyles.dot,
-                    { backgroundColor: unlocked ? '#C41E3A' : '#999' }
+                    { backgroundColor: colors.dot }
                   ]} />
                 </View>
                 <Callout tooltip>
