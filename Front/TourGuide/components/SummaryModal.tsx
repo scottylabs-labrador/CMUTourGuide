@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Modal, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Text, Image, Modal, TouchableOpacity, Pressable, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
@@ -42,6 +42,10 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
             onRequestClose={onClose}
         >
             <View className="flex-1 bg-black/70 justify-center items-center">
+                <Pressable
+                    onPress={onClose}
+                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+                />
                 <View
                     className="bg-white rounded-[20px] p-5 items-center"
                     style={{

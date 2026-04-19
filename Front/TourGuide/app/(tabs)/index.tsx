@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,9 +10,6 @@ import CampusMap from '../../components/CampusMap';
 import { CMU_RED } from '../../constants/colors';
 import { SHADOWS } from '../../constants/layout';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const MAP_HEIGHT = Math.min(470, Math.round(SCREEN_HEIGHT * 0.54));
-
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -20,22 +17,9 @@ export default function HomeScreen() {
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [buildingId, setBuildingId] = React.useState('');
 
-  const scrollY = React.useRef(new Animated.Value(0)).current;
-  const HEADER_SCROLL_RANGE = 200;
-  const HERO_FADE_END = HEADER_SCROLL_RANGE * 0.55;
-  const STICKY_FADE_START = HEADER_SCROLL_RANGE * 0.55;
-
-  const [headerVisible, setHeaderVisible] = React.useState(false);
-  React.useEffect(() => {
-    const id = scrollY.addListener(({ value }) => {
-      setHeaderVisible(value > STICKY_FADE_START);
-    });
-    return () => scrollY.removeListener(id);
-  }, []);
-
-  const handlePastChats = () => {
+  const handleRoutes = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push('/pastChats');
+    // TODO: hook up campus routes once the feature lands.
   };
 
   const handleBlog = () => {
@@ -48,105 +32,43 @@ export default function HomeScreen() {
     router.push('/camera');
   };
 
-  // Hero fades out in the first ~55% of the scroll range...
-  const heroLogoOpacity = scrollY.interpolate({
-    inputRange: [0, HERO_FADE_END],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-  // ...and slides up at a slight parallax for a natural collapse.
-  const heroTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_RANGE],
-    outputRange: [0, -40],
-    extrapolate: 'clamp',
-  });
-  // Sticky header only appears after the hero has finished fading,
-  // so they never overlap visually.
-  const fixedHeaderOpacity = scrollY.interpolate({
-    inputRange: [STICKY_FADE_START, HEADER_SCROLL_RANGE],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
-
   return (
     <View className="flex-1 bg-[#F8F9FA]">
       <SafeAreaView className="flex-1 bg-transparent" edges={['left', 'right']}>
-        <View className="absolute top-0 left-0 right-0 bg-cmu-red" style={{ height: insets.top }} />
-        <Animated.View
-          style={[
-            {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 10,
-              paddingBottom: 12,
-              opacity: fixedHeaderOpacity,
-            },
-          ]}
-          pointerEvents={headerVisible ? 'box-none' : 'none'}
+        <View
+          style={{
+            backgroundColor: CMU_RED,
+            paddingTop: insets.top + 10,
+            paddingBottom: 18,
+            paddingHorizontal: 24,
+            position: 'relative',
+          }}
         >
-          <View
-            className="flex-row items-center justify-between bg-cmu-red px-5 pb-3"
-            style={{ paddingTop: insets.top }}
+          <TouchableOpacity
+            className="absolute right-4 p-1 z-[1]"
+            style={{ top: insets.top + 10 }}
+            onPress={() => router.push('/info')}
+            activeOpacity={0.8}
           >
-            <Text className="font-serif-semi text-lg text-white flex-1" numberOfLines={1}>
-              Campus Explorer
-            </Text>
-            <TouchableOpacity onPress={() => router.push('/info')} activeOpacity={0.8} className="p-1 ml-2">
-              <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-
-        <Animated.ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 0, paddingBottom: 40 }}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-        >
-          <Animated.View
-            style={{
-              backgroundColor: CMU_RED,
-              paddingBottom: 18,
-              paddingHorizontal: 24,
-              marginHorizontal: -24,
-              marginBottom: 16,
-              alignSelf: 'stretch',
-              position: 'relative',
-              opacity: heroLogoOpacity,
-              transform: [{ translateY: heroTranslateY }],
-              paddingTop: insets.top + 10,
-            }}
+            <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text
+            className="font-sans-semi text-[11px] text-white/80 mb-1"
+            style={{ letterSpacing: 1.2, textTransform: 'uppercase' }}
           >
-            <TouchableOpacity
-              className="absolute right-4 p-1 z-[1]"
-              style={{ top: insets.top + 10 }}
-              onPress={() => router.push('/info')}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-            <Text
-              className="font-sans-semi text-[11px] text-white/80 mb-1"
-              style={{ letterSpacing: 1.2, textTransform: 'uppercase' }}
-            >
-              Carnegie Mellon University
-            </Text>
-            <Text
-              className="font-serif-semi text-[28px] text-white"
-              style={{ letterSpacing: -0.4, lineHeight: 32 }}
-            >
-              Campus Explorer
-            </Text>
-          </Animated.View>
+            Carnegie Mellon University
+          </Text>
+          <Text
+            className="font-serif-semi text-[28px] text-white"
+            style={{ letterSpacing: -0.4, lineHeight: 32 }}
+          >
+            Campus Explorer
+          </Text>
+        </View>
 
+        <View className="flex-1 px-6 pt-4">
           {/* Primary actions row */}
-          <View className="flex-row gap-3 mb-6">
+          <View className="flex-row gap-3 mb-5">
             <TouchableOpacity
               className="flex-1 rounded-[20px] items-center py-4 bg-cmu-red"
               style={SHADOWS.card}
@@ -162,16 +84,16 @@ export default function HomeScreen() {
             <TouchableOpacity
               className="flex-1 rounded-[20px] items-center py-4 bg-card"
               style={SHADOWS.card}
-              onPress={handlePastChats}
+              onPress={handleRoutes}
               activeOpacity={0.85}
             >
               <View
                 className="w-11 h-11 rounded-[22px] items-center justify-center mb-2"
                 style={{ backgroundColor: 'rgba(196,18,48,0.08)' }}
               >
-                <Ionicons name="chatbubbles-outline" size={22} color={CMU_RED} />
+                <Ionicons name="map-outline" size={22} color={CMU_RED} />
               </View>
-              <Text className="font-serif-semi text-[13px] text-[#1F2933]">Chats</Text>
+              <Text className="font-serif-semi text-[13px] text-[#1F2933]">Routes</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -190,8 +112,8 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Embedded campus map — main map view for the user */}
-          <View className="mb-6">
+          {/* Embedded campus map — fills remaining space */}
+          <View className="flex-1 mb-4">
             <View className="flex-row justify-between items-center mb-3">
               <Text className="font-serif-bold text-[20px] text-[#1F2933]">CMU Map</Text>
               <View className="flex-row items-center px-2 py-[3px] rounded-full bg-card">
@@ -202,8 +124,8 @@ export default function HomeScreen() {
               </View>
             </View>
             <View
-              className="rounded-[24px] overflow-hidden"
-              style={[{ height: MAP_HEIGHT }, SHADOWS.card]}
+              className="flex-1 rounded-[24px] overflow-hidden"
+              style={SHADOWS.card}
             >
               <CampusMap
                 onBuildingPress={(id) => {
@@ -218,8 +140,7 @@ export default function HomeScreen() {
               />
             </View>
           </View>
-
-        </Animated.ScrollView>
+        </View>
 
         <SummaryModal
           visible={showSummaryPopup}

@@ -55,7 +55,7 @@ export default function InfoScreen() {
       >
         {/* App Title */}
         <View className="items-center mb-10">
-          <Text className="font-serif-bold text-[32px] text-cmu-red mb-2 tracking-tight">{`CMU Tour Guide`}</Text>
+          <Text className="font-serif-bold text-[32px] text-cmu-red mb-2 tracking-tight">{`CMU Campus Explorer`}</Text>
           <Text className="font-serif text-[16px] text-[#666]">Your Intelligent Campus Companion</Text>
         </View>
 
@@ -77,7 +77,7 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">Who is it for?</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            Perfect for prospective students, new visitors, current students exploring campus, alumni returning to campus, and anyone curious about the rich history and architecture of CMU.
+            Perfect for prospective students, new visitors, current students exploring campus, alumni returning to campus, and anyone curious about CMU and life on campus.
           </Text>
         </View>
 
@@ -94,11 +94,11 @@ export default function InfoScreen() {
             </View>
             <View className="flex-row items-start gap-3">
               <Ionicons name="bulb" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Get instant AI-powered insights and history</Text>
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Get instant insights and history</Text>
             </View>
             <View className="flex-row items-start gap-3">
               <Ionicons name="chatbubbles" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Save and review past conversations</Text>
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Chat with our AI companion</Text>
             </View>
             <View className="flex-row items-start gap-3">
               <Ionicons name="map" size={20} color={CMU_RED} />
@@ -114,14 +114,14 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">How it works</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            Simply point your camera at any building or landmark on campus. Our advanced computer vision technology identifies the location, and our AI system provides you with fascinating stories, historical context, and insider information about that place.
+            Simply point your camera at any building or landmark on campus. Our advanced computer vision technology identifies the building, and our AI system provides you with fascinating stories, historical context, and insider information about that place.
           </Text>
         </View>
 
         {/* Clear Storage Section */}
         <View className="mb-8">
           <TouchableOpacity
-            className="flex-row items-center justify-center bg-danger rounded-[12px] py-4 px-6 gap-2"
+            className="flex-row items-center justify-center bg-cmu-red rounded-[12px] py-4 px-6 gap-2"
             onPress={handleClearStorage}
             activeOpacity={0.7}
           >

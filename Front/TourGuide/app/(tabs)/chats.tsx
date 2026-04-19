@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,23 +8,18 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getAllChatSessions, clearAllChatSessions } from '../utils/chatStorage';
-import { ChatSession } from '../types/chat';
+import { getAllChatSessions, clearAllChatSessions } from '../../utils/chatStorage';
+import { ChatSession } from '../../types/chat';
 import * as Haptics from 'expo-haptics';
-import ScreenHeader from '../components/ScreenHeader';
-import EmptyState from '../components/EmptyState';
-import { CMU_RED, COLORS } from '../constants/colors';
+import EmptyState from '../../components/EmptyState';
+import { CMU_RED, COLORS } from '../../constants/colors';
 
-export default function PastChatsScreen() {
+export default function ChatsScreen() {
   const router = useRouter();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadSessions();
-  }, []);
 
   const loadSessions = async () => {
     try {
@@ -37,9 +32,20 @@ export default function PastChatsScreen() {
     }
   };
 
+  useEffect(() => {
+    loadSessions();
+  }, []);
+
+  // Refresh when the tab is focused so new chats show up immediately.
+  useFocusEffect(
+    useCallback(() => {
+      loadSessions();
+    }, [])
+  );
+
   const getChatTitle = (session: ChatSession): string => {
     if (session.messages.length === 0) return 'Empty Chat';
-    const firstUserMessage = session.messages.find(msg => msg.isUser);
+    const firstUserMessage = session.messages.find((msg) => msg.isUser);
     if (firstUserMessage) {
       return firstUserMessage.text.length > 50
         ? firstUserMessage.text.substring(0, 50) + '...'
@@ -86,10 +92,7 @@ export default function PastChatsScreen() {
       'Clear All Chats',
       'Are you sure you want to delete all chat history? This action cannot be undone.',
       [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
+        { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete All',
           style: 'destructive',
@@ -146,19 +149,23 @@ export default function PastChatsScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
-      {/* Header */}
-      <ScreenHeader
-        title="Past Chats"
-        onBack={() => router.back()}
-        rightAction={{
-          icon: 'trash-outline',
-          onPress: handleClearAll,
-          disabled: sessions.length === 0,
-        }}
-      />
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right']}>
+      <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-border">
+        <Text className="font-serif-bold text-[20px] text-cmu-red">Chats</Text>
+        <TouchableOpacity
+          onPress={handleClearAll}
+          activeOpacity={0.7}
+          disabled={sessions.length === 0}
+          className="p-1"
+        >
+          <Ionicons
+            name="trash-outline"
+            size={22}
+            color={sessions.length === 0 ? COLORS.textMuted : CMU_RED}
+          />
+        </TouchableOpacity>
+      </View>
 
-      {/* Content */}
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={CMU_RED} />
@@ -168,7 +175,9 @@ export default function PastChatsScreen() {
           data={sessions}
           renderItem={renderChatItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={sessions.length === 0 ? { flexGrow: 1 } : { paddingVertical: 8 }}
+          contentContainerStyle={
+            sessions.length === 0 ? { flexGrow: 1 } : { paddingVertical: 8 }
+          }
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
         />

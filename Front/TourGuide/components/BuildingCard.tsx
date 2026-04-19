@@ -66,7 +66,7 @@ export default function BuildingCard({ title, imageUrl, unlocked, scannable, onP
       <View className="px-3 py-[10px]">
         <Text className="font-serif-bold text-sm text-[#1F2933] mb-0.5 text-center">{title}</Text>
         <Text className="font-serif text-xs text-[#7A8593] text-center">
-          {scannable ? 'Scan to reveal fun facts.' : 'Explore this building.'}
+          {scannable ? 'Scan for building information.' : 'Explore this building.'}
         </Text>
       </View>
     </TouchableOpacity>

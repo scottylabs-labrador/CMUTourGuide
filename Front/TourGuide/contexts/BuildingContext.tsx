@@ -2,6 +2,11 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useMe
 import { getUnlockedBuildings, unlockBuilding as unlockBuildingStorage, resetProgress } from '../utils/buildingStorage';
 import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../config/scannableBuildings';
 
+interface PendingSummary {
+  buildingId: string;
+  isNewUnlock: boolean;
+}
+
 interface BuildingContextType {
   /** Scannable buildings the user has explicitly unlocked (persisted). */
   unlockedBuildings: string[];
@@ -21,6 +26,10 @@ interface BuildingContextType {
   totalScannableCount: number;
   clearStorage: () => Promise<void>;
   isLoading: boolean;
+  /** Building summary modal queued from anywhere in the app (e.g. after a scan). */
+  pendingSummary: PendingSummary | null;
+  showSummary: (buildingId: string, isNewUnlock?: boolean) => void;
+  hideSummary: () => void;
 }
 
 const BuildingContext = createContext<BuildingContextType | undefined>(undefined);
@@ -40,6 +49,14 @@ interface BuildingProviderProps {
 export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) => {
   const [unlockedBuildings, setUnlockedBuildings] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingSummary, setPendingSummary] = useState<PendingSummary | null>(null);
+
+  const showSummary = (buildingId: string, isNewUnlock: boolean = false) => {
+    if (!buildingId || buildingId === 'Error') return;
+    setPendingSummary({ buildingId, isNewUnlock });
+  };
+
+  const hideSummary = () => setPendingSummary(null);
 
   useEffect(() => {
     const loadUnlockedBuildings = async () => {
@@ -106,6 +123,9 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
         totalScannableCount: SCANNABLE_BUILDING_IDS.length,
         clearStorage,
         isLoading,
+        pendingSummary,
+        showSummary,
+        hideSummary,
       }}
     >
       {children}

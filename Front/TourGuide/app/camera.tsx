@@ -1,27 +1,91 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
+import React, { useState, useRef, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Dimensions, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import SummaryModal from '../components/SummaryModal';
+import { VolumeManager } from 'react-native-volume-manager';
+import Slider from '@react-native-community/slider';
 import { useBuildings } from '../contexts/BuildingContext';
-import { canonicalBuildingId } from '../config/buildingIdMap';
 import { scanBuilding } from '../services/visionService';
 import { CMU_RED } from '../constants/colors';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// expo-camera zoom is 0..1. We expose 1x..10x to the user and map it
+// to a non-linear curve so most of the slider is usable on real devices,
+// where the underlying lens hits its native max well before zoom=1.
+const MIN_ZOOM_X = 1;
+const MAX_ZOOM_X = 10;
+const ZOOM_CURVE = 2; // higher = more low-zoom resolution
+const xToZoom = (x: number) =>
+  Math.pow((x - MIN_ZOOM_X) / (MAX_ZOOM_X - MIN_ZOOM_X), ZOOM_CURVE);
+const zoomToX = (z: number) =>
+  MIN_ZOOM_X +
+  (MAX_ZOOM_X - MIN_ZOOM_X) *
+    Math.pow(Math.max(0, Math.min(1, z)), 1 / ZOOM_CURVE);
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isCapturing, setIsCapturing] = useState(false);
-  const [showSummaryPopup, setShowSummaryPopup] = useState(false)
-  const [buildingId, setBuildingId] = useState("")
-  const [isNewUnlock, setIsNewUnlock] = useState(false)
+  const [zoom, setZoom] = useState(0);
   const router = useRouter();
   const camera = useRef<CameraView>(null);
-  const { unlockBuilding, isUnlocked } = useBuildings();
+  const { unlockBuilding, isUnlocked, showSummary } = useBuildings();
+
+  // Keep the latest takePicture callback reachable from the volume listener.
+  const takePictureRef = useRef<() => void>(() => {});
+
+  // Volume buttons act as a hardware shutter. Requires the dev client build
+  // because react-native-volume-manager is a native module. Declared before
+  // any early returns so the hook order stays stable.
+  useFocusEffect(
+    useCallback(() => {
+      if (!permission?.granted) return;
+
+      let cancelled = false;
+      let initialVolume: number | null = null;
+      let ignoreNextEvent = false;
+      let lastShotAt = 0;
+      let subscription: { remove: () => void } | null = null;
+
+      VolumeManager.showNativeVolumeUI({ enabled: false }).catch(() => {});
+      VolumeManager.getVolume()
+        .then((r) => {
+          if (!cancelled) initialVolume = r.volume;
+        })
+        .catch(() => {});
+
+      subscription = VolumeManager.addVolumeListener(({ volume }) => {
+        if (ignoreNextEvent) {
+          ignoreNextEvent = false;
+          return;
+        }
+        const now = Date.now();
+        if (now - lastShotAt < 600) return;
+        lastShotAt = now;
+
+        takePictureRef.current?.();
+
+        // Bring the volume back to where it started so subsequent presses
+        // keep firing instead of saturating at 0 or 1.
+        if (initialVolume !== null && Math.abs(volume - initialVolume) > 0.001) {
+          ignoreNextEvent = true;
+          VolumeManager.setVolume(initialVolume, { showUI: false }).catch(() => {
+            ignoreNextEvent = false;
+          });
+        }
+      });
+
+      return () => {
+        cancelled = true;
+        subscription?.remove();
+        VolumeManager.showNativeVolumeUI({ enabled: true }).catch(() => {});
+      };
+    }, [permission?.granted])
+  );
 
   if (!permission) {
     return <View />;
@@ -59,69 +123,59 @@ export default function CameraScreen() {
     try {
       const photo = await camera.current?.takePictureAsync({
         base64: true,
-        quality: 1.0
+        quality: 1.0,
       });
 
       const identifiedBuildingId = await scanBuilding(photo?.base64 ?? '');
-      setBuildingId(identifiedBuildingId);
-
-      // Check if building is already unlocked
-      const wasUnlocked = isUnlocked(identifiedBuildingId);
-
-      // Unlock the building
-      if (identifiedBuildingId) {
-        await unlockBuilding(identifiedBuildingId);
-
-        // If it was a new unlock, provide celebration feedback
-        if (!wasUnlocked) {
-          setIsNewUnlock(true);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        }
+      if (!identifiedBuildingId || identifiedBuildingId === 'Error') {
+        Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
+        return;
       }
 
-      setShowSummaryPopup(true);
+      const wasUnlocked = isUnlocked(identifiedBuildingId);
+      await unlockBuilding(identifiedBuildingId);
+      if (!wasUnlocked) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+
+      // Hand the result off to the global modal, then leave the camera screen
+      // so the live preview unmounts and releases the camera + native shutter.
+      showSummary(identifiedBuildingId, !wasUnlocked);
+      router.back();
     } catch (error) {
-      Alert.alert(
-        "Scan Failed",
-        "Could not identify the building. Please try again.",
-      );
+      Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
     } finally {
       setIsCapturing(false);
     }
   };
 
+  takePictureRef.current = takePicture;
+
+  const currentX = zoomToX(zoom);
+
   return (
     <SafeAreaView className="flex-1 bg-black">
       <View className="flex-row justify-between items-center px-5 py-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => router.back()}
-        >
+        <TouchableOpacity className="p-2" onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text className="font-serif-semi text-white text-lg">Scan Building</Text>
-        <TouchableOpacity
-          className="p-2"
-          onPress={toggleCameraFacing}
-        >
+        <TouchableOpacity className="p-2" onPress={toggleCameraFacing}>
           <Ionicons name="camera-reverse" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
       <View className="flex-1 relative">
-        {!showSummaryPopup && (
-          <CameraView
-            style={{ flex: 1 }}
-            ref={camera}
-            facing={facing}
-          />
-        )}
-        {/* Dimming overlay when photo is taken */}
-        {(isCapturing || showSummaryPopup) && (
+        <CameraView
+          style={{ flex: 1 }}
+          ref={camera}
+          facing={facing}
+          zoom={zoom}
+        />
+        {isCapturing && (
           <View className="absolute top-0 left-0 right-0 bottom-0 z-[1]" style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }} />
         )}
         <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center z-[2]" style={{ pointerEvents: 'box-none' }}>
-          {/* Scanning frame */}
           <View className="relative" style={{ width: SCREEN_WIDTH * 0.90, height: SCREEN_WIDTH * 0.90 }}>
             <View style={[styles.corner, styles.topLeft]} />
             <View style={[styles.corner, styles.topRight]} />
@@ -129,38 +183,54 @@ export default function CameraScreen() {
             <View style={[styles.corner, styles.bottomRight]} />
           </View>
 
-          {/* Instructions */}
           <View className="absolute bottom-[30px] left-5 right-5">
             <View className="flex-row items-center justify-center py-3 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
               <Text className="text-white text-[16px] text-center">
-                {isCapturing ? 'Processing image...' : 'Point your camera at a building or landmark'}
+                {isCapturing
+                  ? 'Processing image...'
+                  : `Point your camera at a building${Platform.OS !== 'web' ? ' · Volume = shutter' : ''}`}
               </Text>
               {isCapturing && (
-                <ActivityIndicator
-                  size="small"
-                  color="white"
-                  style={{ marginLeft: 8 }}
-                />
+                <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
               )}
             </View>
           </View>
         </View>
       </View>
 
-      <View className="py-[30px]" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
-        <View className="items-center">
+      <View style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} className="pt-3 pb-[30px] px-6">
+        <View className="flex-row items-center" style={{ gap: 10 }}>
+          <Text style={styles.zoomEdgeLabel}>{`${MIN_ZOOM_X}x`}</Text>
+          <Slider
+            style={{ flex: 1, height: 36 }}
+            minimumValue={MIN_ZOOM_X}
+            maximumValue={MAX_ZOOM_X}
+            value={currentX}
+            onValueChange={(x) => {
+              const clamped = Math.max(MIN_ZOOM_X, Math.min(MAX_ZOOM_X, x));
+              setZoom(xToZoom(clamped));
+            }}
+            minimumTrackTintColor={CMU_RED}
+            maximumTrackTintColor="rgba(255,255,255,0.3)"
+            thumbTintColor={CMU_RED}
+          />
+          <Text style={styles.zoomEdgeLabel}>{`${MAX_ZOOM_X}x`}</Text>
+        </View>
+        <Text style={styles.zoomReadout}>
+          {currentX < 10 ? currentX.toFixed(1) : '10'}x
+        </Text>
+
+        <View className="items-center mt-3">
           <TouchableOpacity
             className="w-20 h-20 rounded-full justify-center items-center"
-            style={[
-              {
-                backgroundColor: isCapturing ? '#666' : CMU_RED,
-                shadowColor: CMU_RED,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 8,
-              },
-            ]}
+            style={{
+              backgroundColor: isCapturing ? '#666' : CMU_RED,
+              shadowColor: CMU_RED,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 8,
+            }}
             onPress={takePicture}
             disabled={isCapturing}
           >
@@ -168,16 +238,6 @@ export default function CameraScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <SummaryModal
-        visible={showSummaryPopup}
-        onClose={() => {
-          setShowSummaryPopup(false);
-          setIsNewUnlock(false);
-        }}
-        building_id={buildingId}
-        isNewUnlock={isNewUnlock}
-      />
     </SafeAreaView>
   );
 }
@@ -213,5 +273,18 @@ const styles = StyleSheet.create({
     right: 0,
     borderLeftWidth: 0,
     borderTopWidth: 0,
+  },
+  zoomEdgeLabel: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 12,
+    width: 28,
+    textAlign: 'center',
+  },
+  zoomReadout: {
+    color: 'white',
+    fontSize: 13,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 2,
   },
 });

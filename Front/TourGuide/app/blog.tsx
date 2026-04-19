@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  Image,
   ScrollView,
   Modal,
   Dimensions,
@@ -14,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { getBlogPostsByCategory } from '../services/blogService';
 import type { BlogPost } from '../types/blog';
 import ScreenHeader from '../components/ScreenHeader';
@@ -70,8 +70,9 @@ export default function BlogScreen() {
           {featured.image ? (
             <Image
               source={{ uri: featured.image }}
-              className="w-full h-full"
-              resizeMode="cover"
+              style={{ width: '100%', height: '100%' }}
+              contentFit="cover"
+              transition={200}
             />
           ) : (
             <View className="w-full h-full justify-center items-center bg-border">
@@ -113,8 +114,9 @@ export default function BlogScreen() {
           {item.image ? (
             <Image
               source={{ uri: item.image }}
-              className="w-full h-full"
-              resizeMode="cover"
+              style={{ width: '100%', height: '100%' }}
+              contentFit="cover"
+              transition={200}
             />
           ) : (
             <View className="w-[80px] h-[80px] justify-center items-center bg-border">
@@ -144,24 +146,34 @@ export default function BlogScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8, alignItems: 'center' }}
       >
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat.key}
-            className={`px-4 py-2 rounded-[20px] ${
-              activeCategory === cat.key ? 'bg-cmu-red' : 'bg-card'
-            }`}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setActiveCategory(cat.key);
             }}
             activeOpacity={0.8}
+            style={{
+              paddingHorizontal: 16,
+              minHeight: 36,
+              borderRadius: 999,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: activeCategory === cat.key ? '#C41230' : '#E0E0E0',
+            }}
           >
             <Text
-              className={`font-serif-semi text-[13px] ${
-                activeCategory === cat.key ? 'text-white' : 'text-[#7A8593]'
-              }`}
+              style={{
+                fontFamily: 'SourceSerifPro_600SemiBold',
+                fontSize: 13,
+                lineHeight: 18,
+                includeFontPadding: false,
+                textAlignVertical: 'center',
+                color: activeCategory === cat.key ? '#FFFFFF' : '#7A8593',
+              }}
             >
               {cat.label}
             </Text>
@@ -205,7 +217,7 @@ export default function BlogScreen() {
                 <Image
                   source={{ uri: selectedPost.image }}
                   style={{ width: SCREEN_WIDTH, height: 240 }}
-                  resizeMode="cover"
+                  contentFit="cover"
                 />
               )}
               <View className="px-6 pt-5">
