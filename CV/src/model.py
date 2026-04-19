@@ -67,9 +67,9 @@ class BuildingRecognizer:
         images = []
         for img_path in image_paths:
             if isinstance(img_path, str):
-                image = Image.open(img_path).convert("RGB")
+                image = ImageOps.exif_transpose(Image.open(img_path)).convert("RGB")
             else:
-                image = img_path.convert("RGB")
+                image = ImageOps.exif_transpose(img_path).convert("RGB")
             images.append(self.preprocess(image))
         
         image_tensor = torch.stack(images).to(self.device)

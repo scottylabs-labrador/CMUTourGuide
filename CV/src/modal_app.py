@@ -4,6 +4,10 @@ Serverless deployment with auto-scaling and pay-per-use pricing.
 """
 import modal
 import io
+from pathlib import Path
+
+# Resolve src/ relative to this file so deploys work regardless of cwd.
+SRC_DIR = Path(__file__).resolve().parent
 
 # Create Modal app
 app = modal.App("cmu-tour-guide-cv")
@@ -33,8 +37,15 @@ image = (
     )
     # Install CLIP from GitHub (requires git)
     .pip_install("git+https://github.com/openai/CLIP.git")
-    # Add source code to image (Modal 1.0 pattern)
-    .add_local_dir(".", remote_path="/root/src")
+    # Bundle ONLY what the container needs at runtime: source modules and the
+    # latest classifier .pkl. Mounts CV/src/ -> /root/src/. Excludes venv/,
+    # data/, __pycache__/, .git/, etc. that were ballooning the image to ~30k
+    # files and ~500MB on the previous deploy.
+    .add_local_dir(
+        str(SRC_DIR),
+        remote_path="/root/src",
+        ignore=["__pycache__", "*.pyc", ".DS_Store"],
+    )
 )
 
 # Module-level cache for the recognizer (persists across requests in same container)
@@ -45,7 +56,7 @@ _classifier_cache = None
     image=image,
     memory=4096,
     timeout=300,
-    container_idle_timeout=1800,  # 30 min - container stays warm longer between requests
+    scaledown_window=1800,  # 30 min - container stays warm longer between requests
 )
 @modal.fastapi_endpoint(method="POST")
 async def recognize_building_LP(request: dict) -> dict:
@@ -108,7 +119,13 @@ async def recognize_building_LP(request: dict) -> dict:
 
         if _classifier_cache is None:
             print("🤖 Loading linear probe (first time in this container)...")
-            _classifier_cache = joblib.load("src/cmu_building_classifier_20260203_1656.pkl")
+            import glob, os
+            candidates = sorted(glob.glob("/root/src/cmu_building_classifier_*.pkl"))
+            if not candidates:
+                raise FileNotFoundError("No cmu_building_classifier_*.pkl bundled in image")
+            latest = candidates[-1]  # filenames sort lexicographically by timestamp
+            print(f"   using {os.path.basename(latest)}")
+            _classifier_cache = joblib.load(latest)
         
         recognizer = _recognizer_cache
         classifier = _classifier_cache
