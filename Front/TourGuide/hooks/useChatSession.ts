@@ -8,13 +8,15 @@ type Params = {
   sessionId?: string;
   imageUri?: string;
   buildingName?: string;
+  buildingId?: string;
 };
 
-export function useChatSession({ sessionId, imageUri, buildingName }: Params) {
+export function useChatSession({ sessionId, imageUri, buildingName, buildingId }: Params) {
   const [sessionIdState, setSessionIdState] = useState<string>(
     sessionId ?? `chat_${Date.now()}`
   );
   const [imageUriState, setImageUriState] = useState<string | undefined>(imageUri);
+  const [buildingIdState, setBuildingIdState] = useState<string | undefined>(buildingId);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -34,6 +36,7 @@ export function useChatSession({ sessionId, imageUri, buildingName }: Params) {
         setMessages(session.messages);
         setSessionIdState(session.id);
         if (session.imageUri) setImageUriState(session.imageUri);
+        if (session.buildingId) setBuildingIdState(session.buildingId);
       }
     };
     loadSession();
@@ -54,11 +57,12 @@ export function useChatSession({ sessionId, imageUri, buildingName }: Params) {
         createdAt: messages[0].timestamp.toISOString(),
         updatedAt: messages[messages.length - 1].timestamp.toISOString(),
         imageUri: imageUriState,
+        buildingId: buildingIdState,
       };
       await saveChatSession(session);
     };
     saveSession();
-  }, [messages, sessionIdState, imageUriState]);
+  }, [messages, sessionIdState, imageUriState, buildingIdState]);
 
   const sendMessage = async (text: string) => {
     if (text.trim() === '') return;
@@ -75,7 +79,7 @@ export function useChatSession({ sessionId, imageUri, buildingName }: Params) {
     setIsTyping(true);
 
     try {
-      const reply = await sendChatMessage(updatedMessages);
+      const reply = await sendChatMessage(updatedMessages, buildingIdState);
       const chatMessage: Message = {
         id: Date.now().toString(),
         text: reply,

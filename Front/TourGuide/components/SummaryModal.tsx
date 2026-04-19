@@ -26,7 +26,13 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
             return;
         }
         onClose();
-        router.push({ pathname: "/chat", params: { building_name: buildingData.title } })
+        router.push({
+            pathname: "/chat",
+            params: {
+                building_id,
+                building_name: buildingData.title,
+            },
+        })
     }
     return (
         <Modal

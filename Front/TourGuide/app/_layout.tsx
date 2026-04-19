@@ -1,7 +1,17 @@
 import "../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useFonts, SourceSerifPro_400Regular, SourceSerifPro_600SemiBold, SourceSerifPro_700Bold } from "@expo-google-fonts/source-serif-pro";
+import {
+  useFonts,
+  SourceSerifPro_400Regular,
+  SourceSerifPro_600SemiBold,
+  SourceSerifPro_700Bold,
+} from "@expo-google-fonts/source-serif-pro";
+import {
+  OpenSans_400Regular,
+  OpenSans_600SemiBold,
+  OpenSans_700Bold,
+} from "@expo-google-fonts/open-sans";
 import { BuildingProvider } from "../contexts/BuildingContext";
 
 export default function RootLayout() {
@@ -9,6 +19,9 @@ export default function RootLayout() {
     SourceSerifPro_400Regular,
     SourceSerifPro_600SemiBold,
     SourceSerifPro_700Bold,
+    OpenSans_400Regular,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
   });
 
   if (!fontsLoaded) {
@@ -24,12 +37,13 @@ export default function RootLayout() {
           animation: 'slide_from_right',
         }}
       >
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="camera" options={{ headerShown: false }} />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
         <Stack.Screen name="map" options={{ headerShown: false }} />
         <Stack.Screen name="blog" options={{ headerShown: false }} />
-        <Stack.Screen name="allBuildings" options={{ headerShown: false }} />
+        <Stack.Screen name="info" options={{ headerShown: false }} />
+        <Stack.Screen name="pastChats" options={{ headerShown: false }} />
       </Stack>
     </BuildingProvider>
   );

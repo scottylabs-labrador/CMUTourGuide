@@ -2,21 +2,17 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   Alert,
   FlatList,
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useBuildings } from '../contexts/BuildingContext';
-import SummaryModal from '../components/SummaryModal';
-import BuildingCard from '../components/BuildingCard';
-import { getAllBuildingIds, getBuilding } from '../services/buildingService';
-import type { BuildingId } from '../types/building';
-import { CMU_RED } from '../constants/colors';
+import { useBuildings } from '../../contexts/BuildingContext';
+import SummaryModal from '../../components/SummaryModal';
+import BuildingCard from '../../components/BuildingCard';
+import { getAllBuildingIds, getBuilding } from '../../services/buildingService';
+import type { BuildingId } from '../../types/building';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20;
@@ -24,7 +20,6 @@ const COLUMN_GAP = 14;
 const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - COLUMN_GAP) / 2;
 
 export default function AllBuildingsScreen() {
-  const router = useRouter();
   const {
     isUnlocked,
     isScannable,
@@ -68,20 +63,12 @@ export default function AllBuildingsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right']}>
       <View
-        className="flex-row items-center justify-between py-[14px] bg-white border-b border-border"
+        className="items-center py-[14px] bg-white border-b border-border"
         style={{ paddingHorizontal: HORIZONTAL_PADDING }}
       >
-        <TouchableOpacity
-          className="p-[6px] w-10"
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
-        </TouchableOpacity>
         <Text className="font-serif-bold text-[20px] text-cmu-red">All Buildings</Text>
-        <View className="w-10" />
       </View>
 
       <View

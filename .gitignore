@@ -1,1 +1,18 @@
 .DS_Store
+
+# Local PDF facts pipeline (raw dumps and one-off merge script)
+**/pdf_facts_raw*
+**/merge_pdf_facts.py
+
+# ML / serialized model artifacts
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.keras
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.cbm
+*.mlmodel

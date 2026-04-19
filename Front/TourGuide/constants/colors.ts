@@ -1,16 +1,24 @@
-export const CMU_RED = '#C41E3A';
+// CMU Brand colors — see "CMU Brand Quick Guide" / brand.cmu.edu
+export const CMU_RED = '#C41230';      // Carnegie Red (PMS 187C)
+export const BLACK = '#000000';        // Black
+export const IRON_GRAY = '#6D6E71';    // Iron Gray (PMS Cool Gray 10 C)
+export const STEEL_GRAY = '#E0E0E0';   // Steel Gray (PMS Cool Gray 4 C)
+export const WHITE = '#FFFFFF';        // White
 
 export const COLORS = {
   primary: CMU_RED,
-  background: '#F8F9FA',
-  card: '#F1F3F5',
-  white: '#FFFFFF',
-  border: '#e9ecef',
-  textPrimary: '#1F2933',
-  textSecondary: '#7A8593',
-  textMuted: '#999',
-  textLight: '#bbb',
-  locked: '#999',
+  background: WHITE,
+  card: STEEL_GRAY,
+  surface: STEEL_GRAY,
+  white: WHITE,
+  black: BLACK,
+  border: STEEL_GRAY,
+  textPrimary: BLACK,
+  textSecondary: IRON_GRAY,
+  textMuted: IRON_GRAY,
+  textLight: IRON_GRAY,
+  locked: IRON_GRAY,
+  // Non-brand utility color, kept for destructive actions only.
   danger: '#dc3545',
 };
 

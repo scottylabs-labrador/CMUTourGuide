@@ -5,7 +5,7 @@ export async function scanBuilding(base64Image: string): Promise<string> {
   const res = await fetch(ENDPOINTS.vision, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: base64Image }),
+    body: JSON.stringify({ imageBase64: base64Image }),
   });
 
   if (!res.ok) {

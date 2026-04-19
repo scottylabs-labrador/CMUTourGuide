@@ -1,11 +1,14 @@
 import { ENDPOINTS } from '../constants/api';
 import { Message } from '../types/chat';
 
-export async function sendChatMessage(messages: Message[]): Promise<string> {
+export async function sendChatMessage(
+  messages: Message[],
+  buildingId?: string,
+): Promise<string> {
   const res = await fetch(ENDPOINTS.chat, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, building_id: buildingId }),
   });
 
   if (!res.ok) {

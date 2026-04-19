@@ -6,7 +6,7 @@ A React Native Expo app that uses computer vision and AI to provide information 
 
 - **Camera Scanning**: Point your camera at any building or landmark on campus
 - **AI Chat Interface**: Get detailed information about buildings with mock AI responses
-- **CMU Branding**: Beautiful UI with Carnegie Mellon's signature red color (#C41E3A)
+- **CMU Branding**: Beautiful UI with Carnegie Mellon's signature Carnegie Red (#C41230)
 - **Smooth Navigation**: Seamless flow between scanning and chat
 
 ## Screens
@@ -74,7 +74,7 @@ app/
 
 ### Design
 
-- CMU color scheme (#C41E3A)
+- CMU color scheme (Carnegie Red #C41230)
 - Modern, clean interface
 - Responsive design
 - Smooth animations

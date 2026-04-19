@@ -22,7 +22,7 @@ import { FONTS } from '../constants/typography';
 import { SHADOWS } from '../constants/layout';
 
 export default function ChatScreen() {
-  const { sessionId, imageUri, building_name } = useLocalSearchParams();
+  const { sessionId, imageUri, building_name, building_id } = useLocalSearchParams();
   const [inputText, setInputText] = useState('');
   const router = useRouter();
 
@@ -30,6 +30,7 @@ export default function ChatScreen() {
     sessionId: sessionId ? String(sessionId) : undefined,
     imageUri: imageUri ? String(imageUri) : undefined,
     buildingName: building_name ? String(building_name) : undefined,
+    buildingId: building_id ? String(building_id) : undefined,
   });
 
   const handleSend = async () => {
