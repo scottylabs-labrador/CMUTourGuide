@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Polygon, Marker, Callout, Region } from 'react-native-maps';
+import MapView, { Polygon, Polyline, Marker, Callout, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useBuildings } from '../contexts/BuildingContext';
 import {
@@ -11,13 +11,27 @@ import {
   getAllOutlineEntries,
 } from '../services/buildingService';
 import {
+  getAllRoutes,
+  getPathsForRoute,
+  findNearestStopInRoute,
+  haversineMeters,
+} from '../services/routeService';
+import { fetchWalkingRoute } from '../services/orsClient';
+import {
   getMapBuildingColors,
   MAP_OUTLINE_NEUTRAL,
   CMU_RED,
   COLORS,
 } from '../constants/colors';
 import { SHADOWS } from '../constants/layout';
-import { CMU_POLYGON, CMU_MAP_STYLE, INITIAL_REGION } from '../constants/map';
+import {
+  CMU_POLYGON,
+  CMU_MAP_STYLE,
+  INITIAL_REGION,
+  CAMPUS_CENTER,
+  OFF_CAMPUS_THRESHOLD_M,
+} from '../constants/map';
+import type { BuildingId, LatLng } from '../types/building';
 
 interface CampusMapProps {
   style?: StyleProp<ViewStyle>;
@@ -27,6 +41,8 @@ interface CampusMapProps {
   showControls?: boolean;
   /** When provided, renders an expand button in the bottom-right corner. */
   onExpand?: () => void;
+  /** When set, draws the polyline for this route on the map. */
+  activeRouteId?: string | null;
 }
 
 // Marker labels are only readable when the visible region is reasonably zoomed
@@ -35,19 +51,45 @@ const LABEL_VISIBLE_LAT_DELTA = 0.005;
 // Default zoom-in level when we focus the map on the user's location.
 const USER_FOCUS_LAT_DELTA = 0.005;
 
+// All known route paths are mounted unconditionally on first render and
+// toggled via strokeColor. Dynamically adding MKPolyline overlays after
+// the MapView has settled crashes on iOS, so we pay a tiny perf cost to
+// keep them stably mounted.
+const ALL_ROUTE_PATHS = getAllRoutes().flatMap((route) =>
+  getPathsForRoute(route.id).map((p) => ({ routeId: route.id, path: p }))
+);
+
+// Placeholder geometry for the approach polyline while it has no real data.
+// We still mount it on first render for the same iOS-overlay reason as
+// above, then swap its `coordinates` in place when ORS returns.
+const APPROACH_PLACEHOLDER: LatLng[] = [
+  CAMPUS_CENTER,
+  { latitude: CAMPUS_CENTER.latitude + 1e-5, longitude: CAMPUS_CENTER.longitude + 1e-5 },
+];
+// Color for the user-to-nearest-stop connector. Distinct from CMU_RED used
+// by route paths so the two read as different things.
+const APPROACH_COLOR = '#1F6FEB';
+// If the user is already within this many meters of the nearest stop, skip
+// fetching an approach path — they're effectively there.
+const APPROACH_SKIP_DISTANCE_M = 20;
+
 export default function CampusMap({
   style,
   onBuildingPress,
   showControls = true,
   onExpand,
+  activeRouteId = null,
 }: CampusMapProps) {
   const { isUnlocked, isScannable } = useBuildings();
   const [locationGranted, setLocationGranted] = useState(false);
-  const [userLocation, setUserLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [labelsVisible, setLabelsVisible] = useState(false);
+  // Approach-path state: the walking polyline from the user to the nearest
+  // stop in the active route, plus which stop that is. Both cleared when
+  // there's no route, no location, or the user is off-campus.
+  const [approachCoords, setApproachCoords] = useState<LatLng[] | null>(null);
+  const [approachTarget, setApproachTarget] = useState<BuildingId | null>(null);
+  const [offCampus, setOffCampus] = useState(false);
   const mapRef = useRef<MapView>(null);
   const initialCameraRef = useRef<any>(null);
   const mapReadyRef = useRef(false);
@@ -73,6 +115,80 @@ export default function CampusMap({
       }
     })();
   }, []);
+
+  // One-shot approach-path computation. Runs when the active route or the
+  // user's location changes; does NOT re-run when a building unlocks — that
+  // visibility is handled at render time via `approachVisible` below.
+  useEffect(() => {
+    if (!activeRouteId || !userLocation) {
+      setApproachCoords(null);
+      setApproachTarget(null);
+      setOffCampus(false);
+      return;
+    }
+
+    if (haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M) {
+      setOffCampus(true);
+      setApproachCoords(null);
+      setApproachTarget(null);
+      return;
+    }
+    setOffCampus(false);
+
+    // Only consider stops the user hasn't unlocked yet — the approach line
+    // is meant to guide them to their next tour destination, not something
+    // they've already visited.
+    const nearest = findNearestStopInRoute(
+      activeRouteId,
+      userLocation,
+      (id) => !isUnlocked(id)
+    );
+    if (!nearest) {
+      // Every stop in this route is already unlocked — nothing to approach.
+      setApproachCoords(null);
+      setApproachTarget(null);
+      return;
+    }
+    setApproachTarget(nearest.id);
+
+    if (nearest.distance < APPROACH_SKIP_DISTANCE_M) {
+      setApproachCoords(null);
+      return;
+    }
+
+    const target = getBuilding(nearest.id);
+    if (!target?.latitude || !target?.longitude) {
+      setApproachCoords(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    fetchWalkingRoute(
+      userLocation,
+      { latitude: target.latitude, longitude: target.longitude },
+      controller.signal
+    )
+      .then((r) => setApproachCoords(r.coordinates))
+      .catch((err) => {
+        if (err?.name !== 'AbortError') {
+          console.warn('ORS approach fetch failed:', err);
+          setApproachCoords(null);
+        }
+      });
+    return () => controller.abort();
+    // `isUnlocked` intentionally omitted so we don't re-fetch every time
+    // a lock state flips; the post-unlock hide is handled by `approachVisible`
+    // and the next activation of the route picks a fresh target.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRouteId, userLocation?.latitude, userLocation?.longitude]);
+
+  // Hide the approach path once its target building is unlocked — the user
+  // has arrived, the connector has served its purpose.
+  const approachVisible =
+    !!approachCoords &&
+    approachCoords.length >= 2 &&
+    !!approachTarget &&
+    !isUnlocked(approachTarget);
 
   // Once both the map is ready and we know the user's location, gently fly
   // there at a closer zoom — but only the first time, so we don't fight the
@@ -147,6 +263,30 @@ export default function CampusMap({
           strokeWidth={1}
           fillColor="rgba(196, 30, 58, 0)"
           lineDashPattern={[5, 3]}
+        />
+
+        {ALL_ROUTE_PATHS.map(({ routeId, path }) => {
+          const active = routeId === activeRouteId;
+          return (
+            <Polyline
+              key={`path-${routeId}-${path.from}-${path.to}`}
+              coordinates={path.coordinates}
+              strokeColor={active ? CMU_RED : 'transparent'}
+              strokeWidth={1}
+              lineDashPattern={[8, 6]}
+            />
+          );
+        })}
+
+        {/* Approach path: user → nearest stop. Mounted unconditionally with
+            a placeholder so we never dynamically add an MKPolyline overlay
+            to a settled MapView (same iOS-crash avoidance as above). */}
+        <Polyline
+          key="approach-path"
+          coordinates={approachVisible ? approachCoords! : APPROACH_PLACEHOLDER}
+          strokeColor={approachVisible ? APPROACH_COLOR : 'transparent'}
+          strokeWidth={1}
+          lineDashPattern={[4, 6]}
         />
 
         {getAllOutlineEntries().map(([code, data]) => {
@@ -235,6 +375,27 @@ export default function CampusMap({
           );
         })}
       </MapView>
+
+      {offCampus && activeRouteId && (
+        <View
+          className="absolute inset-0 items-center justify-center px-8"
+          style={{ backgroundColor: COLORS.background }}
+        >
+          <Ionicons name="walk-outline" size={52} color={CMU_RED} />
+          <Text
+            className="font-serif-semi text-xl mt-4 text-center"
+            style={{ color: COLORS.textPrimary }}
+          >
+            You're not on campus yet
+          </Text>
+          <Text
+            className="font-sans text-base mt-2 text-center"
+            style={{ color: COLORS.locked }}
+          >
+            Come to CMU's main campus to start this tour.
+          </Text>
+        </View>
+      )}
 
       {(showControls || onExpand) && (
         <View className="absolute bottom-3 right-3 z-10 flex flex-row gap-2">

@@ -1,4 +1,5 @@
 import type { Region } from 'react-native-maps';
+import type { LatLng } from '../types/building';
 
 export const INITIAL_REGION: Region = {
   latitude: 40.4440,
@@ -6,6 +7,15 @@ export const INITIAL_REGION: Region = {
   latitudeDelta: 0.015,
   longitudeDelta: 0.015,
 };
+
+// Rough centroid of the CMU main campus, used as the reference point for
+// on/off-campus checks. A user farther than OFF_CAMPUS_THRESHOLD_M meters
+// from this point is treated as "not on campus".
+export const CAMPUS_CENTER: LatLng = {
+  latitude: 40.4440,
+  longitude: -79.9448,
+};
+export const OFF_CAMPUS_THRESHOLD_M = 1500;
 
 // Custom Google Maps style — strips POIs, transit, and noisy labels so CMU
 // outlines and pins read clearly.

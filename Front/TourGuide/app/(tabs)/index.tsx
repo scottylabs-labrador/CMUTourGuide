@@ -7,6 +7,8 @@ import * as Haptics from 'expo-haptics';
 import { useBuildings } from '../../contexts/BuildingContext';
 import SummaryModal from '../../components/SummaryModal';
 import CampusMap from '../../components/CampusMap';
+import RoutePickerModal from '../../components/RoutePickerModal';
+import { getAllRoutes } from '../../services/routeService';
 import { CMU_RED } from '../../constants/colors';
 import { SHADOWS } from '../../constants/layout';
 
@@ -16,10 +18,12 @@ export default function HomeScreen() {
   const { unlockedScannableCount, totalScannableCount } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [buildingId, setBuildingId] = React.useState('');
+  const [showRoutePicker, setShowRoutePicker] = React.useState(false);
+  const [activeRouteId, setActiveRouteId] = React.useState<string | null>(null);
 
   const handleRoutes = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // TODO: hook up campus routes once the feature lands.
+    setShowRoutePicker(true);
   };
 
   const handleBlog = () => {
@@ -128,6 +132,7 @@ export default function HomeScreen() {
               style={SHADOWS.card}
             >
               <CampusMap
+                activeRouteId={activeRouteId}
                 onBuildingPress={(id) => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setBuildingId(id);
@@ -147,6 +152,14 @@ export default function HomeScreen() {
           onClose={() => setShowSummaryPopup(false)}
           building_id={buildingId}
           isNewUnlock={false}
+        />
+
+        <RoutePickerModal
+          visible={showRoutePicker}
+          onClose={() => setShowRoutePicker(false)}
+          routes={getAllRoutes()}
+          activeRouteId={activeRouteId}
+          onSelect={setActiveRouteId}
         />
       </SafeAreaView>
     </View>
