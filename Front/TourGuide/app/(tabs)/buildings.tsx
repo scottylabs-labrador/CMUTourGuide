@@ -12,6 +12,7 @@ import { useBuildings } from '../../contexts/BuildingContext';
 import SummaryModal from '../../components/SummaryModal';
 import BuildingCard from '../../components/BuildingCard';
 import { getAllBuildingIds, getBuilding } from '../../services/buildingService';
+import { getBuildingImageSource } from '../../constants/buildingImages';
 import type { BuildingId } from '../../types/building';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -52,7 +53,7 @@ export default function AllBuildingsScreen() {
     return (
       <BuildingCard
         title={building.title}
-        imageUrl={building.image_url}
+        imageSource={getBuildingImageSource(buildingId, building.image_url)}
         unlocked={unlocked}
         scannable={scannable}
         onPress={() => handlePress(buildingId)}

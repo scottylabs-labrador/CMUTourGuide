@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 type Props = {
   title: string;
-  imageUrl: string;
+  imageSource: ImageSourcePropType | null;
   unlocked: boolean;
   scannable: boolean;
   onPress: () => void;
@@ -13,7 +13,7 @@ type Props = {
   style?: object;
 };
 
-export default function BuildingCard({ title, imageUrl, unlocked, scannable, onPress, width = 210, style }: Props) {
+export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style }: Props) {
   const badgeText = unlocked ? 'Unlocked' : scannable ? 'Must-See' : 'Explore';
 
   return (
@@ -34,9 +34,9 @@ export default function BuildingCard({ title, imageUrl, unlocked, scannable, onP
       activeOpacity={0.9}
     >
       <View className="w-full h-[130px] relative bg-border">
-        {imageUrl ? (
+        {imageSource ? (
           <Image
-            source={{ uri: imageUrl }}
+            source={imageSource}
             className="w-full h-full"
             resizeMode="cover"
           />

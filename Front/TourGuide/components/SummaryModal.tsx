@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
 import { getBuilding } from '../services/buildingService';
+import { getBuildingImageSource } from '../constants/buildingImages';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
@@ -80,13 +81,18 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                         </TouchableOpacity>
                     </View>
 
-                    {/* Image Placeholder */}
+                    {/* Image */}
                     <View className="w-full h-[200px] rounded-[12px] overflow-hidden mb-5 bg-[#f0f0f0]">
-                        <Image
-                            source={{ uri: buildingData.image_url }}
-                            className="w-full h-full"
-                            resizeMode="cover"
-                        />
+                        {(() => {
+                            const source = getBuildingImageSource(building_id, buildingData.image_url);
+                            return source ? (
+                                <Image
+                                    source={source}
+                                    className="w-full h-full"
+                                    resizeMode="cover"
+                                />
+                            ) : null;
+                        })()}
                     </View>
 
                     {/* Title */}

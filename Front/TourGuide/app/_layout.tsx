@@ -58,7 +58,6 @@ export default function RootLayout() {
           <Stack.Screen name="map" options={{ headerShown: false }} />
           <Stack.Screen name="blog" options={{ headerShown: false }} />
           <Stack.Screen name="info" options={{ headerShown: false }} />
-          <Stack.Screen name="pastChats" options={{ headerShown: false }} />
         </Stack>
         <GlobalSummaryModal />
       </BuildingProvider>
