@@ -1,6 +1,6 @@
 import { PATHS, Path } from '../data/paths';
 import { ROUTES, Route } from '../data/routes';
-import { getBuilding } from './buildingService';
+import { getEntrance } from './buildingService';
 import type { BuildingId, LatLng } from '../types/building';
 
 const pathKey = (from: BuildingId, to: BuildingId) => `${from}->${to}`;
@@ -93,12 +93,9 @@ export const findNearestStopInRoute = (
   let best: { id: BuildingId; distance: number } | null = null;
   for (const id of route.stops) {
     if (predicate && !predicate(id)) continue;
-    const b = getBuilding(id);
-    if (!b?.latitude || !b?.longitude) continue;
-    const d = haversineMeters(from, {
-      latitude: b.latitude,
-      longitude: b.longitude,
-    });
+    const entrance = getEntrance(id);
+    if (!entrance) continue;
+    const d = haversineMeters(from, entrance);
     if (!best || d < best.distance) best = { id, distance: d };
   }
   return best;

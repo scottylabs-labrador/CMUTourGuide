@@ -3,6 +3,7 @@
         "title": "ANSYS Hall",
         "latitude": 40.4420,
         "longitude": -79.9467,
+        "entrance": { "latitude": 40.44193, "longitude": -79.9468 },
         "summary": [
             "ANSYS Hall is a four story, 36,000 square foot mixed-use building that incorporates a maker assembly space with immediate access to the outdoor Maker Courtyard, student collaboration space, classrooms and offices.",
             "On the first floor of this building is TechSpark, which you can see into. This facility is a 16,000 square foot makerspace that provides resources, certification, classes and equipment for rapidly prototyping designs from ideas to reality for educational, extracurricular, and research activities. It is a hands-on learning and exploration space available to all current CMU students, faculty and staff. In addition to the highbay area for projects, the makerspace supports machining, wood working, embedded electronics, additive manufacturing, molding and casting with a dedicated wood shop, metal shop, professional shop with welding, hot metals room with jewelry making and metal casting, polymer casting room, computer lab with suite of engineering software, and a fabrication shop with 15 3D printers, 6 laser cutters and a sewing center."
@@ -14,6 +15,7 @@
         "title": "Baker Hall",
         "latitude": 40.44147,
         "longitude": -79.94457,
+        "entrance": { "latitude": 40.44135, "longitude": -79.94425 },
         "summary": [
             "Baker Hall is one of the oldest buildings on campus and connects to Porter Hall via a long, sloped hallway. Baker is home to the Dietrich College of Humanities and Social Sciences. Our humanities are situated at the intersection of humanity and technology. For undergraduates, Dietrich houses 37 majors that are designed to be completed in 2 years, which allows students to add on additional majors, minors, and dual degrees. With this flexibility comes the ability to participate in experiences including internships, research, study abroad and more to prepare their students for the next step on their journey of graduate school or a career."
         ],
@@ -26,8 +28,9 @@
     },
     "CFA": {
         "title": "College of Fine Arts",
-        "latitude": 40.44154,
-        "longitude": -79.94314,
+        "latitude": 40.44158,
+        "longitude": -79.94294,
+        "entrance": { "latitude": 40.44154, "longitude": -79.94314 },
         "summary": [
             "College of Fine Arts Building is an architectural creation of Henry Hornbostel, the college’s first dean, and is home to three of its five schools: architecture, art, and music. To speak a little more about each of these:",
             "It includes the school of Music, Art, and Architecture"
@@ -44,6 +47,7 @@
         "title": "Collaborative Innovation Center",
         "latitude": 0,
         "longitude": 0,
+        "entrance": { "latitude": 0, "longitude": 0 },
         "summary": [],
         "tour_guide": [],
         "image_url": ""
@@ -52,6 +56,7 @@
         "title": "Doherty Hall",
         "latitude": 40.4425,
         "longitude": -79.9445,
+        "entrance": { "latitude": 40.44235, "longitude": -79.9439 },
         "summary": [
             "Doherty Hall contains some of the largest lecture style classrooms and renovated lab spaces for our Mellon College of Science students, in addition to lab and studio spaces for departments like Engineering, Chemistry, Biology and Art.",
             "The Mellon College of Science houses 4 departments with 20 majors including biology, chemistry, physics, mathematics. Over 70% of undergraduates in this college do research. The college facilities also include a Cloud Lab that is the first academic Cloud Laboratory in the country and home to programmable robot-run experimentation instruments.",
@@ -67,8 +72,9 @@
     },
     "GHC": {
         "title": "Gates",
-        "latitude": 40.44312,
-        "longitude": -79.94432,
+        "latitude": 40.44332,
+        "longitude": -79.9447,
+        "entrance": { "latitude": 40.44332, "longitude": -79.9447 },
         "summary": [
             "Gates and Hillman Centers for Future-Generation Technologies are home to the School of Computer Science and Computational Biology Department. These Gold LEED Certified Centers were made possible by lead gifts from the Bill and Melinda Gates and the Henry L. Hillman foundations. The building also houses a Mission Control Center for the student project Iris Rover created by over 300 students from across the university that was the first of its kind to survive a launch and a zero-gravity environment.",
             "The School of Computer Science was the first standalone school of Computer Science in the nation and launched the first Artificial Intelligence degree by a US University. The school houses five undergraduate majors including Computer Science, Artificial Intelligence, Computational Biology, Human Computer Interaction, Robotics."
@@ -85,6 +91,7 @@
         "title": "Hamburg Hall",
         "latitude": 40.4443,
         "longitude": -79.9455,
+        "entrance": { "latitude": 40.4443, "longitude": -79.9455 },
         "tour_guide": [
             "Here is **Hamburg Hall**, home to the **Heinz College of Information Systems and Public Policy**.",
             "**Purpose & Affiliation:**\nThis college focuses on the intersection of people, policy, and technology. It uniquely houses both the School of Information Systems & Management and the School of Public Policy & Management under one roof.",
@@ -96,6 +103,7 @@
         "title": "Hamerschlag Hall",
         "latitude": 40.44233,
         "longitude": -79.94648,
+        "entrance": { "latitude": 40.4423, "longitude": -79.94636 },
         "summary": [
             "Hamerschlag Hall is home to Electrical & Computer Engineering. The building's rotunda is one of the most iconic images on campus. This building also boasts a living roof"
         ],
@@ -110,6 +118,7 @@
         "title": "Hunt Library",
         "latitude": 40.44115,
         "longitude": -79.9437,
+        "entrance": { "latitude": 40.44125, "longitude": -79.9437 },
         "tour_guide": [
             "Here we have the unmistakable **Hunt Library**.",
             "**Purpose & Affiliation:**\nThis is the largest library on campus, housing four floors of collections specifically for the arts, humanities, and social sciences. It's also home to our University Archives and, uniquely, the **Hunt Institute for Botanical Documentation** on the fifth floor, which specializes in the history of plant science.",
@@ -119,8 +128,9 @@
     },
     "HOA": {
         "title": "Hall of the Arts",
-        "latitude": 0,
-        "longitude": 0,
+        "latitude": 40.4409,
+        "longitude": -79.9425,
+        "entrance": { "latitude": 40.4409, "longitude": -79.9423 },
         "summary": [],
         "tour_guide": [],
         "image_url": "https://art.cmu.edu/wp-content/uploads/2024/09/CMU-Art-MFA-facilities-exterior-3.jpg"
@@ -129,6 +139,7 @@
         "title": "Margaret Morrison",
         "latitude": 40.4421,
         "longitude": -79.9415,
+        "entrance": { "latitude": 40.4421, "longitude": -79.9415 },
         "summary": [
             "Margaret Morrison Carnegie Hall, affectionately known on campus as 'Maggie Mo'. This building originally housed the Margaret Morrison Carnegie College for Women, and it now houses some years of the design and architecture programs as well as our on campus children’s school!",
             "The School of Design is an exploration of humanity and sustainable systems. With a focus on interdisciplinary learning, our programs prepare students for real-world design challenges by working collaboratively across fields. CMU was the first school to offer a degree in Industrial Design. Now it’s called “Product Design”."
@@ -144,6 +155,7 @@
         "title": "Newell-Simon Hall",
         "latitude": 40.4434,
         "longitude": -79.94559,
+        "entrance": { "latitude": 40.44355, "longitude": -79.94559 },
         "summary": [],
         "tour_guide": [],
         "image_url": "https://scsbusinessoffice.cs.cmu.edu/space/resources/nsh-exterior.png"
@@ -152,6 +164,7 @@
         "title": "Purnell Center for the Arts",
         "latitude": 40.44358,
         "longitude": -79.94353,
+        "entrance": { "latitude": 40.4433, "longitude": -79.94353 },
         "summary": [
             "Purnell Center for the Arts is home to our School of Drama, the nation’s oldest degree-granting drama program, and includes state-of-the-art performance and education facilities like the Philip Chosky Theater and the Regina Gouger Miller Gallery. Whether you see yourself on stage, behind the scenes, or forging a creative path all on your own, our School of Drama’s specialized curriculum and dedicated, world-class faculty can help you get there with majors in acting/musical theater, design, dramaturgy, and production technology & management."
         ],
@@ -166,6 +179,7 @@
         "title": "Porter Hall",
         "latitude": 40.44186,
         "longitude": -79.9462,
+        "entrance": { "latitude": 40.4420, "longitude": -79.94625 },
         "summary": [],
         "tour_guide": [
             "Welcome to **Porter Hall**! This is actually the very first building ever constructed on our campus. It connects directly to Baker Hall and serves as a home for many of our interdisciplinary programs."
@@ -176,6 +190,7 @@
         "title": "Scott Hall",
         "latitude": 0,
         "longitude": 0,
+        "entrance": { "latitude": 0, "longitude": 0 },
         "summary": [],
         "tour_guide": [],
         "image_url": "https://www.cmu.edu/bme/images/building/scott-hall-front-650x500.jpg"
@@ -184,6 +199,7 @@
         "title": "Scaife Hall",
         "latitude": 40.44178,
         "longitude": -79.9473,
+        "entrance": { "latitude": 40.44178, "longitude": -79.9473 },
         "summary": [
             "Alan Magee Scaife Hall of Engineering is a new 85,000 square-foot building comprising labs, a drone arena, offices, classrooms, and a café. The labs support research in a variety of subjects ranging from Biology to Robotics to Rapid Prototyping and are supported by 100 PhD workspaces directly adjacent to the lab spaces. The building is the home for the Mechanical Engineering Department."
         ],
@@ -194,6 +210,7 @@
         "title": "TCS Hall",
         "latitude": 40.44476,
         "longitude": -79.94715,
+        "entrance": { "latitude": 40.44476, "longitude": -79.94715 },
         "summary": [],
         "tour_guide": [
             "We arrived at the modern **Tata Consultancy Services (TCS) Hall**.",
@@ -207,6 +224,7 @@
         "title": "Tepper Quad",
         "latitude": 40.445,
         "longitude": -79.9453,
+        "entrance": { "latitude": 40.445, "longitude": -79.9453 },
         "summary": [
             "Tepper Quad Building, is a 315,000 square foot state-of-the-art building, is home to the Tepper School of Business, the Coulter Welcome Center, fitness center, dining locations, JP Morgan and Chase AI Makerspace, and the Swartz Center for Entrepreneurship.",
             "The Tepper School of Business houses three variations of undergraduate majors including Business administration major with 9 different concentrations, Multiple ways to earn an Economics major, and a Computational Finance major.",
@@ -226,6 +244,7 @@
         "title": "Wean Hall",
         "latitude": 40.4426,
         "longitude": -79.9459,
+        "entrance": { "latitude": 40.4426, "longitude": -79.9459 },
         "summary": [],
         "tour_guide": [
             "Here we are at **Wean Hall**, instantly recognizable by its concrete, brutalist architecture.",
@@ -239,6 +258,7 @@
         "title": "Cyert Hall",
         "latitude": 40.4444,
         "longitude": -79.94405,
+        "entrance": { "latitude": 40.4444, "longitude": -79.94405 },
         "tour_guide": [
             "Next is **Cyert Hall**, located right near the entrance to campus.",
             "**Purpose & Affiliation:**\nThis building is the nerve center for campus technology, housing **Computing Services** and the Office of the CIO. It’s also the home of the **Office of International Education (OIE)**, so if you are studying abroad or are an international student, you'll likely visit here.",
@@ -251,6 +271,7 @@
         "title": "Warner Hall",
         "latitude": 40.44417,
         "longitude": -79.9434,
+        "entrance": { "latitude": 40.44417, "longitude": -79.9434 },
         "summary": [
             "Warner Hall is home to the Office of Undergraduate Admission on the second floor. Their office is open from 8:30AM - 4:30PM Monday through Friday if you would like to stop in for a walk-in appointment.",
             "The HUB and Enrollment Services also reside here, which would be where you get your Student ID if you choose to attend CMU."
@@ -266,6 +287,7 @@
         "title": "Cohon University Center",
         "latitude": 40.4438,
         "longitude": -79.94228,
+        "entrance": { "latitude": 40.4438, "longitude": -79.94228 },
         "summary": [
             "Jared L. Cohon University Center is our student union. Here students can take advantage of the student fitness facilities, catch a show at the black-box theater, visit the chapel, gather with other students in meeting rooms, or get lunch in one of many eateries.",
             "You see our Scotty statue mascot that was funded and created by multiple CMU alumni. Our mascot is the Scottish Highland Terrier or Scottie for short. We like to call the dog “Scotty” who is a confident, independent and spirited breed. We students like to rub its nose for goodluck, so feel free to try that out before leaving this stop!",
@@ -283,6 +305,7 @@
         "title": "Posner Hall",
         "latitude": 40.44148,
         "longitude": -79.94205,
+        "entrance": { "latitude": 40.44148, "longitude": -79.94205 },
         "summary": [
             "Posner Hall is adjacent to the Hall of the Arts, which is home to some teaching and rehearsal spaces for the School of Music. This building is home to a student-favorite eatery called The Exchange as well as the Student Academic Success Center. The  Student Academic Success Center focuses on creating spaces for students to engage in their coursework and approach to learning through options like academic coaching, subject-specific tutoring, effective communication strategies, accommodations for students with disabilities, and language support for multilingual learners."
         ],
@@ -297,6 +320,7 @@
         "title": "Highmark Center for Health, Wellness and Athletics",
         "latitude": 40.44124,
         "longitude": -79.9413,
+        "entrance": { "latitude": 40.44124, "longitude": -79.9413 },
         "summary": [
             "The Highmark Center is a 160,000 square foot building recently opened which unifies robust health services, contemporary facilities and educational programs that support students’ minds, bodies and spirits in a comprehensive care model. It includes new full-service clinical areas as an expanded University Health Services; private and supportive spaces for Counseling and Psychological Services; and a modern athletics facility for practice, performance, training and athlete care."
         ],

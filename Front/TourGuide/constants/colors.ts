@@ -78,3 +78,65 @@ export const MAP_OUTLINE_NEUTRAL = {
   stroke: hexToRgba(IRON_GRAY, 0.45),
   fill: hexToRgba(IRON_GRAY, 0.06),
 };
+
+/**
+ * Route-aware styling for app buildings on the map.
+ *
+ * Hierarchy (strongest → weakest visual weight) when a route is active:
+ *   1. `isNext` (locked, on-route, next stop)   → thick red outline, deeper red fill
+ *   2. `inRoute` + unlocked                     → red (same as unlocked default) + checkmark badge
+ *   3. `inRoute` + locked                       → gray dot, red outline  (reads as "on this tour")
+ *   4. off-route                                → dimmed to ~40% opacity
+ *
+ * When no route is active, reverts to the basic unlocked/locked palette.
+ */
+export function getMapBuildingStyle(opts: {
+  unlocked: boolean;
+  inRoute: boolean;
+  isNext: boolean;
+  routeActive: boolean;
+}) {
+  const { unlocked, inRoute, isNext, routeActive } = opts;
+
+  if (!routeActive) {
+    return {
+      ...getMapBuildingColors(unlocked),
+      opacity: 1,
+      showCheck: false,
+      strokeWidth: 1,
+    };
+  }
+
+  if (!inRoute) {
+    const base = getMapBuildingColors(unlocked);
+    return {
+      stroke: hexToRgba(unlocked ? CMU_RED : IRON_GRAY, 0.35),
+      fill: hexToRgba(unlocked ? CMU_RED : IRON_GRAY, 0.05),
+      dot: base.dot,
+      opacity: 0.4,
+      showCheck: false,
+      strokeWidth: 1,
+    };
+  }
+
+  if (unlocked) {
+    return {
+      ...getMapBuildingColors(true),
+      opacity: 1,
+      showCheck: true,
+      strokeWidth: 1,
+    };
+  }
+
+  // Locked in-route. Red outline ties the building to the route line;
+  // gray dot preserves the "still locked" signal. The next stop gets a
+  // thicker outline + slightly denser fill so it reads as the target.
+  return {
+    stroke: CMU_RED,
+    fill: hexToRgba(CMU_RED, isNext ? 0.22 : 0.08),
+    dot: IRON_GRAY,
+    opacity: 1,
+    showCheck: false,
+    strokeWidth: isNext ? 3 : 1,
+  };
+}

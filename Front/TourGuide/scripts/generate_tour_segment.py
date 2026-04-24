@@ -38,6 +38,25 @@ def load_buildings() -> dict:
     return json.loads(BUILDINGS_JSON.read_text())
 
 
+def routing_coord(building: dict, bid: str) -> tuple[float, float]:
+    """Coordinate ORS should route to/from: entrance if set, else center.
+
+    Mirrors getEntrance() in services/buildingService.ts so generated
+    paths land on the same point the runtime approach-path uses.
+    """
+    entrance = building.get("entrance")
+    if isinstance(entrance, dict):
+        lat = entrance.get("latitude")
+        lng = entrance.get("longitude")
+        if isinstance(lat, (int, float)) and isinstance(lng, (int, float)):
+            return (float(lat), float(lng))
+    lat = building.get("latitude")
+    lng = building.get("longitude")
+    if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or (lat == 0 and lng == 0):
+        sys.exit(f"building {bid} has no usable coordinates in buildings.json")
+    return (float(lat), float(lng))
+
+
 def fetch_route(api_key: str, start: tuple[float, float], end: tuple[float, float]) -> list[dict]:
     """Call ORS foot-walking; return list of {latitude, longitude} along the path."""
     body = json.dumps(
@@ -89,9 +108,9 @@ def main() -> None:
     for bid in ids:
         if bid not in buildings:
             sys.exit(f"unknown building id: {bid}")
-        b = buildings[bid]
-        if not b.get("latitude") or not b.get("longitude"):
-            sys.exit(f"building {bid} has no coordinates in buildings.json")
+        # Validates presence of entrance-or-center; exits with a clear error
+        # if the building has neither.
+        routing_coord(buildings[bid], bid)
 
     api_key = load_env_key()
 
@@ -100,12 +119,10 @@ def main() -> None:
     for i in range(len(ids) - 1):
         a, b = ids[i], ids[i + 1]
         ba, bb = buildings[a], buildings[b]
+        start = routing_coord(ba, a)
+        end = routing_coord(bb, b)
         print(f"// {a} ({ba['title']}) -> {b} ({bb['title']})", file=sys.stderr)
-        coords = fetch_route(
-            api_key,
-            (ba["latitude"], ba["longitude"]),
-            (bb["latitude"], bb["longitude"]),
-        )
+        coords = fetch_route(api_key, start, end)
         print(f"//   {len(coords)} waypoints", file=sys.stderr)
         print(format_segment(a, b, coords))
         print()

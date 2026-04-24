@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleProp, ViewStyle } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  StyleProp,
+  ViewStyle,
+  Animated,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Polygon, Polyline, Marker, Callout, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -9,16 +17,18 @@ import {
   getBuilding,
   getBuildingOutline,
   getAllOutlineEntries,
+  getEntrance,
 } from '../services/buildingService';
 import {
   getAllRoutes,
   getPathsForRoute,
   findNearestStopInRoute,
   haversineMeters,
+  getRoute,
 } from '../services/routeService';
 import { fetchWalkingRoute } from '../services/orsClient';
 import {
-  getMapBuildingColors,
+  getMapBuildingStyle,
   MAP_OUTLINE_NEUTRAL,
   CMU_RED,
   COLORS,
@@ -73,6 +83,14 @@ const APPROACH_COLOR = '#1F6FEB';
 // fetching an approach path — they're effectively there.
 const APPROACH_SKIP_DISTANCE_M = 20;
 
+// RGB channels of CMU_RED (#C41230), used to build rgba strings with an
+// animated alpha for the full-route peek.
+const CMU_RED_RGB = '196, 18, 48';
+// Peek timing: fade-in → hold → fade-out.
+const PEEK_FADE_IN_MS = 200;
+const PEEK_HOLD_MS = 2500;
+const PEEK_FADE_OUT_MS = 500;
+
 export default function CampusMap({
   style,
   onBuildingPress,
@@ -84,16 +102,50 @@ export default function CampusMap({
   const [locationGranted, setLocationGranted] = useState(false);
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [labelsVisible, setLabelsVisible] = useState(false);
-  // Approach-path state: the walking polyline from the user to the nearest
-  // stop in the active route, plus which stop that is. Both cleared when
-  // there's no route, no location, or the user is off-campus.
-  const [approachCoords, setApproachCoords] = useState<LatLng[] | null>(null);
-  const [approachTarget, setApproachTarget] = useState<BuildingId | null>(null);
+  // Fetched approach path, tagged with the target it was fetched for.
+  // Tagging lets us ignore stale coords if the target has since advanced
+  // (e.g. user just unlocked the previous nearest stop).
+  const [approach, setApproach] = useState<{
+    target: BuildingId;
+    coords: LatLng[];
+  } | null>(null);
   const [offCampus, setOffCampus] = useState(false);
   const mapRef = useRef<MapView>(null);
   const initialCameraRef = useRef<any>(null);
   const mapReadyRef = useRef(false);
   const focusedOnUserRef = useRef(false);
+
+  // Animated alpha (0..1) for the "peek full route" reveal. A JS-side
+  // Animated.Value feeds a state mirror via a listener so we can use it to
+  // build an rgba strokeColor — Polyline doesn't accept Animated props.
+  const peekAnim = useRef(new Animated.Value(0)).current;
+  const peekSeqRef = useRef<Animated.CompositeAnimation | null>(null);
+  const [peekAlpha, setPeekAlpha] = useState(0);
+  useEffect(() => {
+    const id = peekAnim.addListener(({ value }) => setPeekAlpha(value));
+    return () => {
+      peekAnim.removeListener(id);
+      peekSeqRef.current?.stop();
+    };
+  }, [peekAnim]);
+  const peekFullRoute = () => {
+    peekSeqRef.current?.stop();
+    peekAnim.setValue(0);
+    peekSeqRef.current = Animated.sequence([
+      Animated.timing(peekAnim, {
+        toValue: 1,
+        duration: PEEK_FADE_IN_MS,
+        useNativeDriver: false,
+      }),
+      Animated.delay(PEEK_HOLD_MS),
+      Animated.timing(peekAnim, {
+        toValue: 0,
+        duration: PEEK_FADE_OUT_MS,
+        useNativeDriver: false,
+      }),
+    ]);
+    peekSeqRef.current.start();
+  };
 
   useEffect(() => {
     (async () => {
@@ -116,79 +168,83 @@ export default function CampusMap({
     })();
   }, []);
 
-  // One-shot approach-path computation. Runs when the active route or the
-  // user's location changes; does NOT re-run when a building unlocks — that
-  // visibility is handled at render time via `approachVisible` below.
+  // Derived: the nearest LOCKED stop in the active route. Recomputed on
+  // every render (cheap — routes are short). This is the single source of
+  // truth for "where should the user head next," and it automatically
+  // advances the moment the user unlocks their current target.
+  const nextTargetId: BuildingId | null =
+    activeRouteId && userLocation
+      ? findNearestStopInRoute(activeRouteId, userLocation, (id) => !isUnlocked(id))?.id ?? null
+      : null;
+
+  // Fetch (or clear) the approach polyline whenever the active route, the
+  // user's location, or — critically — the next target changes. Re-running
+  // on nextTargetId is what makes the line auto-advance after an unlock.
+  useEffect(() => {
+    if (!userLocation) {
+      setOffCampus(false);
+      return;
+    }
+    setOffCampus(
+      haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M
+    );
+  }, [userLocation?.latitude, userLocation?.longitude]);
+
   useEffect(() => {
     if (!activeRouteId || !userLocation) {
-      setApproachCoords(null);
-      setApproachTarget(null);
-      setOffCampus(false);
+      setApproach(null);
       return;
     }
 
     if (haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M) {
-      setOffCampus(true);
-      setApproachCoords(null);
-      setApproachTarget(null);
+      setApproach(null);
       return;
     }
-    setOffCampus(false);
 
-    // Only consider stops the user hasn't unlocked yet — the approach line
-    // is meant to guide them to their next tour destination, not something
-    // they've already visited.
-    const nearest = findNearestStopInRoute(
-      activeRouteId,
-      userLocation,
-      (id) => !isUnlocked(id)
-    );
-    if (!nearest) {
+    if (!nextTargetId) {
       // Every stop in this route is already unlocked — nothing to approach.
-      setApproachCoords(null);
-      setApproachTarget(null);
-      return;
-    }
-    setApproachTarget(nearest.id);
-
-    if (nearest.distance < APPROACH_SKIP_DISTANCE_M) {
-      setApproachCoords(null);
+      setApproach(null);
       return;
     }
 
-    const target = getBuilding(nearest.id);
-    if (!target?.latitude || !target?.longitude) {
-      setApproachCoords(null);
+    // Route to the entrance, not the polygon center — otherwise ORS
+    // routinely snaps to whichever side door is nearest the centroid.
+    const targetLatLng = getEntrance(nextTargetId);
+    if (!targetLatLng) {
+      setApproach(null);
+      return;
+    }
+
+    // If the user is essentially standing on the entrance, skip the
+    // fetch — a polyline would be visual noise. The thick building
+    // outline still conveys "this is your next stop."
+    if (haversineMeters(userLocation, targetLatLng) < APPROACH_SKIP_DISTANCE_M) {
+      setApproach(null);
       return;
     }
 
     const controller = new AbortController();
-    fetchWalkingRoute(
-      userLocation,
-      { latitude: target.latitude, longitude: target.longitude },
-      controller.signal
-    )
-      .then((r) => setApproachCoords(r.coordinates))
+    fetchWalkingRoute(userLocation, targetLatLng, controller.signal)
+      .then((r) =>
+        setApproach({ target: nextTargetId, coords: r.coordinates })
+      )
       .catch((err) => {
         if (err?.name !== 'AbortError') {
           console.warn('ORS approach fetch failed:', err);
-          setApproachCoords(null);
+          setApproach(null);
         }
       });
     return () => controller.abort();
-    // `isUnlocked` intentionally omitted so we don't re-fetch every time
-    // a lock state flips; the post-unlock hide is handled by `approachVisible`
-    // and the next activation of the route picks a fresh target.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeRouteId, userLocation?.latitude, userLocation?.longitude]);
+  }, [activeRouteId, userLocation?.latitude, userLocation?.longitude, nextTargetId]);
 
-  // Hide the approach path once its target building is unlocked — the user
-  // has arrived, the connector has served its purpose.
+  // Visible only when the fetched coords match the *current* target. If
+  // the target has advanced and a new fetch is in flight, this goes false
+  // until the new coords arrive — preventing a stale path from briefly
+  // pointing to an already-unlocked building.
   const approachVisible =
-    !!approachCoords &&
-    approachCoords.length >= 2 &&
-    !!approachTarget &&
-    !isUnlocked(approachTarget);
+    !!approach &&
+    approach.coords.length >= 2 &&
+    approach.target === nextTargetId;
 
   // Once both the map is ready and we know the user's location, gently fly
   // there at a closer zoom — but only the first time, so we don't fight the
@@ -212,6 +268,16 @@ export default function CampusMap({
 
   const buildingKeys = getAllBuildingIds();
   const buildingKeySet = new Set(buildingKeys);
+
+  // Route-aware styling inputs, computed once per render so the Polygon
+  // and Marker passes stay cheap.
+  const activeRoute = activeRouteId ? getRoute(activeRouteId) : null;
+  const routeActive = !!activeRoute;
+  const routeStopIds = new Set<BuildingId>(activeRoute?.stops ?? []);
+  // Use the synchronously-derived target so the "next stop" styling
+  // updates on the same render as an unlock, rather than waiting a beat
+  // for the approach-path effect to run.
+  const nextStopId = nextTargetId;
 
   const resetHome = () => {
     if (!initialCameraRef.current || !mapRef.current) return;
@@ -253,27 +319,31 @@ export default function CampusMap({
         showsUserLocation={locationGranted}
         showsMyLocationButton={false}
         rotateEnabled
-        pitchEnabled
+        pitchEnabled={false}
         scrollEnabled
         zoomEnabled
       >
         <Polygon
           coordinates={CMU_POLYGON}
-          strokeColor={CMU_RED}
+          strokeColor={'rgba(153, 0, 0, 0.6)'}
           strokeWidth={1}
-          fillColor="rgba(196, 30, 58, 0)"
           lineDashPattern={[5, 3]}
         />
 
         {ALL_ROUTE_PATHS.map(({ routeId, path }) => {
           const active = routeId === activeRouteId;
+          // Active route polylines stay mounted but fade in/out via the
+          // peek alpha. Inactive route polylines are always transparent.
+          const strokeColor = active
+            ? `rgba(${CMU_RED_RGB}, ${peekAlpha})`
+            : 'transparent';
           return (
             <Polyline
               key={`path-${routeId}-${path.from}-${path.to}`}
               coordinates={path.coordinates}
-              strokeColor={active ? CMU_RED : 'transparent'}
+              strokeColor={strokeColor}
               strokeWidth={1}
-              lineDashPattern={[8, 6]}
+              lineDashPattern={[3, 2]}
             />
           );
         })}
@@ -283,10 +353,10 @@ export default function CampusMap({
             to a settled MapView (same iOS-crash avoidance as above). */}
         <Polyline
           key="approach-path"
-          coordinates={approachVisible ? approachCoords! : APPROACH_PLACEHOLDER}
-          strokeColor={approachVisible ? APPROACH_COLOR : 'transparent'}
+          coordinates={approachVisible ? approach!.coords : APPROACH_PLACEHOLDER}
+          strokeColor={approachVisible ? CMU_RED : 'transparent'}
           strokeWidth={1}
-          lineDashPattern={[4, 6]}
+          lineDashPattern={[3, 2]}
         />
 
         {getAllOutlineEntries().map(([code, data]) => {
@@ -306,14 +376,21 @@ export default function CampusMap({
           const data = getBuildingOutline(id);
           if (!data) return null;
           const unlocked = isUnlocked(id);
-          const colors = getMapBuildingColors(unlocked);
+          const inRoute = routeStopIds.has(id);
+          const isNext = routeActive && id === nextStopId;
+          const style = getMapBuildingStyle({
+            unlocked,
+            inRoute,
+            isNext,
+            routeActive,
+          });
           return data.shapes.map((shape, i) => (
             <Polygon
               key={`app-${id}-${i}`}
               coordinates={shape}
-              strokeColor={colors.stroke}
-              strokeWidth={1}
-              fillColor={colors.fill}
+              strokeColor={style.stroke}
+              strokeWidth={style.strokeWidth}
+              fillColor={style.fill}
               tappable
               onPress={() => handleMarkerPress(id, unlocked)}
             />
@@ -326,18 +403,29 @@ export default function CampusMap({
           const unlocked = isUnlocked(id);
           const scannable = isScannable(id);
           const showLocked = scannable && !unlocked;
-          const colors = getMapBuildingColors(unlocked);
+          const inRoute = routeStopIds.has(id);
+          const isNext = routeActive && id === nextStopId;
+          const style = getMapBuildingStyle({
+            unlocked,
+            inRoute,
+            isNext,
+            routeActive,
+          });
+          // Include route-state bits in the key so the native marker
+          // bitmap is re-captured when membership/next-stop/unlock changes
+          // (same mechanism as the existing label-visibility rekey).
+          const styleSig = `u${unlocked ? 1 : 0}r${inRoute ? 1 : 0}n${
+            isNext ? 1 : 0
+          }a${routeActive ? 1 : 0}`;
           return (
             <Marker
-              // Re-key on label visibility so the native marker bitmap is
-              // re-captured when the label appears/disappears.
-              key={`${id}-${labelsVisible ? 'lbl' : 'dot'}`}
+              key={`${id}-${labelsVisible ? 'lbl' : 'dot'}-${styleSig}`}
               coordinate={{ latitude: b.latitude, longitude: b.longitude }}
               tracksViewChanges={false}
               stopPropagation
               onPress={() => handleMarkerPress(id, unlocked)}
             >
-              <View className="items-center">
+              <View className="items-center" style={{ opacity: style.opacity }}>
                 {labelsVisible && (
                   <View
                     className="flex-row items-center px-1 py-[2px] rounded-[4px] mb-[2px]"
@@ -348,6 +436,14 @@ export default function CampusMap({
                         name="lock-closed"
                         size={10}
                         color={COLORS.locked}
+                        style={{ marginRight: 3 }}
+                      />
+                    )}
+                    {style.showCheck && (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={11}
+                        color={CMU_RED}
                         style={{ marginRight: 3 }}
                       />
                     )}
@@ -365,7 +461,7 @@ export default function CampusMap({
                 )}
                 <View
                   className="w-[10px] h-[10px] rounded-[5px] border-2 border-white"
-                  style={{ backgroundColor: colors.dot }}
+                  style={{ backgroundColor: style.dot }}
                 />
               </View>
               <Callout tooltip>
@@ -374,12 +470,13 @@ export default function CampusMap({
             </Marker>
           );
         })}
+
       </MapView>
 
-      {offCampus && activeRouteId && (
+      {offCampus && (
         <View
           className="absolute inset-0 items-center justify-center px-8"
-          style={{ backgroundColor: COLORS.background }}
+          style={{ backgroundColor: COLORS.background, zIndex: 20 }}
         >
           <Ionicons name="walk-outline" size={52} color={CMU_RED} />
           <Text
@@ -392,10 +489,67 @@ export default function CampusMap({
             className="font-sans text-base mt-2 text-center"
             style={{ color: COLORS.locked }}
           >
-            Come to CMU's main campus to start this tour.
+            {activeRouteId
+              ? "Come to CMU's main campus to start this tour."
+              : "Come to CMU's main campus to explore."}
           </Text>
         </View>
       )}
+
+      {/* Route chip — small, bottom-left corner. When a route is active,
+          tells the user which route and the next locked stop, and tapping
+          peeks the full polyline. When no route is active, shows a
+          placeholder prompting the user to pick one. Sits above the
+          off-campus overlay via zIndex. */}
+      {(() => {
+        const route = activeRouteId ? getRoute(activeRouteId) : null;
+        const nextStopBuilding =
+          route && nextTargetId ? getBuilding(nextTargetId) : null;
+        const hasRoute = !!route;
+        return (
+          <TouchableOpacity
+            onPress={hasRoute ? peekFullRoute : undefined}
+            activeOpacity={hasRoute ? 0.8 : 1}
+            disabled={!hasRoute}
+            className="absolute bottom-2 left-3 px-3 py-2 rounded-lg max-w-[65%]"
+            style={[
+              { backgroundColor: COLORS.background, zIndex: 30 },
+              SHADOWS.card,
+            ]}
+          >
+            <View className="flex-row items-center">
+              <View style={{ flexShrink: 1 }}>
+                <Text
+                  className="font-serif-semi text-[12px]"
+                  style={{ color: hasRoute ? CMU_RED : COLORS.textSecondary }}
+                  numberOfLines={1}
+                >
+                  {hasRoute ? `Route: ${route!.name}` : 'No route selected'}
+                </Text>
+                <Text
+                  className="font-sans text-[10px] mt-[1px]"
+                  style={{ color: COLORS.textSecondary }}
+                  numberOfLines={1}
+                >
+                  {hasRoute
+                    ? nextStopBuilding
+                      ? `Next: ${nextStopBuilding.title}`
+                      : 'Tour complete'
+                    : 'Tap Routes to select a route'}
+                </Text>
+              </View>
+              {hasRoute && (
+                <Ionicons
+                  name="eye-outline"
+                  size={14}
+                  color={COLORS.textSecondary}
+                  style={{ marginLeft: 10 }}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        );
+      })()}
 
       {(showControls || onExpand) && (
         <View className="absolute bottom-3 right-3 z-10 flex flex-row gap-2">

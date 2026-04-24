@@ -35,6 +35,35 @@ const outlines: Record<BuildingId, BuildingOutline> = Object.fromEntries(
 export const getBuilding = (id: BuildingId): Building | undefined =>
   buildings[id];
 
+/**
+ * Routing-facing coordinate for a building. Prefers an explicit entrance
+ * if set; otherwise falls back to the visual center. Returns undefined
+ * only if the building is missing or has no usable coords at all.
+ *
+ * Use this anywhere a path should *end* at the building (ORS fetches,
+ * nearest-stop distance) — not for marker placement, which should stay
+ * on the geometric center.
+ */
+const isValidLatLng = (p?: { latitude?: number; longitude?: number }): boolean =>
+  !!p &&
+  typeof p.latitude === 'number' &&
+  typeof p.longitude === 'number' &&
+  Number.isFinite(p.latitude) &&
+  Number.isFinite(p.longitude) &&
+  (p.latitude !== 0 || p.longitude !== 0);
+
+export const getEntrance = (id: BuildingId): LatLng | undefined => {
+  const b = buildings[id];
+  if (!b) return undefined;
+  if (isValidLatLng(b.entrance)) {
+    return { latitude: b.entrance!.latitude, longitude: b.entrance!.longitude };
+  }
+  if (isValidLatLng(b)) {
+    return { latitude: b.latitude, longitude: b.longitude };
+  }
+  return undefined;
+};
+
 export const getAllBuildings = (): Record<BuildingId, Building> => buildings;
 
 export const getAllBuildingIds = (): BuildingId[] => Object.keys(buildings);
