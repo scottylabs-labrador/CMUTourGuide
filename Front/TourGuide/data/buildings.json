@@ -43,15 +43,6 @@
         ],
         "image_url": "https://freight.cargo.site/t/original/i/4e4dd19166a61e7b73ba5a17f4b961264757176e28342f251b43739bf843ebba/nichesD-1.jpg"
     },
-    "CIC": {
-        "title": "Collaborative Innovation Center",
-        "latitude": 0,
-        "longitude": 0,
-        "entrance": { "latitude": 0, "longitude": 0 },
-        "summary": [],
-        "tour_guide": [],
-        "image_url": ""
-    },
     "DH": {
         "title": "Doherty Hall",
         "latitude": 40.4425,

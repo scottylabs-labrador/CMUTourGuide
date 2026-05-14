@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, Modal, TouchableOpacity, Pressable, Dimensions, ScrollView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Pressable, Dimensions, ScrollView } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
@@ -88,8 +89,11 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                             return source ? (
                                 <Image
                                     source={source}
-                                    className="w-full h-full"
-                                    resizeMode="cover"
+                                    style={{ width: '100%', height: '100%' }}
+                                    contentFit="cover"
+                                    cachePolicy="memory-disk"
+                                    transition={200}
+                                    recyclingKey={building_id}
                                 />
                             ) : null;
                         })()}

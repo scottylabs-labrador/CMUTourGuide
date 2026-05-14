@@ -6,7 +6,6 @@ export const SCANNABLE_BUILDING_IDS: readonly string[] = [
   'AN',   // Ansys Hall
   'BH',   // Baker Hall
   'CFA',  // College of Fine Arts
-  'CIC',  // Collaborative Innovation Center
   'DH',   // Doherty Hall
   'GHC',  // Gates & Hillman Centers
   'HBH',  // Hamburg Hall

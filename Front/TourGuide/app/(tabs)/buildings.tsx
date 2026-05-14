@@ -59,6 +59,7 @@ export default function AllBuildingsScreen() {
         onPress={() => handlePress(buildingId)}
         width={CARD_WIDTH}
         style={{ marginRight: isLeftColumn ? COLUMN_GAP : 0 }}
+        recyclingKey={buildingId}
       />
     );
   };

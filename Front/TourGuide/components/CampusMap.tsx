@@ -181,13 +181,15 @@ export default function CampusMap({
   // user's location, or — critically — the next target changes. Re-running
   // on nextTargetId is what makes the line auto-advance after an unlock.
   useEffect(() => {
-    if (!userLocation) {
-      setOffCampus(false);
-      return;
-    }
-    setOffCampus(
-      haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M
-    );
+    setOffCampus(false);
+    return;
+    // if (!userLocation) {
+    //   setOffCampus(false);
+    //   return;
+    // }
+    // setOffCampus(
+    //   haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M
+    // );
   }, [userLocation?.latitude, userLocation?.longitude]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
+import { View, Text, TouchableOpacity, ImageSourcePropType } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -11,9 +12,12 @@ type Props = {
   onPress: () => void;
   width?: number;
   style?: object;
+  // Stable id for FlatList recycling so expo-image can keep its decoded
+  // bitmap cached across cell reuse.
+  recyclingKey?: string;
 };
 
-export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style }: Props) {
+export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style, recyclingKey }: Props) {
   const badgeText = unlocked ? 'Unlocked' : scannable ? 'Must-See' : 'Explore';
 
   return (
@@ -37,8 +41,11 @@ export default function BuildingCard({ title, imageSource, unlocked, scannable, 
         {imageSource ? (
           <Image
             source={imageSource}
-            className="w-full h-full"
-            resizeMode="cover"
+            style={{ width: '100%', height: '100%' }}
+            contentFit="cover"
+            cachePolicy="memory-disk"
+            transition={150}
+            recyclingKey={recyclingKey}
           />
         ) : (
           <View className="w-full h-full justify-center items-center bg-border">
