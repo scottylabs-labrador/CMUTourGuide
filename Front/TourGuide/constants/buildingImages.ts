@@ -14,6 +14,7 @@ export const BUILDING_IMAGES: Record<string, ImageSourcePropType> = {
   CUC: require('../assets/images/buildings/CUC.webp'),
   CYH: require('../assets/images/buildings/CYH.webp'),
   DH: require('../assets/images/buildings/DH.webp'),
+  FENCE: require('../assets/images/buildings/FENCE.webp'),
   GHC: require('../assets/images/buildings/GHC.webp'),
   HBH: require('../assets/images/buildings/HBH.webp'),
   HH: require('../assets/images/buildings/HH.webp'),
@@ -31,6 +32,7 @@ export const BUILDING_IMAGES: Record<string, ImageSourcePropType> = {
   TEP: require('../assets/images/buildings/TEP.webp'),
   WEH: require('../assets/images/buildings/WEH.webp'),
   WH: require('../assets/images/buildings/WH.webp'),
+  WTS: require('../assets/images/buildings/WTS.webp'),
 };
 
 /**

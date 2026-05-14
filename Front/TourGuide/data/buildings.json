@@ -62,7 +62,7 @@
         "image_url": "https://www.cmu.edu/computing/services/teach-learn/tes/images/doherty700x700.jpg"
     },
     "GHC": {
-        "title": "Gates",
+        "title": "Gates and Hillman Center",
         "latitude": 40.44332,
         "longitude": -79.9447,
         "entrance": { "latitude": 40.44332, "longitude": -79.9447 },
@@ -127,7 +127,7 @@
         "image_url": "https://art.cmu.edu/wp-content/uploads/2024/09/CMU-Art-MFA-facilities-exterior-3.jpg"
     },
     "MM": {
-        "title": "Margaret Morrison",
+        "title": "Margaret Morrison Carnegie Hall",
         "latitude": 40.4421,
         "longitude": -79.9415,
         "entrance": { "latitude": 40.4421, "longitude": -79.9415 },
@@ -321,5 +321,39 @@
             "**Fun Facts:**\nEven though it's brand new (opened in 2024), it preserves our history by being built around the foundation of the old Skibo Gym. Also, take a look at the floor tiles in the lobby—they are designed to mimic the rhythm of a human heartbeat!"
         ],
         "image_url": "https://www.cmu.edu/news/sites/default/files/styles/hero_full_width_fallback/public/2024-08/240815_Highmark_Building-MWH.jpg.webp?itok=8dBgqjwF"
+    },
+    "WTS": {
+        "title": "Walking to the Sky",
+        "latitude": 40.44415,
+        "longitude": -79.94296,
+        "entrance": { "latitude": 40.44272, "longitude": -79.94164 },
+        "summary": [
+            "Walking to the Sky is a 100-foot-tall stainless steel sculpture by artist Jonathan Borofsky, installed on CMU's campus in 2006. Standing at a striking 75-degree angle, it features a procession of figures climbing toward the sky, led by an elder and followed by people of all ages, races, and walks of life.",
+            "The piece is meant to celebrate the human spirit of optimism, discovery, and self-discovery — a fitting symbol for a university built on curiosity. Located on the lawn near the College of Fine Arts and Forbes Avenue, it's one of the most photographed spots on campus."
+        ],
+        "tour_guide": [
+            "This is **Walking to the Sky**, one of the most iconic landmarks on our campus.",
+            "**About the Sculpture:**\nCreated by artist **Jonathan Borofsky** and installed in 2006, this **100-foot stainless steel** piece leans skyward at a dramatic 75-degree angle. Climbing the pole is a procession of human figures — an elder leading the way, followed by people of every age and background — representing humanity's collective journey of discovery.",
+            "**Why It's Here:**\nThe sculpture embodies CMU's spirit of **optimism, ambition, and lifelong learning**. It's a reminder that the climb may be steep, but we make it together.",
+            "**Photo Tip:**\nFor the most dramatic shot, stand directly under the base and shoot straight up — the figures look like they're walking right into the clouds."
+        ],
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Walking_to_the_Sky_at_Carnegie_Mellon.JPG/640px-Walking_to_the_Sky_at_Carnegie_Mellon.JPG"
+    },
+    "FENCE": {
+        "title": "The Fence",
+        "latitude": 40.44222,
+        "longitude": -79.94335,
+        "entrance": { "latitude": 40.44261, "longitude": -79.94070 },
+        "summary": [
+            "The Fence is one of CMU's most beloved traditions and is widely considered the most painted object in the world. Originally a wooden footbridge railing built in 1916, it has been continuously painted by student groups for over a century to advertise events, celebrate milestones, and share messages with the community.",
+            "Tradition dictates that the Fence can only be painted between midnight and sunrise, by hand using a brush, and a group must be present to guard it 24/7 in order to keep it. By 1993, layers of paint had grown so heavy that the original Fence collapsed under its own weight; the current concrete and steel structure was built to carry the legacy forward."
+        ],
+        "tour_guide": [
+            "Welcome to **The Fence** — possibly the **most painted object in the world**.",
+            "**The Tradition:**\nFor over a century, CMU students have used the Fence as a campus billboard. Want to advertise your club's event, congratulate a friend, or honor a cause? Grab a brush. There's just one catch: you can **only paint between midnight and sunrise**, it must be done by hand, and your group has to **physically guard the Fence 24/7** to keep your paint job up.",
+            "**Why It Looks Like That:**\nThe original wooden Fence from 1916 actually **collapsed under the weight of its own paint** in 1993. The current concrete-and-steel version is its successor — built to carry decades more of layered messages from generations of Tartans.",
+            "**Pro Tip:**\nIf you walk by tomorrow morning, the Fence may look completely different. That's the point."
+        ],
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/CMU_The_Fence.jpg/640px-CMU_The_Fence.jpg"
     }
 }

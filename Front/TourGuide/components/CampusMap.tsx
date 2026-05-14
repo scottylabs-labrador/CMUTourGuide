@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MapView, { Polygon, Polyline, Marker, Callout, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useBuildings } from '../contexts/BuildingContext';
+import { isLandmark } from '../config/scannableBuildings';
 import {
   getAllBuildingIds,
   getBuilding,
@@ -32,6 +33,7 @@ import {
   MAP_OUTLINE_NEUTRAL,
   CMU_RED,
   COLORS,
+  LANDMARK_YELLOW,
 } from '../constants/colors';
 import { SHADOWS } from '../constants/layout';
 import {
@@ -54,6 +56,15 @@ interface CampusMapProps {
   /** When set, draws the polyline for this route on the map. */
   activeRouteId?: string | null;
 }
+
+// Dev-only location override. When true, skips the real GPS lookup and seeds
+// the user's location to FAKE_CAMPUS_LOCATION so on-campus behavior can be
+// tested from anywhere (e.g. while developing abroad).
+const USE_FAKE_LOCATION = true;
+const FAKE_CAMPUS_LOCATION: LatLng = {
+  latitude: 40.4440,
+  longitude: -79.9448,
+};
 
 // Marker labels are only readable when the visible region is reasonably zoomed
 // in. Below this latitudeDelta, only the dot is shown to avoid overlap clutter.
@@ -148,6 +159,11 @@ export default function CampusMap({
   };
 
   useEffect(() => {
+    if (USE_FAKE_LOCATION) {
+      setLocationGranted(true);
+      setUserLocation(FAKE_CAMPUS_LOCATION);
+      return;
+    }
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -181,15 +197,13 @@ export default function CampusMap({
   // user's location, or — critically — the next target changes. Re-running
   // on nextTargetId is what makes the line auto-advance after an unlock.
   useEffect(() => {
-    setOffCampus(false);
-    return;
-    // if (!userLocation) {
-    //   setOffCampus(false);
-    //   return;
-    // }
-    // setOffCampus(
-    //   haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M
-    // );
+     if (!userLocation) {
+       setOffCampus(false);
+       return;
+     }
+     setOffCampus(
+       haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M
+     );
   }, [userLocation?.latitude, userLocation?.longitude]);
 
   useEffect(() => {
@@ -327,7 +341,7 @@ export default function CampusMap({
       >
         <Polygon
           coordinates={CMU_POLYGON}
-          strokeColor={'rgba(153, 0, 0, 0.6)'}
+          strokeColor={'rgba(100, 116, 139, 0.7)'}
           strokeWidth={1}
           lineDashPattern={[5, 3]}
         />
@@ -407,18 +421,28 @@ export default function CampusMap({
           const showLocked = scannable && !unlocked;
           const inRoute = routeStopIds.has(id);
           const isNext = routeActive && id === nextStopId;
-          const style = getMapBuildingStyle({
+          const baseStyle = getMapBuildingStyle({
             unlocked,
             inRoute,
             isNext,
             routeActive,
           });
+
+          const landmark = isLandmark(id);
+          const style = landmark
+            ? { ...baseStyle, dot: LANDMARK_YELLOW, showCheck: false }
+            : baseStyle;
+          const labelColor = landmark
+            ? LANDMARK_YELLOW
+            : showLocked
+              ? COLORS.locked
+              : CMU_RED;
           // Include route-state bits in the key so the native marker
           // bitmap is re-captured when membership/next-stop/unlock changes
           // (same mechanism as the existing label-visibility rekey).
           const styleSig = `u${unlocked ? 1 : 0}r${inRoute ? 1 : 0}n${
             isNext ? 1 : 0
-          }a${routeActive ? 1 : 0}`;
+          }a${routeActive ? 1 : 0}l${landmark ? 1 : 0}`;
           return (
             <Marker
               key={`${id}-${labelsVisible ? 'lbl' : 'dot'}-${styleSig}`}
@@ -452,7 +476,7 @@ export default function CampusMap({
                     <Text
                       className="font-serif-semi text-[11px] text-center"
                       style={{
-                        color: showLocked ? COLORS.locked : CMU_RED,
+                        color: labelColor,
                         maxWidth: 100,
                       }}
                       numberOfLines={1}

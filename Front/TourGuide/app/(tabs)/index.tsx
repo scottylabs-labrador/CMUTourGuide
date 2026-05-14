@@ -8,6 +8,7 @@ import { useBuildings } from '../../contexts/BuildingContext';
 import SummaryModal from '../../components/SummaryModal';
 import CampusMap from '../../components/CampusMap';
 import RoutePickerModal from '../../components/RoutePickerModal';
+import FeedbackModal from '../../components/FeedbackModal';
 import { getAllRoutes } from '../../services/routeService';
 import { CMU_RED } from '../../constants/colors';
 import { SHADOWS } from '../../constants/layout';
@@ -20,6 +21,12 @@ export default function HomeScreen() {
   const [buildingId, setBuildingId] = React.useState('');
   const [showRoutePicker, setShowRoutePicker] = React.useState(false);
   const [activeRouteId, setActiveRouteId] = React.useState<string | null>(null);
+  const [showFeedback, setShowFeedback] = React.useState(false);
+
+  const handleFeedback = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowFeedback(true);
+  };
 
   const handleRoutes = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -48,14 +55,27 @@ export default function HomeScreen() {
             position: 'relative',
           }}
         >
-          <TouchableOpacity
-            className="absolute right-4 p-1 z-[1]"
+          <View
+            className="absolute right-4 z-[1] flex-row items-center"
             style={{ top: insets.top + 10 }}
-            onPress={() => router.push('/info')}
-            activeOpacity={0.8}
           >
-            <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="p-1 mr-2"
+              onPress={handleFeedback}
+              activeOpacity={0.8}
+              accessibilityLabel="Send feedback"
+            >
+              <Ionicons name="chatbubble-ellipses-outline" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="p-1"
+              onPress={() => router.push('/info')}
+              activeOpacity={0.8}
+              accessibilityLabel="About this app"
+            >
+              <Ionicons name="information-circle-outline" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
           <Text
             className="font-sans-semi text-[11px] text-white/80 mb-1"
             style={{ letterSpacing: 1.2, textTransform: 'uppercase' }}
@@ -160,6 +180,11 @@ export default function HomeScreen() {
           routes={getAllRoutes()}
           activeRouteId={activeRouteId}
           onSelect={setActiveRouteId}
+        />
+
+        <FeedbackModal
+          visible={showFeedback}
+          onClose={() => setShowFeedback(false)}
         />
       </SafeAreaView>
     </View>

@@ -13,6 +13,7 @@ import SummaryModal from '../../components/SummaryModal';
 import BuildingCard from '../../components/BuildingCard';
 import { getAllBuildingIds, getBuilding } from '../../services/buildingService';
 import { getBuildingImageSource } from '../../constants/buildingImages';
+import { isLandmark } from '../../config/scannableBuildings';
 import type { BuildingId } from '../../types/building';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -56,6 +57,7 @@ export default function AllBuildingsScreen() {
         imageSource={getBuildingImageSource(buildingId, building.image_url)}
         unlocked={unlocked}
         scannable={scannable}
+        landmark={isLandmark(buildingId)}
         onPress={() => handlePress(buildingId)}
         width={CARD_WIDTH}
         style={{ marginRight: isLeftColumn ? COLUMN_GAP : 0 }}

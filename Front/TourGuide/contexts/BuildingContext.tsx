@@ -2,6 +2,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useMe
 import { getUnlockedBuildings, unlockBuilding as unlockBuildingStorage, resetProgress } from '../utils/buildingStorage';
 import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../config/scannableBuildings';
 
+// TESTING: Set to true to unlock every building so the UI can be browsed
+// without scanning. MUST be set back to false before shipping.
+const UNLOCK_ALL_BUILDINGS_FOR_TESTING = true;
+
 interface PendingSummary {
   buildingId: string;
   isNewUnlock: boolean;
@@ -92,12 +96,16 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
   };
 
   const isUnlocked = (buildingId: string): boolean => {
+    if (UNLOCK_ALL_BUILDINGS_FOR_TESTING) return true;
     if (!isScannableBuilding(buildingId)) return true;
     return unlockedBuildings.includes(buildingId);
   };
 
   const unlockedScannableCount = useMemo(
-    () => unlockedBuildings.filter(isScannableBuilding).length,
+    () =>
+      UNLOCK_ALL_BUILDINGS_FOR_TESTING
+        ? SCANNABLE_BUILDING_IDS.length
+        : unlockedBuildings.filter(isScannableBuilding).length,
     [unlockedBuildings]
   );
 

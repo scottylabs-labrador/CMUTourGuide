@@ -15,10 +15,20 @@ type Props = {
   // Stable id for FlatList recycling so expo-image can keep its decoded
   // bitmap cached across cell reuse.
   recyclingKey?: string;
+  // Landmarks use distinct copy ("Landmark" badge, "Discover this landmark.")
+  // since "Unlocked / Explore this building" reads oddly for a sculpture or
+  // campus tradition.
+  landmark?: boolean;
 };
 
-export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style, recyclingKey }: Props) {
-  const badgeText = unlocked ? 'Unlocked' : scannable ? 'Must-See' : 'Explore';
+export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style, recyclingKey, landmark = false }: Props) {
+  const badgeText = landmark
+    ? 'Landmark'
+    : unlocked
+      ? 'Unlocked'
+      : scannable
+        ? 'Must-See'
+        : 'Explore';
 
   return (
     <TouchableOpacity
@@ -73,7 +83,11 @@ export default function BuildingCard({ title, imageSource, unlocked, scannable, 
       <View className="px-3 py-[10px]">
         <Text className="font-serif-bold text-sm text-[#1F2933] mb-0.5 text-center">{title}</Text>
         <Text className="font-serif text-xs text-[#7A8593] text-center">
-          {scannable ? 'Scan for building information.' : 'Explore this building.'}
+          {landmark
+            ? 'Discover this landmark.'
+            : scannable
+              ? 'Scan for building information.'
+              : 'Explore this building.'}
         </Text>
       </View>
     </TouchableOpacity>

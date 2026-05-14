@@ -32,3 +32,17 @@ const SCANNABLE_SET = new Set(SCANNABLE_BUILDING_IDS);
 
 export const isScannableBuilding = (buildingId: string): boolean =>
   SCANNABLE_SET.has(buildingId);
+
+// Campus landmarks — non-building points of interest (sculptures, traditions,
+// etc.) that share the same data shape as buildings but should never be
+// scannable and should be presented to the user as "landmarks" rather than
+// buildings.
+export const LANDMARK_BUILDING_IDS: readonly string[] = [
+  'WTS',   // Walking to the Sky
+  'FENCE', // The Fence
+];
+
+const LANDMARK_SET = new Set(LANDMARK_BUILDING_IDS);
+
+export const isLandmark = (buildingId: string): boolean =>
+  LANDMARK_SET.has(buildingId);

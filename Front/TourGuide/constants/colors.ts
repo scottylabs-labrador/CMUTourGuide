@@ -5,6 +5,11 @@ export const IRON_GRAY = '#6D6E71';    // Iron Gray (PMS Cool Gray 10 C)
 export const STEEL_GRAY = '#E0E0E0';   // Steel Gray (PMS Cool Gray 4 C)
 export const WHITE = '#FFFFFF';        // White
 
+// Distinct accent used to set campus landmarks (sculptures, traditions, etc.)
+// apart from buildings on the map. A saturated golden yellow that reads
+// clearly on the white-ish basemap and against CMU_RED route paths.
+export const LANDMARK_YELLOW = '#E6A817';
+
 export const COLORS = {
   primary: CMU_RED,
   background: WHITE,

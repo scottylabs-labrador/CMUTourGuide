@@ -47,7 +47,7 @@
     ]
   },
   "GHC": {
-    "title": "Gates",
+    "title": "Gates and Hillman Centers",
     "summary": [
       "Gates and Hillman Centers for Future-Generation Technologies are home to the School of Computer Science and Computational Biology Department. These Gold LEED Certified Centers were made possible by lead gifts from the Bill and Melinda Gates and the Henry L. Hillman foundations. The building also houses a Mission Control Center for the student project Iris Rover created by over 300 students from across the university that was the first of its kind to survive a launch and a zero-gravity environment.",
       "The School of Computer Science was the first standalone school of Computer Science in the nation and launched the first Artificial Intelligence degree by a US University. The school houses five undergraduate majors including Computer Science, Artificial Intelligence, Computational Biology, Human Computer Interaction, Robotics.",
@@ -96,7 +96,7 @@
     "summary": []
   },
   "MM": {
-    "title": "Margaret Morrison",
+    "title": "Margaret Morrison Carnegie Hall",
     "summary": [
       "Margaret Morrison Carnegie Hall, affectionately known on campus as 'Maggie Mo'. This building originally housed the Margaret Morrison Carnegie College for Women, and it now houses some years of the design and architecture programs as well as our on campus children’s school!",
       "The School of Design is an exploration of humanity and sustainable systems. With a focus on interdisciplinary learning, our programs prepare students for real-world design challenges by working collaboratively across fields. CMU was the first school to offer a degree in Industrial Design. Now it’s called “Product Design”.",
@@ -238,5 +238,19 @@
   "FLD": {
     "title": "Athletic Field",
     "summary": []
+  },
+  "WTS": {
+    "title": "Walking to the Sky",
+    "summary": [
+      "Walking to the Sky is a 100-foot-tall stainless steel sculpture by artist Jonathan Borofsky, installed on CMU's campus in 2006. Standing at a striking 75-degree angle, it features a procession of figures climbing toward the sky, led by an elder and followed by people of all ages, races, and walks of life.",
+      "The piece is meant to celebrate the human spirit of optimism, discovery, and self-discovery — a fitting symbol for a university built on curiosity. Located on the lawn near the College of Fine Arts and Forbes Avenue, it's one of the most photographed spots on campus."
+    ]
+  },
+  "FENCE": {
+    "title": "The Fence",
+    "summary": [
+      "The Fence is one of CMU's most beloved traditions and is widely considered the most painted object in the world. Originally a wooden footbridge railing built in 1916, it has been continuously painted by student groups for over a century to advertise events, celebrate milestones, and share messages with the community.",
+      "Tradition dictates that the Fence can only be painted between midnight and sunrise, by hand using a brush, and a group must be present to guard it 24/7 in order to keep it. By 1993, layers of paint had grown so heavy that the original Fence collapsed under its own weight; the current concrete and steel structure was built to carry the legacy forward."
+    ]
   }
 }
