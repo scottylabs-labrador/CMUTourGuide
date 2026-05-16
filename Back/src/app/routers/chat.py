@@ -9,9 +9,10 @@ from services import buildings_kb, chat_tools
 
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = "openai/gpt-4o"
+OPENROUTER_MODEL = "openai/gpt-5-mini"
 OPENROUTER_TIMEOUT_SECONDS = 30.0
-OPENROUTER_MAX_TOKENS = 250
+OPENROUTER_MAX_TOKENS = 2000
+OPENROUTER_REASONING_EFFORT = "minimal"
 MAX_TOOL_ITERATIONS = 3
 
 BASE_SYSTEM_PROMPT = """You are a CMU Tour Guide AI assistant helping visitors navigate Carnegie Mellon University.
@@ -46,11 +47,11 @@ router = APIRouter(prefix="", tags=["chat"])
 async def chat(req: ChatRequest) -> ChatResponse:
 	last_user_msg = next((m.text for m in reversed(req.messages) if m.isUser), "(none)")
 	print(
-		f"[chat] /chat called | building_id={req.building_id!r} | "
-		f"messages={len(req.messages)} | last_user={last_user_msg[:120]!r}"
+		f"[chat] -> building={req.building_id!r} msgs={len(req.messages)} "
+		f"user={last_user_msg[:100]!r}"
 	)
 	reply = await generate_reply(req.messages, req.building_id)
-	print(f"[chat] /chat returning reply ({len(reply)} chars): {reply[:160]!r}")
+	print(f"[chat] <- ({len(reply)}c) {reply[:120]!r}")
 	return ChatResponse(reply=reply)
 
 
@@ -87,15 +88,6 @@ async def generate_reply(messages: list[Message], building_id: Optional[str]) ->
 		raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY not configured")
 
 	system_prompt = build_system_prompt(building_id)
-	resolved = building_id and buildings_kb.get_building(building_id) is not None
-	print(
-		f"[chat] system prompt for building_id={building_id!r} "
-		f"(resolved={bool(resolved)}, length={len(system_prompt)} chars):\n"
-		f"----- BEGIN SYSTEM PROMPT -----\n"
-		f"{system_prompt}\n"
-		f"----- END SYSTEM PROMPT -----"
-	)
-
 	chat_history: list[dict[str, Any]] = [
 		{"role": "system", "content": system_prompt},
 	]
@@ -113,40 +105,66 @@ async def generate_reply(messages: list[Message], building_id: Optional[str]) ->
 				"messages": chat_history,
 				"tools": chat_tools.TOOLS,
 				"max_tokens": OPENROUTER_MAX_TOKENS,
+				"reasoning": {"effort": OPENROUTER_REASONING_EFFORT},
 			}
-			print(f"[chat] OpenRouter call #{iteration} (history len={len(chat_history)})")
 			try:
 				response = await client.post(OPENROUTER_URL, headers=headers, json=payload)
 				response.raise_for_status()
 				data = response.json()
-			except httpx.HTTPError as e:
-				print(f"[chat] OpenRouter request failed: {e}")
+			except httpx.HTTPStatusError as e:
+				body = ""
+				try:
+					body = e.response.text
+				except Exception:
+					pass
+				print(
+					f"[chat] OpenRouter HTTP {e.response.status_code} on iter #{iteration}: "
+					f"{body[:1000]}"
+				)
 				return "Sorry, I couldn't reach my knowledge service right now. Please try again."
+			except httpx.HTTPError as e:
+				print(f"[chat] OpenRouter transport error on iter #{iteration}: {e!r}")
+				return "Sorry, I couldn't reach my knowledge service right now. Please try again."
+
+			# OpenRouter sometimes surfaces upstream errors inside a 200 body.
+			if isinstance(data, dict) and data.get("error"):
+				print(f"[chat] OpenRouter returned error payload on iter #{iteration}: {data.get('error')}")
+				return "Sorry, I couldn't generate a response. Please try again."
 
 			choices = data.get("choices") or []
 			if not choices:
-				print(f"[chat] OpenRouter returned no choices: {data}")
+				print(f"[chat] OpenRouter returned no choices on iter #{iteration}: {data}")
 				return "Sorry, I couldn't generate a response. Please try again."
 
-			assistant_msg = choices[0].get("message") or {}
+			choice = choices[0]
+			assistant_msg = choice.get("message") or {}
 			tool_calls = assistant_msg.get("tool_calls") or []
+			finish_reason = choice.get("finish_reason")
+			content = assistant_msg.get("content")
 
 			if not tool_calls:
-				print(f"[chat] no tool calls on iteration #{iteration}, returning final reply")
-				return assistant_msg.get("content") or "Sorry, I couldn't generate a response. Please try again."
+				if not content:
+					usage = data.get("usage") or {}
+					print(
+						f"[chat] EMPTY CONTENT iter#{iteration} "
+						f"finish_reason={finish_reason!r} usage={usage} "
+						f"msg={assistant_msg}"
+					)
+					if finish_reason == "length":
+						return (
+							"Sorry, my answer ran past its length limit before I "
+							"could finish. Please try asking again, maybe more specifically."
+						)
+					return "Sorry, I couldn't generate a response. Please try again."
+				return content
 
-			print(f"[chat] iteration #{iteration} produced {len(tool_calls)} tool call(s)")
-			# Append the assistant's tool-call message verbatim, then resolve each call.
 			chat_history.append(assistant_msg)
 			for tc in tool_calls:
 				fn = tc.get("function") or {}
 				name = fn.get("name", "")
 				args = chat_tools.parse_arguments(fn.get("arguments"))
 				result = chat_tools.dispatch(name, args)
-				print(
-					f"[chat] >>> TOOL CALL: {name}({args}) -> "
-					f"{len(result)} chars: {result[:200]!r}"
-				)
+				print(f"[chat] tool {name}({args}) -> {len(result)}c")
 				chat_history.append({
 					"role": "tool",
 					"tool_call_id": tc.get("id", ""),
