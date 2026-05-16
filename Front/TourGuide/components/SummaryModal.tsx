@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, Pressable, Dimensions, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
 import { getBuilding } from '../services/buildingService';
 import { getBuildingImageSource } from '../constants/buildingImages';
+import { usePostHog } from 'posthog-react-native';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface SummaryModalProps {
@@ -17,7 +18,19 @@ interface SummaryModalProps {
 
 export default function SummaryModal({ visible, onClose, building_id, isNewUnlock = false }: SummaryModalProps) {
     const buildingData = getBuilding(building_id);
-    const router = useRouter()
+    const router = useRouter();
+    const posthog = usePostHog();
+
+    useEffect(() => {
+        if (visible && building_id) {
+            posthog.capture('building_summary_opened', {
+                building_id,
+                building_name: buildingData?.title,
+                is_new_unlock: isNewUnlock,
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [visible, building_id]);
 
     if (!buildingData) {
         return null;
@@ -27,6 +40,10 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
         if (!buildingData.title) {
             return;
         }
+        posthog.capture('chat_started', {
+            building_id,
+            building_name: buildingData.title,
+        });
         onClose();
         router.push({
             pathname: "/chat",
@@ -34,7 +51,7 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                 building_id,
                 building_name: buildingData.title,
             },
-        })
+        });
     }
     return (
         <Modal
@@ -85,7 +102,7 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                     {/* Image */}
                     <View className="w-full h-[200px] rounded-[12px] overflow-hidden mb-5 bg-[#f0f0f0]">
                         {(() => {
-                            const source = getBuildingImageSource(building_id, buildingData.image_url);
+                            const source = getBuildingImageSource(building_id);
                             return source ? (
                                 <Image
                                     source={source}
@@ -127,18 +144,12 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
                         </Markdown>
                     </ScrollView>
 
-                    <View className="flex-row">
+                    <View className="flex-row w-full">
                         <TouchableOpacity
-                            className="bg-cmu-red px-[10px] py-[14px] rounded-[25px] w-1/2 items-center mx-1"
+                            className="bg-cmu-red px-[10px] py-[14px] rounded-[25px] flex-1 items-center"
                             onPress={pushChat}
                         >
                             <Text className="font-serif-semi text-white text-base">Chat More</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className="bg-cmu-red px-[10px] py-[14px] rounded-[25px] w-1/2 items-center mx-1"
-                            onPress={onClose}
-                        >
-                            <Text className="font-serif-semi text-white text-base">Look Inside</Text>
                         </TouchableOpacity>
                     </View>
 

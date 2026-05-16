@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { CMU_RED, COLORS } from '../constants/colors';
+import { usePostHog } from 'posthog-react-native';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -56,6 +57,7 @@ export default function FeedbackModal({ visible, onClose }: FeedbackModalProps) 
   const [category, setCategory] = useState<Category>('feedback');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const posthog = usePostHog();
 
   const reset = () => {
     setCategory('feedback');
@@ -107,6 +109,11 @@ export default function FeedbackModal({ visible, onClose }: FeedbackModalProps) 
         throw new Error(`Webhook responded ${res.status}`);
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      posthog.capture('feedback_submitted', {
+        category,
+        message_length: trimmed.length,
+        platform: Platform.OS,
+      });
       reset();
       onClose();
       Alert.alert('Thanks!', 'Your feedback has been sent.');

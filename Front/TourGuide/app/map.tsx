@@ -10,7 +10,7 @@ import CampusMap from '../components/CampusMap';
 
 export default function MapScreen() {
   const router = useRouter();
-  const { unlockedScannableCount, totalScannableCount } = useBuildings();
+  const { unlockedScannableCount, totalScannableCount, activeRouteId } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
 
@@ -48,6 +48,7 @@ export default function MapScreen() {
 
       <CampusMap
         style={{ flex: 1 }}
+        activeRouteId={activeRouteId}
         onBuildingPress={(id) => {
           setSelectedBuildingId(id);
           setShowSummaryPopup(true);

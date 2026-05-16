@@ -44,3 +44,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+.claude
+
+posthog-setup-report.md

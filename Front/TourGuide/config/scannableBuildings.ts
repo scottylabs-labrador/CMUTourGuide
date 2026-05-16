@@ -16,7 +16,6 @@ export const SCANNABLE_BUILDING_IDS: readonly string[] = [
   'NSH',  // Newell-Simon Hall
   'PCA',  // Purnell Center for the Arts
   'PH',   // Porter Hall
-  'SC',   // Scott Hall
   'SH',   // Scaife Hall
   'TCS',  // TCS Hall
   'TEP',  // Tepper
@@ -26,6 +25,7 @@ export const SCANNABLE_BUILDING_IDS: readonly string[] = [
   'CUC',  // Cohon University Center
   'POS',  // Posner Hall
   'HWC',  // Highmark Center for Health, Wellness and Athletics
+  'FLD',  // Gesling Stadium (CV label: "Field")
 ];
 
 const SCANNABLE_SET = new Set(SCANNABLE_BUILDING_IDS);

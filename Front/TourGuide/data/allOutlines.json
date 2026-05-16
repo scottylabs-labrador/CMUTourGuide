@@ -2231,88 +2231,6 @@
       ]
     ]
   },
-  "SC": {
-    "name": "Scott Hall",
-    "category": "academic",
-    "shapes": [
-      [
-        {
-          "latitude": 40.4429454,
-          "longitude": -79.9470952
-        },
-        {
-          "latitude": 40.4431996,
-          "longitude": -79.9470022
-        },
-        {
-          "latitude": 40.4430869,
-          "longitude": -79.9464705
-        },
-        {
-          "latitude": 40.4430393,
-          "longitude": -79.9464872
-        },
-        {
-          "latitude": 40.4430269,
-          "longitude": -79.9464263
-        },
-        {
-          "latitude": 40.4429346,
-          "longitude": -79.9464599
-        },
-        {
-          "latitude": 40.4428358,
-          "longitude": -79.9464958
-        },
-        {
-          "latitude": 40.4428409,
-          "longitude": -79.9465192
-        },
-        {
-          "latitude": 40.4427288,
-          "longitude": -79.9465607
-        },
-        {
-          "latitude": 40.4427372,
-          "longitude": -79.9465806
-        },
-        {
-          "latitude": 40.442816,
-          "longitude": -79.9467045
-        },
-        {
-          "latitude": 40.4429454,
-          "longitude": -79.9470952
-        }
-      ],
-      [
-        {
-          "latitude": 40.4426612,
-          "longitude": -79.9467069
-        },
-        {
-          "latitude": 40.4426415,
-          "longitude": -79.9466154
-        },
-        {
-          "latitude": 40.4426372,
-          "longitude": -79.9465955
-        },
-        {
-          "latitude": 40.4425509,
-          "longitude": -79.9466251
-        },
-        {
-          "latitude": 40.4425749,
-          "longitude": -79.9467376
-        },
-        {
-          "latitude": 40.4426612,
-          "longitude": -79.9467069
-        }
-      ]
-    ]
-  },
   "EDS": {
     "name": "Smith Hall",
     "category": "academic",
@@ -5329,6 +5247,30 @@
         {
           "latitude": 40.442546,
           "longitude": -79.9376354
+        }
+      ]
+    ]
+  },
+  "FLD": {
+    "name": "Gesling Stadium",
+    "category": "student-life",
+    "shapes": [
+      [
+        {
+          "latitude": 40.44352,
+          "longitude": -79.94080
+        },
+        {
+          "latitude": 40.44310,
+          "longitude": -79.94095
+        },
+        {
+          "latitude": 40.44283,
+          "longitude": -79.93972
+        },
+        {
+          "latitude": 40.44324,
+          "longitude": -79.93956
         }
       ]
     ]

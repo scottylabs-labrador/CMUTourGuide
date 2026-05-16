@@ -18,9 +18,7 @@ export interface Building {
    * the center. Set this when the center-based route snaps to a side door.
    */
   entrance?: LatLng;
-  summary: string[];
   tour_guide: string[];
-  image_url: string;
 }
 
 export interface BuildingOutline {

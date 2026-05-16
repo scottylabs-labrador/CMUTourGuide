@@ -12,15 +12,21 @@ import FeedbackModal from '../../components/FeedbackModal';
 import { getAllRoutes } from '../../services/routeService';
 import { CMU_RED } from '../../constants/colors';
 import { SHADOWS } from '../../constants/layout';
+import { usePostHog } from 'posthog-react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { unlockedScannableCount, totalScannableCount } = useBuildings();
+  const posthog = usePostHog();
+  const {
+    unlockedScannableCount,
+    totalScannableCount,
+    activeRouteId,
+    setActiveRouteId,
+  } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [buildingId, setBuildingId] = React.useState('');
   const [showRoutePicker, setShowRoutePicker] = React.useState(false);
-  const [activeRouteId, setActiveRouteId] = React.useState<string | null>(null);
   const [showFeedback, setShowFeedback] = React.useState(false);
 
   const handleFeedback = () => {
@@ -160,6 +166,7 @@ export default function HomeScreen() {
                 }}
                 onExpand={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  posthog.capture('map_expanded');
                   router.push('/map');
                 }}
               />

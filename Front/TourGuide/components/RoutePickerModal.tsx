@@ -11,6 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Route } from '../data/routes';
 import { CMU_RED, COLORS } from '../constants/colors';
+import { usePostHog } from 'posthog-react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -29,7 +30,16 @@ export default function RoutePickerModal({
   activeRouteId,
   onSelect,
 }: RoutePickerModalProps) {
+  const posthog = usePostHog();
+
   const handleSelect = (id: string | null) => {
+    const selectedRoute = id ? routes.find((r) => r.id === id) : null;
+    posthog.capture('route_selected', {
+      route_id: id,
+      route_name: selectedRoute?.name ?? null,
+      stop_count: selectedRoute?.stops.length ?? null,
+      previous_route_id: activeRouteId,
+    });
     onSelect(id);
     onClose();
   };
@@ -93,7 +103,7 @@ export default function RoutePickerModal({
                   No route
                 </Text>
                 <Text className="font-serif text-[12px] text-slate-500 mt-[2px]">
-                  Hide all tour paths
+                  Explore the campus freely!
                 </Text>
               </View>
             </TouchableOpacity>

@@ -15,6 +15,7 @@ import { getAllBuildingIds, getBuilding } from '../../services/buildingService';
 import { getBuildingImageSource } from '../../constants/buildingImages';
 import { isLandmark } from '../../config/scannableBuildings';
 import type { BuildingId } from '../../types/building';
+import { usePostHog } from 'posthog-react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 20;
@@ -30,11 +31,19 @@ export default function AllBuildingsScreen() {
   } = useBuildings();
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = React.useState('');
+  const posthog = usePostHog();
 
   const buildingIds = getAllBuildingIds();
 
   const handlePress = (buildingId: string) => {
-    if (isUnlocked(buildingId)) {
+    const unlocked = isUnlocked(buildingId);
+    const building = getBuilding(buildingId);
+    posthog.capture('building_card_tapped', {
+      building_id: buildingId,
+      building_name: building?.title,
+      is_unlocked: unlocked,
+    });
+    if (unlocked) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setSelectedBuildingId(buildingId);
       setShowSummaryPopup(true);
@@ -54,7 +63,7 @@ export default function AllBuildingsScreen() {
     return (
       <BuildingCard
         title={building.title}
-        imageSource={getBuildingImageSource(buildingId, building.image_url)}
+        imageSource={getBuildingImageSource(buildingId)}
         unlocked={unlocked}
         scannable={scannable}
         landmark={isLandmark(buildingId)}

@@ -15,6 +15,7 @@ export const BUILDING_IMAGES: Record<string, ImageSourcePropType> = {
   CYH: require('../assets/images/buildings/CYH.webp'),
   DH: require('../assets/images/buildings/DH.webp'),
   FENCE: require('../assets/images/buildings/FENCE.webp'),
+  FLD: require('../assets/images/buildings/FLD.webp'),
   GHC: require('../assets/images/buildings/GHC.webp'),
   HBH: require('../assets/images/buildings/HBH.webp'),
   HH: require('../assets/images/buildings/HH.webp'),
@@ -26,7 +27,6 @@ export const BUILDING_IMAGES: Record<string, ImageSourcePropType> = {
   PCA: require('../assets/images/buildings/PCA.webp'),
   PH: require('../assets/images/buildings/PH.webp'),
   POS: require('../assets/images/buildings/POS.webp'),
-  SC: require('../assets/images/buildings/SC.webp'),
   SH: require('../assets/images/buildings/SH.webp'),
   TCS: require('../assets/images/buildings/TCS.webp'),
   TEP: require('../assets/images/buildings/TEP.webp'),
@@ -36,17 +36,9 @@ export const BUILDING_IMAGES: Record<string, ImageSourcePropType> = {
 };
 
 /**
- * Resolve the image source for a building. Prefers the bundled asset; falls
- * back to the remote `image_url` (useful for buildings added via data only or
- * while a local asset hasn't been checked in yet). Returns `null` when neither
- * is available so callers can render a placeholder.
+ * Resolve the bundled image source for a building. Returns `null` when no
+ * asset is registered, so callers can render a placeholder.
  */
-export function getBuildingImageSource(
-  id: string,
-  fallbackUrl?: string
-): ImageSourcePropType | null {
-  const bundled = BUILDING_IMAGES[id];
-  if (bundled) return bundled;
-  if (fallbackUrl && fallbackUrl.trim().length > 0) return { uri: fallbackUrl };
-  return null;
+export function getBuildingImageSource(id: string): ImageSourcePropType | null {
+  return BUILDING_IMAGES[id] ?? null;
 }

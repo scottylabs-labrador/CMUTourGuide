@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { getUnlockedBuildings, unlockBuilding as unlockBuildingStorage, resetProgress } from '../utils/buildingStorage';
 import { SCANNABLE_BUILDING_IDS, isScannableBuilding } from '../config/scannableBuildings';
+import { getRoute } from '../services/routeService';
 
 // TESTING: Set to true to unlock every building so the UI can be browsed
 // without scanning. MUST be set back to false before shipping.
-const UNLOCK_ALL_BUILDINGS_FOR_TESTING = true;
+const UNLOCK_ALL_BUILDINGS_FOR_TESTING = false;
 
 interface PendingSummary {
   buildingId: string;
@@ -34,6 +35,26 @@ interface BuildingContextType {
   pendingSummary: PendingSummary | null;
   showSummary: (buildingId: string, isNewUnlock?: boolean) => void;
   hideSummary: () => void;
+  /**
+   * The currently selected tour route, or null if no route is active. Lifted
+   * into context (rather than living on HomeScreen) so the camera flow and
+   * the globally-mounted route-completion modal can react to it.
+   */
+  activeRouteId: string | null;
+  /**
+   * Set the active route. Also clears `routeCompletionDismissed` so that
+   * re-selecting an already-complete route re-shows the completion popup.
+   */
+  setActiveRouteId: (routeId: string | null) => void;
+  /** True when every stop in the active route is unlocked. */
+  isActiveRouteComplete: boolean;
+  /**
+   * Tracks whether the user has already dismissed the route-completion modal
+   * for the current `activeRouteId`. Resets to false on every
+   * `setActiveRouteId` call.
+   */
+  routeCompletionDismissed: boolean;
+  dismissRouteCompletion: () => void;
 }
 
 const BuildingContext = createContext<BuildingContextType | undefined>(undefined);
@@ -54,6 +75,19 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
   const [unlockedBuildings, setUnlockedBuildings] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pendingSummary, setPendingSummary] = useState<PendingSummary | null>(null);
+  const [activeRouteId, setActiveRouteIdState] = useState<string | null>(null);
+  const [routeCompletionDismissed, setRouteCompletionDismissed] = useState(false);
+
+  const setActiveRouteId = useCallback((routeId: string | null) => {
+    setActiveRouteIdState(routeId);
+    // Re-arm the completion popup for the new selection. Without this,
+    // re-selecting an already-completed route would silently do nothing.
+    setRouteCompletionDismissed(false);
+  }, []);
+
+  const dismissRouteCompletion = useCallback(() => {
+    setRouteCompletionDismissed(true);
+  }, []);
 
   const showSummary = (buildingId: string, isNewUnlock: boolean = false) => {
     if (!buildingId || buildingId === 'Error') return;
@@ -109,6 +143,16 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
     [unlockedBuildings]
   );
 
+  // A route is "complete" iff every stop is unlocked. We deliberately reuse
+  // `isUnlocked` so the TESTING flag and the non-scannable auto-unlock rule
+  // both apply consistently with the rest of the app.
+  const isActiveRouteComplete = useMemo(() => {
+    if (!activeRouteId) return false;
+    const route = getRoute(activeRouteId);
+    if (!route || route.stops.length === 0) return false;
+    return route.stops.every((id) => isUnlocked(id));
+  }, [activeRouteId, unlockedBuildings]);
+
   const clearStorage = async () => {
     try {
       await resetProgress();
@@ -134,6 +178,11 @@ export const BuildingProvider: React.FC<BuildingProviderProps> = ({ children }) 
         pendingSummary,
         showSummary,
         hideSummary,
+        activeRouteId,
+        setActiveRouteId,
+        isActiveRouteComplete,
+        routeCompletionDismissed,
+        dismissRouteCompletion,
       }}
     >
       {children}

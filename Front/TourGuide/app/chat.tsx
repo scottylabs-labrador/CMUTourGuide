@@ -8,10 +8,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 import { Image } from 'expo-image';
 import { Message } from '../types/chat';
@@ -20,11 +19,13 @@ import ScreenHeader from '../components/ScreenHeader';
 import { CMU_RED, COLORS } from '../constants/colors';
 import { FONTS } from '../constants/typography';
 import { SHADOWS } from '../constants/layout';
+import { usePostHog } from 'posthog-react-native';
 
 export default function ChatScreen() {
   const { sessionId, imageUri, building_name, building_id } = useLocalSearchParams();
   const [inputText, setInputText] = useState('');
   const router = useRouter();
+  const posthog = usePostHog();
 
   const { messages, isTyping, flatListRef, imageUriState, sendMessage } = useChatSession({
     sessionId: sessionId ? String(sessionId) : undefined,
@@ -37,6 +38,11 @@ export default function ChatScreen() {
     if (inputText.trim() === '') return;
     const text = inputText.trim();
     setInputText('');
+    posthog.capture('chat_message_sent', {
+      building_id: building_id ? String(building_id) : undefined,
+      building_name: building_name ? String(building_name) : undefined,
+      message_length: text.length,
+    });
     await sendMessage(text);
   };
 

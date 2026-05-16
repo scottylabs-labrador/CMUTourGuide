@@ -560,7 +560,7 @@ export default function CampusMap({
                   {hasRoute
                     ? nextStopBuilding
                       ? `Next: ${nextStopBuilding.title}`
-                      : 'Tour complete'
+                      : 'Route complete'
                     : 'Tap Routes to select a route'}
                 </Text>
               </View>

@@ -10,6 +10,7 @@ import Slider from '@react-native-community/slider';
 import { useBuildings } from '../contexts/BuildingContext';
 import { scanBuilding } from '../services/visionService';
 import { CMU_RED } from '../constants/colors';
+import { usePostHog } from 'posthog-react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -34,6 +35,7 @@ export default function CameraScreen() {
   const router = useRouter();
   const camera = useRef<CameraView>(null);
   const { unlockBuilding, isUnlocked, showSummary } = useBuildings();
+  const posthog = usePostHog();
 
   // Keep the latest takePicture callback reachable from the volume listener.
   const takePictureRef = useRef<() => void>(() => {});
@@ -128,6 +130,7 @@ export default function CameraScreen() {
 
       const identifiedBuildingId = await scanBuilding(photo?.base64 ?? '');
       if (!identifiedBuildingId || identifiedBuildingId === 'Error') {
+        posthog.capture('building_scan_failed', { reason: 'unrecognised' });
         Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
         return;
       }
@@ -138,11 +141,21 @@ export default function CameraScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
 
+      posthog.capture('building_scanned', {
+        building_id: identifiedBuildingId,
+        is_new_unlock: !wasUnlocked,
+      });
+
       // Hand the result off to the global modal, then leave the camera screen
       // so the live preview unmounts and releases the camera + native shutter.
       showSummary(identifiedBuildingId, !wasUnlocked);
       router.back();
     } catch (error) {
+      posthog.capture('building_scan_failed', {
+        reason: 'error',
+        $exception_type: error instanceof Error ? error.name : 'Unknown',
+        $exception_message: error instanceof Error ? error.message : String(error),
+      });
       Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
     } finally {
       setIsCapturing(false);
