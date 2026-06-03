@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useBuildings } from '../contexts/BuildingContext';
@@ -56,7 +56,7 @@ export default function InfoScreen() {
         {/* App Title */}
         <View className="items-center mb-10">
           <Text className="font-serif-bold text-[32px] text-cmu-red mb-2 tracking-tight">{`CMU Campus Explorer`}</Text>
-          <Text className="font-serif text-[16px] text-[#666]">Your Intelligent Campus Companion</Text>
+          <Text className="font-serif text-[16px] text-[#666]">Your Intelligent Campus Guide</Text>
         </View>
 
         {/* What is it */}
@@ -66,7 +66,7 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">What is it?</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            CMU Tour Guide is an AI-powered mobile application that uses computer vision and artificial intelligence to provide instant, detailed information about buildings, monuments, and landmarks across Carnegie Mellon University's campus.
+            CMU Campus Explorer is your personal pocket tour guide for Carnegie Mellon University. It uses computer vision and AI to share detailed information about buildings and landmarks across campus.
           </Text>
         </View>
 
@@ -89,32 +89,53 @@ export default function InfoScreen() {
           </View>
           <View className="gap-4">
             <View className="flex-row items-start gap-3">
-              <Ionicons name="camera" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Scan buildings and landmarks with your camera</Text>
+              <Ionicons name="map" size={20} color={CMU_RED} />
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Select a route on the map to explore the campus</Text>
             </View>
             <View className="flex-row items-start gap-3">
-              <Ionicons name="bulb" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Get instant insights and history</Text>
+              <Ionicons name="camera" size={20} color={CMU_RED} />
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Scan buildings and landmarks with your camera to get instant insights and history</Text>
             </View>
             <View className="flex-row items-start gap-3">
               <Ionicons name="chatbubbles" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Chat with our AI companion</Text>
-            </View>
-            <View className="flex-row items-start gap-3">
-              <Ionicons name="map" size={20} color={CMU_RED} />
-              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Explore campus with interactive maps</Text>
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Chat with our AI to ask follow-up questions and learn more about our campus</Text>
             </View>
           </View>
         </View>
 
-        {/* How it works */}
+        {/* About Us */}
         <View className="mb-8">
           <View className="flex-row items-center mb-3 gap-2">
-            <Ionicons name="settings" size={24} color={CMU_RED} />
-            <Text className="font-serif-semi text-[20px] text-cmu-red">How it works</Text>
+            <Ionicons name="heart" size={24} color={CMU_RED} />
+            <Text className="font-serif-semi text-[20px] text-cmu-red">About Us</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            Simply point your camera at any building or landmark on campus. Our advanced computer vision technology identifies the building, and our AI system provides you with fascinating stories, historical context, and insider information about that place.
+            CMU Campus Explorer was built by Noah and Kaveh, members of ScottyLabs, a student-run club at Carnegie Mellon University that builds practical software for our community. Explore more projects at{' '}
+            <Text
+              className="font-serif-semi text-cmu-red"
+              onPress={() => Linking.openURL('https://scottylabs.org')}
+            >
+              scottylabs.org
+            </Text>
+            .
+          </Text>
+        </View>
+
+        {/* Contact */}
+        <View className="mb-8">
+          <View className="flex-row items-center mb-3 gap-2">
+            <Ionicons name="mail" size={24} color={CMU_RED} />
+            <Text className="font-serif-semi text-[20px] text-cmu-red">Contact</Text>
+          </View>
+          <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
+            Have feedback or found a bug? Reach out at{' '}
+            <Text
+              className="font-serif-semi text-cmu-red"
+              onPress={() => Linking.openURL('mailto:noahchoi@andrew.cmu.edu')}
+            >
+              noahchoi@andrew.cmu.edu
+            </Text>
+            .
           </Text>
         </View>
 
@@ -131,7 +152,7 @@ export default function InfoScreen() {
         </View>
 
         {/* Footer */}
-        <View className="items-center mt-6 pt-6 border-t border-border">
+        <View className="items-center mt-2 pt-6 border-t border-border">
           <Text className="font-serif text-sm text-muted">Made for Carnegie Mellon University</Text>
         </View>
       </ScrollView>

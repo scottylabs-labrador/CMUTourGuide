@@ -201,7 +201,7 @@ export default function CameraScreen() {
               <Text className="text-white text-[16px] text-center">
                 {isCapturing
                   ? 'Processing image...'
-                  : `Point your camera at a building${Platform.OS !== 'web' ? ' · Volume = shutter' : ''}`}
+                  : ''}
               </Text>
               {isCapturing && (
                 <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
