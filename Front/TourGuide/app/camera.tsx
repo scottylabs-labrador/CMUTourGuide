@@ -197,16 +197,15 @@ export default function CameraScreen() {
           </View>
 
           <View className="absolute bottom-[30px] left-5 right-5">
-            <View className="flex-row items-center justify-center py-3 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-              <Text className="text-white text-[16px] text-center">
-                {isCapturing
-                  ? 'Processing image...'
-                  : ''}
-              </Text>
-              {isCapturing && (
+            {isCapturing && (
+              <View className="flex-row items-center justify-center py-3 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                <Text className="text-white text-[16px] text-center">
+                  Processing image...
+                </Text>
                 <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
-              )}
-            </View>
+              </View>
+            )}
+       
           </View>
         </View>
       </View>

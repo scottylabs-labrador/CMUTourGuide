@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   StyleProp,
   ViewStyle,
   Animated,
@@ -60,7 +59,7 @@ interface CampusMapProps {
 // Dev-only location override. When true, skips the real GPS lookup and seeds
 // the user's location to FAKE_CAMPUS_LOCATION so on-campus behavior can be
 // tested from anywhere (e.g. while developing abroad).
-const USE_FAKE_LOCATION = true;
+const USE_FAKE_LOCATION = false;
 const FAKE_CAMPUS_LOCATION: LatLng = {
   latitude: 40.4440,
   longitude: -79.9448,
@@ -303,12 +302,10 @@ export default function CampusMap({
     );
   };
 
-  const handleMarkerPress = (id: string, unlocked: boolean) => {
-    if (unlocked) {
-      onBuildingPress?.(id);
-    } else {
-      Alert.alert('Locked', 'Scan this building to unlock it!');
-    }
+  // Both locked and unlocked buildings open the summary. The modal itself
+  // renders a blurred teaser for locked buildings, so there's no alert here.
+  const handleMarkerPress = (id: string) => {
+    onBuildingPress?.(id);
   };
 
   return (
@@ -408,7 +405,7 @@ export default function CampusMap({
               strokeWidth={style.strokeWidth}
               fillColor={style.fill}
               tappable
-              onPress={() => handleMarkerPress(id, unlocked)}
+              onPress={() => handleMarkerPress(id)}
             />
           ));
         })}
@@ -449,7 +446,7 @@ export default function CampusMap({
               coordinate={{ latitude: b.latitude, longitude: b.longitude }}
               tracksViewChanges={false}
               stopPropagation
-              onPress={() => handleMarkerPress(id, unlocked)}
+              onPress={() => handleMarkerPress(id)}
             >
               <View className="items-center" style={{ opacity: style.opacity }}>
                 {labelsVisible && (

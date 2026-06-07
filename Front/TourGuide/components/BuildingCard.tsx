@@ -19,16 +19,15 @@ type Props = {
   // since "Unlocked / Explore this building" reads oddly for a sculpture or
   // campus tradition.
   landmark?: boolean;
+  // CMU college / campus area (e.g. "Computer Science", "Engineering").
+  // Shown as the card badge in place of the old unlock-state tag.
+  college?: string;
 };
 
-export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style, recyclingKey, landmark = false }: Props) {
+export default function BuildingCard({ title, imageSource, unlocked, scannable, onPress, width = 210, style, recyclingKey, landmark = false, college }: Props) {
   const badgeText = landmark
     ? 'Landmark'
-    : unlocked
-      ? 'Unlocked'
-      : scannable
-        ? 'Must-See'
-        : 'Explore';
+    : college ?? (unlocked ? 'Unlocked' : 'Explore');
 
   return (
     <TouchableOpacity

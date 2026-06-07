@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  Alert,
   FlatList,
   Dimensions,
 } from 'react-native';
@@ -14,6 +13,7 @@ import BuildingCard from '../../components/BuildingCard';
 import { getAllBuildingIds, getBuilding } from '../../services/buildingService';
 import { getBuildingImageSource } from '../../constants/buildingImages';
 import { isLandmark } from '../../config/scannableBuildings';
+import { getBuildingCollege } from '../../constants/buildingColleges';
 import type { BuildingId } from '../../types/building';
 import { usePostHog } from 'posthog-react-native';
 
@@ -43,14 +43,13 @@ export default function AllBuildingsScreen() {
       building_name: building?.title,
       is_unlocked: unlocked,
     });
-    if (unlocked) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setSelectedBuildingId(buildingId);
-      setShowSummaryPopup(true);
-    } else {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      Alert.alert('Building not unlocked', 'Find the building to unlock it!');
-    }
+    // Locked buildings still open the summary — it just shows a teaser with
+    // the rest of the info blurred, nudging the user to go scan it.
+    Haptics.impactAsync(
+      unlocked ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Medium
+    );
+    setSelectedBuildingId(buildingId);
+    setShowSummaryPopup(true);
   };
 
   const renderItem = ({ item: buildingId, index }: { item: BuildingId; index: number }) => {
@@ -67,6 +66,7 @@ export default function AllBuildingsScreen() {
         unlocked={unlocked}
         scannable={scannable}
         landmark={isLandmark(buildingId)}
+        college={getBuildingCollege(buildingId)}
         onPress={() => handlePress(buildingId)}
         width={CARD_WIDTH}
         style={{ marginRight: isLeftColumn ? COLUMN_GAP : 0 }}

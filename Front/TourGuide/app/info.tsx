@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, TouchableOpacity, Alert, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useBuildings } from '../contexts/BuildingContext';
 import { CMU_RED } from '../constants/colors';
+import FeedbackModal from '../components/FeedbackModal';
 
 export default function InfoScreen() {
   const router = useRouter();
   const { clearStorage } = useBuildings();
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
 
   const handleClearStorage = () => {
     Alert.alert(
@@ -85,7 +87,7 @@ export default function InfoScreen() {
         <View className="mb-8">
           <View className="flex-row items-center mb-3 gap-2">
             <Ionicons name="sparkles" size={24} color={CMU_RED} />
-            <Text className="font-serif-semi text-[20px] text-cmu-red">What it does</Text>
+            <Text className="font-serif-semi text-[20px] text-cmu-red">How it works</Text>
           </View>
           <View className="gap-4">
             <View className="flex-row items-start gap-3">
@@ -100,6 +102,10 @@ export default function InfoScreen() {
               <Ionicons name="chatbubbles" size={20} color={CMU_RED} />
               <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Chat with our AI to ask follow-up questions and learn more about our campus</Text>
             </View>
+            <View className="flex-row items-start gap-3">
+              <Ionicons name="book" size={20} color={CMU_RED} />
+              <Text className="font-serif flex-1 text-[16px] text-[#1F2933] leading-6">Read our student-written blog posts to learn more about student-life on campus</Text>
+            </View>
           </View>
         </View>
 
@@ -110,14 +116,8 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">About Us</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            CMU Campus Explorer was built by Noah and Kaveh, members of ScottyLabs, a student-run club at Carnegie Mellon University that builds practical software for our community. Explore more projects at{' '}
-            <Text
-              className="font-serif-semi text-cmu-red"
-              onPress={() => Linking.openURL('https://scottylabs.org')}
-            >
-              scottylabs.org
-            </Text>
-            .
+            CMU Campus Explorer was built by Noah Choi and Kaveh Fayyazi, members of ScottyLabs, a student-run club at Carnegie Mellon University that builds practical software for our school community. Explore more projects at{' '}
+            <Text className="font-serif-semi text-cmu-red" onPress={() => Linking.openURL('https://scottylabs.org')}>scottylabs.org</Text>.
           </Text>
         </View>
 
@@ -128,7 +128,11 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">Contact</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            Have feedback or found a bug? Reach out at{' '}
+            Have feedback or found a bug?{' '}
+            <Text className="font-serif-semi text-cmu-red" onPress={() => setFeedbackVisible(true)}>
+              Press here
+            </Text>{' '}
+            to report it, or reach out at{' '}
             <Text
               className="font-serif-semi text-cmu-red"
               onPress={() => Linking.openURL('mailto:noahchoi@andrew.cmu.edu')}
@@ -156,6 +160,11 @@ export default function InfoScreen() {
           <Text className="font-serif text-sm text-muted">Made for Carnegie Mellon University</Text>
         </View>
       </ScrollView>
+
+      <FeedbackModal
+        visible={feedbackVisible}
+        onClose={() => setFeedbackVisible(false)}
+      />
     </SafeAreaView>
   );
 }
