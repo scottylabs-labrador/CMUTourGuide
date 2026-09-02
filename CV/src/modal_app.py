@@ -32,7 +32,7 @@ image = (
         "Pillow>=10.0.0",
         "numpy>=1.24.0",
         "fastapi[standard]>=0.100.0",  # Required for Modal web endpoints
-        "scikit-learn>=1.3.0",
+        "scikit-learn==1.7.2",  # must match the version that pickled the classifier
         "joblib>=1.3.0"
     )
     # Install CLIP from GitHub (requires git)
