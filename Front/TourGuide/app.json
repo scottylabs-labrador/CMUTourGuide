@@ -24,7 +24,6 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
@@ -47,7 +46,9 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow CMU Explorer to access your camera"
+          "cameraPermission": "CMU Explorer uses the camera to scan campus buildings and identify them.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ],
       [
@@ -59,11 +60,12 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "CMU Explorer uses your location to show your position on the campus map."
+          "locationWhenInUsePermission": "CMU Explorer uses your location to show your position on the campus map.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false
         }
       ],
-      "expo-font",
-      "expo-web-browser"
+      "expo-font"
     ],
     "developmentClient": {
       "silentLaunch": true

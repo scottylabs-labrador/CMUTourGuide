@@ -7,6 +7,8 @@ import { useBuildings } from '../contexts/BuildingContext';
 import { CMU_RED } from '../constants/colors';
 import FeedbackModal from '../components/FeedbackModal';
 
+const PRIVACY_POLICY_URL = 'https://github.com/scottylabs-labrador/CMUTourGuide/blob/main/docs/privacy-policy.md';
+
 export default function InfoScreen() {
   const router = useRouter();
   const { clearStorage } = useBuildings();
@@ -138,6 +140,21 @@ export default function InfoScreen() {
               onPress={() => Linking.openURL('mailto:noahchoi@andrew.cmu.edu')}
             >
               noahchoi@andrew.cmu.edu
+            </Text>
+            .
+          </Text>
+        </View>
+
+        {/* Privacy */}
+        <View className="mb-8">
+          <View className="flex-row items-center mb-3 gap-2">
+            <Ionicons name="shield-checkmark" size={24} color={CMU_RED} />
+            <Text className="font-serif-semi text-[20px] text-cmu-red">Privacy</Text>
+          </View>
+          <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
+            Scanned photos and chat messages are sent to our servers to identify buildings and answer questions. Read the full{' '}
+            <Text className="font-serif-semi text-cmu-red" onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}>
+              privacy policy
             </Text>
             .
           </Text>
