@@ -14,9 +14,6 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "CMU Campus Explorer uses your location to show your position on the campus map."
-      },
-      "config": {
-        "googleMapsApiKey": "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
       }
     },
     "android": {
@@ -65,7 +62,13 @@
           "locationAlwaysPermission": false
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "AIzaSyA2UL82O5NP-hY4x1WeoOKbKqiXq1GEUko"
+        }
+      ]
     ],
     "developmentClient": {
       "silentLaunch": true

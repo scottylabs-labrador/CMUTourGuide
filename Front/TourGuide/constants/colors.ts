@@ -10,6 +10,11 @@ export const WHITE = '#FFFFFF';        // White
 // clearly on the white-ish basemap and against CMU_RED route paths.
 export const LANDMARK_YELLOW = '#E6A817';
 
+// "Visited" color for unlocked stops while a route is active. Okabe-Ito green:
+// matches the palette family already used for category blue/orange, and stays
+// distinct from red (remaining), gray (locked) and yellow (landmark).
+export const VISITED_GREEN = '#009E73';
+
 export const COLORS = {
   primary: CMU_RED,
   background: WHITE,
@@ -89,7 +94,7 @@ export const MAP_OUTLINE_NEUTRAL = {
  *
  * Hierarchy (strongest → weakest visual weight) when a route is active:
  *   1. `isNext` (locked, on-route, next stop)   → thick red outline, deeper red fill
- *   2. `inRoute` + unlocked                     → red (same as unlocked default) + checkmark badge
+ *   2. `inRoute` + unlocked                     → green outline/fill/dot + checkmark badge
  *   3. `inRoute` + locked                       → gray dot, red outline  (reads as "on this tour")
  *   4. off-route                                → dimmed to ~40% opacity
  *
@@ -126,7 +131,9 @@ export function getMapBuildingStyle(opts: {
 
   if (unlocked) {
     return {
-      ...getMapBuildingColors(true),
+      stroke: VISITED_GREEN,
+      fill: hexToRgba(VISITED_GREEN, 0.18),
+      dot: VISITED_GREEN,
       opacity: 1,
       showCheck: true,
       strokeWidth: 1,

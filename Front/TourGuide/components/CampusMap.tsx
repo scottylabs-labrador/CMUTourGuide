@@ -8,7 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Polygon, Polyline, Marker, Callout, Region } from 'react-native-maps';
+import MapView, { Polygon, Polyline, Marker, Callout, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useBuildings } from '../contexts/BuildingContext';
 import { isLandmark } from '../config/scannableBuildings';
@@ -33,6 +33,7 @@ import {
   CMU_RED,
   COLORS,
   LANDMARK_YELLOW,
+  VISITED_GREEN,
 } from '../constants/colors';
 import { SHADOWS } from '../constants/layout';
 import {
@@ -317,7 +318,7 @@ export default function CampusMap({
         customMapStyle={CMU_MAP_STYLE}
         showsBuildings
         showsIndoors={false}
-        showsPointsOfInterest={false}
+        showsPointsOfInterests={false}
         showsTraffic={false}
         onMapReady={async () => {
           if (!initialCameraRef.current && mapRef.current) {
@@ -433,7 +434,9 @@ export default function CampusMap({
             ? LANDMARK_YELLOW
             : showLocked
               ? COLORS.locked
-              : CMU_RED;
+              : routeActive && inRoute
+                ? VISITED_GREEN
+                : CMU_RED;
           // Include route-state bits in the key so the native marker
           // bitmap is re-captured when membership/next-stop/unlock changes
           // (same mechanism as the existing label-visibility rekey).
@@ -466,7 +469,7 @@ export default function CampusMap({
                       <Ionicons
                         name="checkmark-circle"
                         size={11}
-                        color={CMU_RED}
+                        color={VISITED_GREEN}
                         style={{ marginRight: 3 }}
                       />
                     )}
