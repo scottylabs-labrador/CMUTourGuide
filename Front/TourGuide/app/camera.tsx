@@ -8,7 +8,7 @@ import * as Haptics from 'expo-haptics';
 import { VolumeManager } from 'react-native-volume-manager';
 import Slider from '@react-native-community/slider';
 import { useBuildings } from '../contexts/BuildingContext';
-import { scanBuilding } from '../services/visionService';
+import { scanBuilding, LowConfidenceError } from '../services/visionService';
 import { TimeoutError, isAbortError } from '../services/http';
 import { CMU_RED } from '../constants/colors';
 import { usePostHog } from 'posthog-react-native';
@@ -157,6 +157,20 @@ export default function CameraScreen() {
       // User pressed cancel: reset quietly
       if (isAbortError(error)) {
         posthog.capture('building_scan_failed', { reason: 'cancelled' });
+        return;
+      }
+      if (error instanceof LowConfidenceError) {
+        posthog.capture('building_scan_failed', {
+          reason: 'low_confidence', guess: error.buildingId, confidence: error.confidence,
+        });
+        Alert.alert(
+          'Not Quite Sure',
+          "We couldn't confidently identify that building. Try again:\n\n"
+          + '\u2022 Center the building in the frame\n'
+          + '\u2022 Step back so the whole front is visible\n'
+          + '\u2022 Hold steady and let the camera focus\n'
+          + '\u2022 Avoid shooting into the sun or at night',
+        );
         return;
       }
       if (error instanceof TimeoutError) {

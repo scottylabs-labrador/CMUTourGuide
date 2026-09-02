@@ -1,3 +1,4 @@
+import os
 import httpx
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
@@ -14,10 +15,21 @@ class VisionResponse(BaseModel):
 
 router = APIRouter(prefix="", tags=["image"])
 
+# Below this the client asks the user to retry instead of unlocking. Env-tunable so it can move without an app release.
+VISION_MIN_CONFIDENCE = float(os.getenv("VISION_MIN_CONFIDENCE", "0.6"))  # see CV/src/eval_confidence.py
+LOW_CONFIDENCE = "LOW_CONFIDENCE"
+
+def apply_threshold(reply: VisionResponse, threshold: float = VISION_MIN_CONFIDENCE) -> VisionResponse:
+	"""Flag recognised-but-unsure results; keeps building_name/confidence for logging."""
+	if reply.error is None and reply.confidence < threshold:
+		return reply.model_copy(update={"error": LOW_CONFIDENCE})
+	return reply
+
 @router.post("/vision", response_model=VisionResponse)
 async def image(req: VisionRequest, background_tasks: BackgroundTasks):
-	reply = await recognize_building(req.imageBase64)
-	if reply.error is None:
+	reply = apply_threshold(await recognize_building(req.imageBase64))
+	# Low-confidence scans are the most useful training data, so upload those too
+	if reply.error in (None, LOW_CONFIDENCE):
 		background_tasks.add_task(
             upload_interaction, 
             req.imageBase64, 
