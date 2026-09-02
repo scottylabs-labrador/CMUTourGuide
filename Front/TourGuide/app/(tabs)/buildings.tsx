@@ -40,7 +40,7 @@ export default function AllBuildingsScreen() {
     const building = getBuilding(buildingId);
     posthog.capture('building_card_tapped', {
       building_id: buildingId,
-      building_name: building?.title,
+      building_name: building?.title ?? null,
       is_unlocked: unlocked,
     });
     // Locked buildings still open the summary — it just shows a teaser with

@@ -39,8 +39,8 @@ export default function ChatScreen() {
     const text = inputText.trim();
     setInputText('');
     posthog.capture('chat_message_sent', {
-      building_id: building_id ? String(building_id) : undefined,
-      building_name: building_name ? String(building_name) : undefined,
+      building_id: building_id ? String(building_id) : null,
+      building_name: building_name ? String(building_name) : null,
       message_length: text.length,
     });
     await sendMessage(text);

@@ -9,6 +9,7 @@ import { VolumeManager } from 'react-native-volume-manager';
 import Slider from '@react-native-community/slider';
 import { useBuildings } from '../contexts/BuildingContext';
 import { scanBuilding } from '../services/visionService';
+import { TimeoutError, isAbortError } from '../services/http';
 import { CMU_RED } from '../constants/colors';
 import { usePostHog } from 'posthog-react-native';
 
@@ -34,6 +35,7 @@ export default function CameraScreen() {
   const [zoom, setZoom] = useState(0);
   const router = useRouter();
   const camera = useRef<CameraView>(null);
+  const scanAbort = useRef<AbortController | null>(null);
   const { unlockBuilding, isUnlocked, showSummary } = useBuildings();
   const posthog = usePostHog();
 
@@ -128,7 +130,8 @@ export default function CameraScreen() {
         quality: 1.0,
       });
 
-      const identifiedBuildingId = await scanBuilding(photo?.base64 ?? '');
+      scanAbort.current = new AbortController();
+      const identifiedBuildingId = await scanBuilding(photo?.base64 ?? '', scanAbort.current.signal);
       if (!identifiedBuildingId || identifiedBuildingId === 'Error') {
         posthog.capture('building_scan_failed', { reason: 'unrecognised' });
         Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
@@ -151,6 +154,16 @@ export default function CameraScreen() {
       showSummary(identifiedBuildingId, !wasUnlocked);
       router.back();
     } catch (error) {
+      // User pressed cancel: reset quietly
+      if (isAbortError(error)) {
+        posthog.capture('building_scan_failed', { reason: 'cancelled' });
+        return;
+      }
+      if (error instanceof TimeoutError) {
+        posthog.capture('building_scan_failed', { reason: 'timeout' });
+        Alert.alert('Taking Too Long', 'The scan timed out. Check your connection and try again.');
+        return;
+      }
       posthog.capture('building_scan_failed', {
         reason: 'error',
         $exception_type: error instanceof Error ? error.name : 'Unknown',
@@ -158,9 +171,12 @@ export default function CameraScreen() {
       });
       Alert.alert('Scan Failed', 'Could not identify the building. Please try again.');
     } finally {
+      scanAbort.current = null;
       setIsCapturing(false);
     }
   };
+
+  const cancelScan = () => scanAbort.current?.abort();
 
   takePictureRef.current = takePicture;
 
@@ -198,11 +214,16 @@ export default function CameraScreen() {
 
           <View className="absolute bottom-[30px] left-5 right-5">
             {isCapturing && (
-              <View className="flex-row items-center justify-center py-3 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-                <Text className="text-white text-[16px] text-center">
-                  Processing image...
-                </Text>
-                <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
+              <View className="items-center" style={{ gap: 12 }}>
+                <View className="flex-row items-center justify-center py-3 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+                  <Text className="text-white text-[16px] text-center">
+                    Processing image...
+                  </Text>
+                  <ActivityIndicator size="small" color="white" style={{ marginLeft: 8 }} />
+                </View>
+                <TouchableOpacity className="py-2 px-5 rounded-[20px]" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} onPress={cancelScan}>
+                  <Text className="text-white text-[15px]">Cancel</Text>
+                </TouchableOpacity>
               </View>
             )}
        

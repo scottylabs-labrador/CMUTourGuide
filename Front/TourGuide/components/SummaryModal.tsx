@@ -47,7 +47,7 @@ export default function SummaryModal({ visible, onClose, building_id, isNewUnloc
         if (visible && building_id) {
             posthog.capture('building_summary_opened', {
                 building_id,
-                building_name: buildingData?.title,
+                building_name: buildingData?.title ?? null,
                 is_new_unlock: isNewUnlock,
                 locked,
             });

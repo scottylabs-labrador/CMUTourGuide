@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FlatList } from 'react-native';
 import { saveChatSession, getChatSession } from '../utils/chatStorage';
 import { sendChatMessage } from '../services/chatService';
+import { TimeoutError } from '../services/http';
 import { Message, ChatSession } from '../types/chat';
 
 type Params = {
@@ -87,10 +88,12 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, chatMessage]);
-    } catch {
+    } catch (error) {
       const errorMessage: Message = {
         id: Date.now().toString(),
-        text: "Sorry, I couldn't get a response. Please try again.",
+        text: error instanceof TimeoutError
+          ? 'Sorry, that took too long. Check your connection and try again.'
+          : "Sorry, I couldn't get a response. Please try again.",
         isUser: false,
         timestamp: new Date(),
       };

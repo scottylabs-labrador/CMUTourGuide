@@ -24,7 +24,6 @@ export const posthog = new PostHog(apiKey || 'placeholder_key', {
   host,
   disabled: !isPostHogConfigured,
   captureAppLifecycleEvents: true,
-  debug: __DEV__,
   flushAt: 20,
   flushInterval: 10000,
   maxBatchSize: 100,
@@ -36,3 +35,6 @@ export const posthog = new PostHog(apiKey || 'placeholder_key', {
   fetchRetryCount: 3,
   fetchRetryDelay: 3000,
 })
+
+// debug is an instance method in posthog-react-native 4.x, not a constructor option
+if (__DEV__) posthog.debug(true)
