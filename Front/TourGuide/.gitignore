@@ -47,4 +47,5 @@ app-example
 
 .claude
 
-posthog-setup-report.md*.ipa
+posthog-setup-report.md
+*.ipa

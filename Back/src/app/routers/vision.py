@@ -1,9 +1,10 @@
 import os
 import httpx
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Request
 from pydantic import BaseModel
 from typing import Optional
 from services.s3Services import upload_interaction
+from services.rate_limit import limiter
 
 class VisionRequest(BaseModel):
 	imageBase64: str
@@ -26,7 +27,8 @@ def apply_threshold(reply: VisionResponse, threshold: float = VISION_MIN_CONFIDE
 	return reply
 
 @router.post("/vision", response_model=VisionResponse)
-async def image(req: VisionRequest, background_tasks: BackgroundTasks):
+@limiter.limit("20/minute")
+async def image(request: Request, req: VisionRequest, background_tasks: BackgroundTasks):
 	reply = apply_threshold(await recognize_building(req.imageBase64))
 	# Low-confidence scans are the most useful training data, so upload those too
 	if reply.error in (None, LOW_CONFIDENCE):

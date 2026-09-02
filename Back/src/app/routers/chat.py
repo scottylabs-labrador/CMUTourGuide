@@ -2,10 +2,11 @@ import os
 from typing import Any, Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from services import buildings_kb, chat_tools
+from services.rate_limit import limiter
 
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -44,7 +45,8 @@ router = APIRouter(prefix="", tags=["chat"])
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest) -> ChatResponse:
+@limiter.limit("30/minute")
+async def chat(request: Request, req: ChatRequest) -> ChatResponse:
 	last_user_msg = next((m.text for m in reversed(req.messages) if m.isUser), "(none)")
 	print(
 		f"[chat] -> building={req.building_id!r} msgs={len(req.messages)} "

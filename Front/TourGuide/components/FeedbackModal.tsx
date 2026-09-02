@@ -15,16 +15,12 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { CMU_RED, COLORS } from '../constants/colors';
+import { ENDPOINTS } from '../constants/api';
+import { fetchWithTimeout } from '../services/http';
 import { usePostHog } from 'posthog-react-native';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// Discord webhook that receives feedback submissions. Anyone with this URL
-// can post to the channel, so treat it as semi-secret: regenerate the webhook
-// in Discord's channel settings if it ever leaks (this only invalidates this
-// URL, no other side effects).
-const FEEDBACK_WEBHOOK_URL =
-  'https://discord.com/api/webhooks/1504311597395345429/j0LTNajEbQaz7fe4aZx4Mj58kRgGHzQqpvjJzuD1SwRjliRjmwjaoYB6TvQCu_lxCa2k';
+const FEEDBACK_TIMEOUT_MS = 15_000;
 
 type Category = 'bug' | 'feedback' | 'other';
 
@@ -33,20 +29,6 @@ const CATEGORIES: { id: Category; label: string; icon: keyof typeof Ionicons.gly
   { id: 'feedback', label: 'Feedback', icon: 'chatbubble-ellipses-outline' },
   { id: 'other', label: 'Other', icon: 'ellipsis-horizontal-circle-outline' },
 ];
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  bug: 'Bug Report',
-  feedback: 'General Feedback',
-  other: 'Other',
-};
-
-// Discord embed `color` field is a decimal int. These mirror the in-app
-// palette so the channel is scannable at a glance.
-const CATEGORY_COLORS: Record<Category, number> = {
-  bug: 0xc41230,      // CMU red
-  feedback: 0x1f6feb, // blue
-  other: 0x6d6e71,    // iron gray
-};
 
 interface FeedbackModalProps {
   visible: boolean;
@@ -82,31 +64,15 @@ export default function FeedbackModal({ visible, onClose }: FeedbackModalProps) 
     setSubmitting(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    const payload = {
-      // `username` overrides the webhook's default name on a per-message basis.
-      username: 'CMU Campus Explorer',
-      embeds: [
-        {
-          title: CATEGORY_LABELS[category],
-          description: trimmed,
-          color: CATEGORY_COLORS[category],
-          timestamp: new Date().toISOString(),
-          footer: {
-            text: `${Platform.OS} ${Platform.Version}`,
-          },
-        },
-      ],
-    };
-
     try {
-      const res = await fetch(FEEDBACK_WEBHOOK_URL, {
+      // Backend relays to Discord so the webhook URL never ships in the app bundle
+      const res = await fetchWithTimeout(ENDPOINTS.feedback, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      // Discord returns 204 No Content on success; treat any 2xx as OK.
+        body: JSON.stringify({ category, message: trimmed, platform: `${Platform.OS} ${Platform.Version}` }),
+      }, FEEDBACK_TIMEOUT_MS);
       if (!res.ok) {
-        throw new Error(`Webhook responded ${res.status}`);
+        throw new Error(`Feedback API responded ${res.status}`);
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       posthog.capture('feedback_submitted', {

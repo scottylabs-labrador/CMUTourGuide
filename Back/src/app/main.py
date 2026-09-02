@@ -4,8 +4,14 @@ from typing import List
 from app.routers.health import router as health_router
 from app.routers.chat import router as chat_router
 from app.routers.vision import router as vision_router
+from app.routers.feedback import router as feedback_router
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from services.rate_limit import limiter
 
 app = FastAPI(title="CMU Tour Guide API", version="0.1.0")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 origins: List[str] = [
 	"http://localhost:8081",
@@ -23,6 +29,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(chat_router)
 app.include_router(vision_router)
+app.include_router(feedback_router)
 
 
 @app.get("/")
