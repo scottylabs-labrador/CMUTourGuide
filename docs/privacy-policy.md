@@ -8,7 +8,7 @@ CMU Explorer ("the app") is a campus tour guide for Carnegie Mellon University, 
 
 **Photos you scan.** When you point the camera at a building and tap scan, the photo is sent to our server to identify the building. We keep a copy of scanned photos to improve the recognition model. Photos are not linked to your name or account, and we do not collect photos from your camera roll.
 
-**Chat messages.** Questions you type in the chat are sent to our server, which uses a third-party language model (via OpenRouter) to generate answers. Messages are not linked to your identity. Your chat history is stored only on your device.
+**Chat messages.** Questions you type in the chat are sent to our server, which uses a third-party language model (via OpenRouter) to generate answers. Messages are not linked to your name, but they are logged with a random device identifier so we can review answer quality. Your chat history is stored only on your device.
 
 **Location.** With your permission, the app uses your location to show where you are on the campus map and to draw walking routes. Your location is used on the device and for route requests to our routing provider (OpenRouteService). We do not store your location history.
 

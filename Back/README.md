@@ -71,40 +71,7 @@ Back/
 
 ## Data
 
-`src/data/buildings.json` is the chatbot's building knowledge base. It is a
-**derived** file built in two steps:
-
-1. Slim the client's `Front/TourGuide/data/buildings.json` down to `title` +
-   `summary` (with `tour_guide` merged into `summary`). One-shot script:
-
-   ```bash
-   python3 - <<'PY'
-   import json, pathlib
-   src = pathlib.Path("../Front/TourGuide/data/buildings.json")
-   dst = pathlib.Path("src/data/buildings.json")
-   data = json.loads(src.read_text())
-   slim = {}
-   for bid, rec in data.items():
-       summary = list(rec.get("summary") or [])
-       tour_guide = rec.get("tour_guide")
-       if isinstance(tour_guide, list):
-           summary.extend(tour_guide)
-       elif isinstance(tour_guide, str) and tour_guide.strip():
-           summary.append(tour_guide)
-       slim[bid] = {"title": rec["title"], "summary": summary}
-   dst.write_text(json.dumps(slim, indent=2, ensure_ascii=False) + "\n")
-   PY
-   ```
-
-2. Append cross-verified tour-guide research from the PDF extract:
-
-   ```bash
-   python3 scripts/merge_pdf_facts.py
-   ```
-
-   The merge script is **idempotent** — it detects a sentinel paragraph
-   (`"Additional tour-guide research..."`) and rewrites everything after it,
-   so it's safe to re-run after step 1.
+`src/knowledge/` holds the chatbot's knowledge base as markdown (buildings, campus topics, blog posts). See `src/knowledge/README.md` for the file format. It is indexed with BM25 at startup (`services/knowledge.py`) and exposed to the model as the `search_campus_info` and `get_building_info` tools.
 
 ## Testing locally
 
