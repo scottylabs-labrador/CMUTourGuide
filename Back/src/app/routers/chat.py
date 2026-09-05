@@ -16,7 +16,7 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 OPENROUTER_MODEL = "openai/gpt-5-mini"
 OPENROUTER_TIMEOUT_SECONDS = 30.0
 OPENROUTER_MAX_TOKENS = 2000
-OPENROUTER_REASONING_EFFORT = "minimal"
+OPENROUTER_REASONING_EFFORT = "low"
 MAX_TOOL_ITERATIONS = 4
 
 BASE_SYSTEM_PROMPT = """You are a CMU Tour Guide AI assistant helping visitors navigate Carnegie Mellon University.
@@ -26,6 +26,7 @@ KNOWLEDGE RULES (strict):
 - If the question is not covered by the current building context, call search_campus_info BEFORE answering. If the first search misses, search once more with different keywords.
 - Use get_building_info when the user asks about a specific other building.
 - If the knowledge base still does not cover it, say so in one sentence and suggest where to ask (the Coulter Welcome Center or admission office). Never guess.
+- Never invent walking directions or spatial relationships between buildings. For "how do I get to X", tell the visitor the app's Map tab draws the walking route, then answer what X is from the knowledge base.
 
 RESPONSE RULES (strict):
 - Reply in 2-4 sentences. Never exceed one short paragraph, even when comparing buildings or answering complex questions.
@@ -98,9 +99,9 @@ def build_system_prompt(building_id: Optional[str]) -> str:
 		f"{BASE_SYSTEM_PROMPT}\n\n"
 		f"CURRENT BUILDING CONTEXT (the visitor is currently at this building):\n"
 		f"{context_block}\n\n"
-		f"Ground every answer about the current building in the facts above. "
-		f"If the answer is not covered by these facts, say you don't know rather than guessing."
-		f"Use the tools for anything else."
+		f"Ground answers about the current building in the facts above. "
+		f"For anything NOT covered above (other buildings, dining nearby, directions, history, traditions), "
+		f"call search_campus_info or get_building_info BEFORE answering. Only say you don't know after a search comes back empty."
 	)
 
 
