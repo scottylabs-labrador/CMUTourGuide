@@ -2,71 +2,52 @@
 
 ## Overview
 
-FastAPI backend with two endpoints:
+FastAPI backend for the CMU Explorer app:
 
 - GET `/health` – health check
-- POST `/chat` – returns a hardcoded reply: `"Hello World"`
+- POST `/chat` – tour-guide chat. Agentic tool loop (`routers/chat.py`) over the markdown knowledge base, model via OpenRouter, traced to PostHog
+- POST `/vision` – building recognition, proxies to the Modal CLIP endpoint and applies a confidence threshold
+- POST `/feedback` – relays in-app feedback to Discord
 
 ## Setup
 
-1. Create and activate a virtual environment (optional but recommended)
-
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+cd src && uvicorn app.main:app --reload --port 8000
 ```
 
-2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-3. Run the server
-
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-4. Open API docs
-
-```
-http://localhost:8000/docs
-```
+Docs at `http://localhost:8000/docs`. Tests: `pytest tests` from `Back/`.
 
 ## Environment
 
-Copy `.env.example` to `.env` and adjust as needed.
+| Variable | Purpose |
+|---|---|
+| `OPENROUTER_API_KEY` | chat model access (required) |
+| `VISION_MIN_CONFIDENCE` | reject scans below this (default 0.6) |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET_NAME` | scanned-photo inbox |
+| `DISCORD_WEBHOOK_URL` | feedback relay |
+| `POSTHOG_PROJECT_TOKEN`, `POSTHOG_HOST` | LLM tracing; tracing is disabled when unset |
+| `POSTHOG_DEBUG=1` | log every PostHog batch (local debugging) |
 
-## Project Structure
+## Project structure
 
 ```
 Back/
-├── requirements.txt
-├── .env.example
-├── README.md
-├── scripts/
-│   ├── merge_pdf_facts.py        # appends curated PDF research into buildings.json
-│   └── data/
-│       └── pdf_facts_raw.txt     # verbatim PDF extract (source of truth for the merge)
+├── requirements.txt / requirements-dev.txt
+├── railway.json                  # deploy: uvicorn from src/
+├── tests/
 └── src/
-    ├── data/
-    │   └── buildings.json        # building knowledge base (see "Data" below)
-    └── app/
-        ├── main.py
-        ├── config.py
-        ├── routers/
-        │   ├── health.py
-        │   └── chat.py
-        ├── schemas/
-        │   └── chat.py
-        ├── services/
-        │   ├── ai.py
-        │   ├── vision.py
-        │   ├── buildings_kb.py   # loads buildings.json, formats context blocks
-        │   └── chat_tools.py     # OpenRouter tool schema + dispatch
-        └── middleware/
-            └── cors.py
+    ├── knowledge/                # markdown knowledge base (see its README)
+    ├── app/
+    │   ├── main.py               # app, CORS, rate limiter, routers
+    │   └── routers/              # chat.py, vision.py, feedback.py, health.py
+    └── services/
+        ├── knowledge.py          # loads + chunks markdown, BM25 search
+        ├── chat_tools.py         # tool schemas + dispatch (search_campus_info, get_building_info)
+        ├── tracing.py            # PostHog $ai_trace / $ai_span helpers
+        ├── rate_limit.py
+        └── s3Services.py
 ```
 
 ## Data
@@ -76,13 +57,10 @@ Back/
 ## Testing locally
 
 ```bash
-# health
 curl http://localhost:8000/health
 
-# chat
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message":"hi"}'
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" \
+  -d '{"messages":[{"id":"1","text":"Who founded CMU?","isUser":true,"timestamp":"2026-01-01T00:00:00Z"}],"building_id":null}'
 ```
 
 ## Mobile integration (Expo dev)

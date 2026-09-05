@@ -1,6 +1,6 @@
 # Knowledge base
 
-Markdown is the source of truth for everything the chat assistant knows. `src/data/buildings.json` is legacy and will be removed once the retrieval tool reads from here.
+Markdown is the source of truth for everything the chat assistant knows. `services/knowledge.py` loads and indexes this folder at startup.
 
 ## Layout
 

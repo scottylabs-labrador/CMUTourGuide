@@ -8,6 +8,7 @@ from app.routers.feedback import router as feedback_router
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from services.rate_limit import limiter
+from services.tracing import posthog
 
 app = FastAPI(title="CMU Tour Guide API", version="0.1.0")
 app.state.limiter = limiter
@@ -25,6 +26,11 @@ app.add_middleware(
 	allow_methods=["*"],
 	allow_headers=["*"],
 )
+
+@app.on_event("shutdown")
+def _flush_traces():
+	posthog.shutdown()
+
 
 app.include_router(health_router)
 app.include_router(chat_router)

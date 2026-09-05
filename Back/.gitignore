@@ -103,9 +103,6 @@ dmypy.json
 temp/
 tmp/
 
-# Local PDF facts pipeline (raw dumps and one-off merge script)
-scripts/data/pdf_facts_raw*
-scripts/merge_pdf_facts.py
 
 # ML / serialized model artifacts
 *.pkl

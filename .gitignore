@@ -1,8 +1,5 @@
 .DS_Store
 
-# Local PDF facts pipeline (raw dumps and one-off merge script)
-**/pdf_facts_raw*
-**/merge_pdf_facts.py
 
 # ML / serialized model artifacts
 *.pkl
