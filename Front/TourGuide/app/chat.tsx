@@ -20,6 +20,7 @@ import { CMU_RED, COLORS } from '../constants/colors';
 import { FONTS } from '../constants/typography';
 import { SHADOWS } from '../constants/layout';
 import { usePostHog } from 'posthog-react-native';
+import { getBuilding } from '../services/buildingService';
 
 export default function ChatScreen() {
   const { sessionId, imageUri, building_name, building_id } = useLocalSearchParams();
@@ -27,7 +28,7 @@ export default function ChatScreen() {
   const router = useRouter();
   const posthog = usePostHog();
 
-  const { messages, isTyping, flatListRef, imageUriState, sendMessage } = useChatSession({
+  const { messages, isTyping, flatListRef, imageUriState, buildingIdState, sendMessage } = useChatSession({
     sessionId: sessionId ? String(sessionId) : undefined,
     imageUri: imageUri ? String(imageUri) : undefined,
     buildingName: building_name ? String(building_name) : undefined,
@@ -128,7 +129,7 @@ export default function ChatScreen() {
       >
         {/* Header */}
         <ScreenHeader
-          title="CMU Tour Guide"
+          title={(buildingIdState && getBuilding(buildingIdState)?.title) || "CMU Tour Guide"}
           onBack={() => router.back()}
           rightAction={{
             icon: 'add',

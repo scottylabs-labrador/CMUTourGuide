@@ -80,7 +80,7 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
     setIsTyping(true);
 
     try {
-      const reply = await sendChatMessage(updatedMessages, buildingIdState);
+      const reply = await sendChatMessage(updatedMessages, buildingIdState, sessionIdState);
       const chatMessage: Message = {
         id: Date.now().toString(),
         text: reply,
@@ -108,6 +108,7 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
     isTyping,
     flatListRef,
     imageUriState,
+    buildingIdState,
     sendMessage,
   };
 }

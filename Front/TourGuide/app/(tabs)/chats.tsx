@@ -12,6 +12,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getAllChatSessions, clearAllChatSessions } from '../../utils/chatStorage';
 import { ChatSession } from '../../types/chat';
+import { getBuilding } from '../../services/buildingService';
 import * as Haptics from 'expo-haptics';
 import EmptyState from '../../components/EmptyState';
 import { CMU_RED, COLORS } from '../../constants/colors';
@@ -44,6 +45,9 @@ export default function ChatsScreen() {
   );
 
   const getChatTitle = (session: ChatSession): string => {
+    // Title by building when the chat came from a scan; fall back to first message
+    const building = session.buildingId ? getBuilding(session.buildingId) : undefined;
+    if (building) return building.title;
     if (session.messages.length === 0) return 'Empty Chat';
     const firstUserMessage = session.messages.find((msg) => msg.isUser);
     if (firstUserMessage) {
