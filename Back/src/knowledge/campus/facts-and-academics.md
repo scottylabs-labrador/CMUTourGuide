@@ -2,7 +2,7 @@
 id: campus-facts
 title: "CMU at a glance: facts, colleges, and awards"
 type: campus
-aliases: ["how many students", "colleges", "schools", "campus size", "Nobel", "Turing Award", "student faculty ratio", "rankings"]
+aliases: ["how many students", "colleges", "schools", "campus size", "Nobel", "Turing Award", "student faculty ratio", "rankings", "best majors", "popular majors", "top programs", "what is CMU known for", "what is CMU good at", "degrees"]
 sources:
   - https://www.cmu.edu/about/index.html
   - https://www.cmu.edu/academics/index.html
@@ -20,9 +20,9 @@ Carnegie Mellon enrolls about 16,600 students from more than 130 countries, with
 
 CMU is organized into seven schools and colleges: the College of Engineering, the College of Fine Arts, the Dietrich College of Humanities and Social Sciences, the Heinz College of Information Systems and Public Policy, the Mellon College of Science, the School of Computer Science, and the Tepper School of Business. The university emphasizes work across disciplines rather than within silos, and many degree programs are jointly run by two or more colleges.
 
-## Rankings
+## Rankings and best-known majors
 
-CMU is consistently ranked among the top 20 universities in the United States, and it is ranked number one nationally in seven undergraduate programs, including artificial intelligence, programming languages, cybersecurity, software engineering, information systems, analytics, and mobile and web applications.
+CMU is consistently ranked among the top 20 universities in the United States. Its best-known majors and programs are in computer science and engineering: it is ranked number one nationally in seven undergraduate programs, including artificial intelligence, programming languages, cybersecurity, software engineering, information systems, analytics, and mobile and web applications. The School of Drama and the College of Fine Arts are also nationally prominent, reflected in the alumni award counts below.
 
 ## Awards and honors
 
