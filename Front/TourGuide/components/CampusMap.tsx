@@ -269,6 +269,8 @@ export default function CampusMap({
     if (focusedOnUserRef.current) return;
     if (!mapReadyRef.current || !userLocation || !mapRef.current) return;
     focusedOnUserRef.current = true;
+    // Off-campus users keep the campus view instead of flying to wherever they are
+    if (haversineMeters(userLocation, CAMPUS_CENTER) > OFF_CAMPUS_THRESHOLD_M) return;
     mapRef.current.animateToRegion(
       {
         ...userLocation,
@@ -499,26 +501,23 @@ export default function CampusMap({
 
       </MapView>
 
+      {/* Off-campus notice: a banner over the top of the map so it stays browsable */}
       {offCampus && (
         <View
-          className="absolute inset-0 items-center justify-center px-8"
-          style={{ backgroundColor: COLORS.background, zIndex: 20 }}
+          className="absolute top-2 left-3 right-3 flex-row items-center px-3 py-2 rounded-lg"
+          style={[{ backgroundColor: COLORS.background, zIndex: 20 }, SHADOWS.card]}
         >
-          <Ionicons name="walk-outline" size={52} color={CMU_RED} />
-          <Text
-            className="font-serif-semi text-xl mt-4 text-center"
-            style={{ color: COLORS.textPrimary }}
-          >
-            You're not on campus yet
-          </Text>
-          <Text
-            className="font-sans text-base mt-2 text-center"
-            style={{ color: COLORS.locked }}
-          >
-            {activeRouteId
-              ? "Come to CMU's main campus to start this tour."
-              : "Come to CMU's main campus to explore."}
-          </Text>
+          <Ionicons name="walk-outline" size={20} color={CMU_RED} />
+          <View className="ml-2 flex-1">
+            <Text className="font-serif-semi text-[13px]" style={{ color: COLORS.textPrimary }}>
+              You’re not on campus yet
+            </Text>
+            <Text className="font-sans text-[11px]" style={{ color: COLORS.textSecondary }}>
+              {activeRouteId
+                ? "Come to CMU's main campus to start this tour."
+                : "Come to CMU's main campus to scan buildings."}
+            </Text>
+          </View>
         </View>
       )}
 

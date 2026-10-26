@@ -28,6 +28,8 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  // Sync guard: isTyping state lags within the same tick, so a ref blocks overlapping sends
+  const pendingRef = useRef(false);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -51,7 +53,8 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
 
   useEffect(() => {
     const saveSession = async () => {
-      if (messages.length === 0) return;
+      // Greeting-only state is never saved: avoids empty chats and clobbering a session that's still loading
+      if (!messages.some((m) => m.isUser)) return;
       const session: ChatSession = {
         id: sessionIdState,
         messages,
@@ -66,7 +69,8 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
   }, [messages, sessionIdState, imageUriState, buildingIdState]);
 
   const sendMessage = async (text: string) => {
-    if (text.trim() === '') return;
+    if (text.trim() === '' || pendingRef.current) return;
+    pendingRef.current = true;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -99,6 +103,7 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
+      pendingRef.current = false;
       setIsTyping(false);
     }
   };

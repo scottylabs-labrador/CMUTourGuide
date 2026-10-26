@@ -35,8 +35,10 @@ export default function ChatScreen() {
     buildingId: building_id ? String(building_id) : undefined,
   });
 
+  const canSend = inputText.trim() !== '' && !isTyping;
+
   const handleSend = async () => {
-    if (inputText.trim() === '') return;
+    if (!canSend) return;
     const text = inputText.trim();
     setInputText('');
     posthog.capture('chat_message_sent', {
@@ -164,14 +166,14 @@ export default function ChatScreen() {
             />
             <TouchableOpacity
               className="w-11 h-11 rounded-[22px] justify-center items-center"
-              style={{ backgroundColor: inputText.trim() === '' ? '#e0e0e0' : CMU_RED }}
+              style={{ backgroundColor: canSend ? CMU_RED : '#e0e0e0' }}
               onPress={handleSend}
-              disabled={inputText.trim() === ''}
+              disabled={!canSend}
             >
               <Ionicons
                 name="send"
                 size={20}
-                color={inputText.trim() === '' ? '#999' : 'white'}
+                color={canSend ? 'white' : '#999'}
               />
             </TouchableOpacity>
           </View>

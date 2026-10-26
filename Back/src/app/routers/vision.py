@@ -52,6 +52,9 @@ async def recognize_building(image_base64: str) -> VisionResponse:
 			response.raise_for_status()
 			res_json =  response.json()
 			print(res_json)
+			# Modal reports failures in a 200 body; surface them instead of reading them as confidence 0
+			if res_json.get("error"):
+				return _error_response(res_json.get("description", ""), res_json["error"])
 			raw_building = res_json.get("building", "Unknown")
 			confidence = float(res_json.get("confidence", 0.0))
 			return VisionResponse(building_name=raw_building, confidence=confidence, error=None)
