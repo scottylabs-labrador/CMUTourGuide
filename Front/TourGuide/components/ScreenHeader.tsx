@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type RightAction = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -16,10 +17,13 @@ type Props = {
 };
 
 export default function ScreenHeader({ title, onBack, rightAction }: Props) {
+  // Red extends under the status bar, so screens using this header skip the 'top' safe-area edge
+  const insets = useSafeAreaInsets();
   return (
     <View
-      className="flex-row items-center px-4 py-3 bg-cmu-red"
+      className="flex-row items-center px-4 pb-3 bg-cmu-red"
       style={{
+        paddingTop: insets.top + 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,

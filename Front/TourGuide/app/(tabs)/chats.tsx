@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getAllChatSessions, clearAllChatSessions } from '../../utils/chatStorage';
@@ -19,6 +19,7 @@ import { CMU_RED, COLORS } from '../../constants/colors';
 
 export default function ChatsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,9 +154,13 @@ export default function ChatsScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right']}>
-      <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-border">
-        <Text className="font-serif-bold text-[20px] text-cmu-red">Chats</Text>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['left', 'right']}>
+      {/* Red header runs under the status bar, matching Home */}
+      <View
+        className="flex-row items-center justify-between px-5 pb-3 bg-cmu-red"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <Text className="font-serif-bold text-[20px] text-white">Chats</Text>
         <TouchableOpacity
           onPress={handleClearAll}
           activeOpacity={0.7}
@@ -165,7 +170,7 @@ export default function ChatsScreen() {
           <Ionicons
             name="trash-outline"
             size={22}
-            color={sessions.length === 0 ? COLORS.textMuted : CMU_RED}
+            color={sessions.length === 0 ? 'rgba(255,255,255,0.4)' : '#FFFFFF'}
           />
         </TouchableOpacity>
       </View>

@@ -7,6 +7,7 @@ import { useBuildings } from '../contexts/BuildingContext';
 import { CMU_RED } from '../constants/colors';
 import SummaryModal from '../components/SummaryModal';
 import CampusMap from '../components/CampusMap';
+import ScreenHeader from '../components/ScreenHeader';
 
 export default function MapScreen() {
   const router = useRouter();
@@ -22,14 +23,8 @@ export default function MapScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center justify-between px-5 py-3 border-b border-slate-200">
-        <TouchableOpacity className="p-2" onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
-        </TouchableOpacity>
-        <Text className="text-[20px] font-serif-bold text-cmu-red">Campus Map</Text>
-        <View className="w-10" />
-      </View>
+    <SafeAreaView className="flex-1 bg-white" edges={['left', 'right', 'bottom']}>
+      <ScreenHeader title="Campus Map" onBack={() => router.back()} />
 
       <View className="bg-slate-50 px-5 py-3 border-b border-slate-200">
         <View className="flex-row items-center justify-between mb-2">

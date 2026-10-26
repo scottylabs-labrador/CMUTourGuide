@@ -135,7 +135,7 @@ export default function BlogScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['left', 'right', 'bottom']}>
       {/* Header */}
       <ScreenHeader
         title="Blog"

@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useBuildings } from '../contexts/BuildingContext';
 import { CMU_RED } from '../constants/colors';
 import FeedbackModal from '../components/FeedbackModal';
+import ScreenHeader from '../components/ScreenHeader';
 
 const PRIVACY_POLICY_URL = 'https://github.com/scottylabs-labrador/CMUTourGuide/blob/main/docs/privacy-policy.md';
 
@@ -40,17 +41,8 @@ export default function InfoScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center justify-between px-5 py-4 border-b border-border">
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color={CMU_RED} />
-        </TouchableOpacity>
-        <Text className="font-serif-semi text-[20px] text-cmu-red">About</Text>
-        <View className="w-10" />
-      </View>
+    <SafeAreaView className="flex-1 bg-white" edges={['left', 'right', 'bottom']}>
+      <ScreenHeader title="About" onBack={() => router.back()} />
 
       <ScrollView
         className="flex-1"

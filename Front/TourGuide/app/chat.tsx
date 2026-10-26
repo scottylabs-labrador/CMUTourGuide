@@ -122,7 +122,7 @@ export default function ChatScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]">
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['left', 'right', 'bottom']}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

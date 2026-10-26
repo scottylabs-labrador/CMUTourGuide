@@ -5,7 +5,7 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useBuildings } from '../../contexts/BuildingContext';
 import SummaryModal from '../../components/SummaryModal';
@@ -32,6 +32,7 @@ export default function AllBuildingsScreen() {
   const [showSummaryPopup, setShowSummaryPopup] = React.useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = React.useState('');
   const posthog = usePostHog();
+  const insets = useSafeAreaInsets();
 
   const buildingIds = getAllBuildingIds();
 
@@ -76,12 +77,13 @@ export default function AllBuildingsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['top', 'left', 'right']}>
+    <SafeAreaView className="flex-1 bg-[#F8F9FA]" edges={['left', 'right']}>
+      {/* Red header runs under the status bar, matching Home */}
       <View
-        className="items-center py-[14px] bg-white border-b border-border"
-        style={{ paddingHorizontal: HORIZONTAL_PADDING }}
+        className="items-center pb-[14px] bg-cmu-red"
+        style={{ paddingHorizontal: HORIZONTAL_PADDING, paddingTop: insets.top + 14 }}
       >
-        <Text className="font-serif-bold text-[20px] text-cmu-red">All Buildings</Text>
+        <Text className="font-serif-bold text-[20px] text-white">All Buildings</Text>
       </View>
 
       <View
