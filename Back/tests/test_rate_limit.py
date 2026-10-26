@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.routers import vision, feedback
 from services.rate_limit import limiter
+from test_vision import JPEG
 
 @pytest.fixture(autouse=True)
 def fresh_limits():
@@ -15,13 +16,13 @@ def client(monkeypatch):
     return TestClient(app)
 
 def test_vision_blocks_after_20_per_minute(client):
-    codes = [client.post("/vision", json={"imageBase64": "x"}).status_code for _ in range(21)]
+    codes = [client.post("/vision", json={"imageBase64": JPEG}).status_code for _ in range(21)]
     assert codes[:20] == [200] * 20 and codes[20] == 429
 
 def test_limits_are_per_client_ip(client):
-    for _ in range(20): client.post("/vision", json={"imageBase64": "x"}, headers={"x-envoy-external-address": "1.1.1.1"})
-    assert client.post("/vision", json={"imageBase64": "x"}, headers={"x-envoy-external-address": "1.1.1.1"}).status_code == 429
-    assert client.post("/vision", json={"imageBase64": "x"}, headers={"x-envoy-external-address": "2.2.2.2"}).status_code == 200
+    for _ in range(20): client.post("/vision", json={"imageBase64": JPEG}, headers={"x-real-ip": "1.1.1.1"})
+    assert client.post("/vision", json={"imageBase64": JPEG}, headers={"x-real-ip": "1.1.1.1"}).status_code == 429
+    assert client.post("/vision", json={"imageBase64": JPEG}, headers={"x-real-ip": "2.2.2.2"}).status_code == 200
 
 def test_feedback_503_when_webhook_unset(monkeypatch):
     monkeypatch.delenv("DISCORD_WEBHOOK_URL", raising=False)

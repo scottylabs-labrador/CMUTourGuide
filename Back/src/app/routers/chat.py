@@ -5,7 +5,7 @@ from typing import Any, Optional
 import openai
 from fastapi import APIRouter, HTTPException, Request
 from posthog.ai.openai import AsyncOpenAI  # drop-in OpenAI client that captures $ai_generation events
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from services import chat_tools, tracing
 from services.knowledge import KB
@@ -18,6 +18,9 @@ OPENROUTER_TIMEOUT_SECONDS = 30.0
 OPENROUTER_MAX_TOKENS = 2000
 OPENROUTER_REASONING_EFFORT = "low"
 MAX_TOOL_ITERATIONS = 4
+MAX_MESSAGE_CHARS = 4000  # app input caps at 500; replies are a short paragraph
+MAX_MESSAGES = 100  # reject absurd payloads outright
+MAX_HISTORY_MESSAGES = 20  # only the recent tail is sent to the model
 
 BASE_SYSTEM_PROMPT = """You are a CMU Tour Guide AI assistant helping visitors navigate Carnegie Mellon University.
 
@@ -37,13 +40,13 @@ RESPONSE RULES (strict):
 
 class Message(BaseModel):
 	id: str
-	text: str
+	text: str = Field(max_length=MAX_MESSAGE_CHARS)
 	isUser: bool
 	timestamp: str
 
 
 class ChatRequest(BaseModel):
-	messages: list[Message]
+	messages: list[Message] = Field(min_length=1, max_length=MAX_MESSAGES)
 	building_id: Optional[str] = None
 	distinct_id: Optional[str] = None  # PostHog distinct id from the app, joins traces to app events
 	session_id: Optional[str] = None  # chat session id, groups traces per conversation
@@ -106,7 +109,7 @@ def build_system_prompt(building_id: Optional[str]) -> str:
 
 
 def to_openai_messages(messages: list[Message]) -> list[dict[str, Any]]:
-	return [{"role": "user" if m.isUser else "assistant", "content": m.text} for m in messages]
+	return [{"role": "user" if m.isUser else "assistant", "content": m.text} for m in messages[-MAX_HISTORY_MESSAGES:]]
 
 
 async def generate_reply(req: ChatRequest, trace_id: str) -> str:

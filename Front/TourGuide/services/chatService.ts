@@ -3,6 +3,9 @@ import { Message } from '../types/chat';
 import { fetchWithTimeout, CHAT_TIMEOUT_MS } from './http';
 import { posthog } from '../config/posthog';
 
+// Matches MAX_HISTORY_MESSAGES in Back/src/app/routers/chat.py; the backend rejects >100
+export const MAX_HISTORY_MESSAGES = 20;
+
 export async function sendChatMessage(
   messages: Message[],
   buildingId?: string,
@@ -13,7 +16,7 @@ export async function sendChatMessage(
     headers: { 'Content-Type': 'application/json' },
     // ids let the backend's LLM traces join this device's PostHog events
     body: JSON.stringify({
-      messages,
+      messages: messages.slice(-MAX_HISTORY_MESSAGES),
       building_id: buildingId,
       distinct_id: posthog.getDistinctId(),
       session_id: sessionId,

@@ -58,7 +58,7 @@ _classifier_cache = None
     timeout=300,
     scaledown_window=1800,  # 30 min - container stays warm longer between requests
 )
-@modal.fastapi_endpoint(method="POST")
+@modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)  # callers send Modal-Key/Modal-Secret
 async def recognize_building_LP(request: dict) -> dict:
     """
     New Linear Probe endpoint. 
@@ -159,14 +159,16 @@ async def recognize_building_LP(request: dict) -> dict:
 @app.function(
     schedule=modal.Period(minutes=29),
     image=modal.Image.debian_slim().pip_install("httpx"),
+    secrets=[modal.Secret.from_name("vision-proxy-auth")],  # VISION_PROXY_KEY / VISION_PROXY_SECRET
 )
 def keep_warm():
     """Ping the recognizer web endpoint every 29 min so its container stays warm (avoids cold starts)."""
     import os
     import httpx
     url = os.environ.get("VISION_WEB_URL", VISION_WEB_URL)
+    auth = {"Modal-Key": os.environ["VISION_PROXY_KEY"], "Modal-Secret": os.environ["VISION_PROXY_SECRET"]}
     try:
-        httpx.post(url, json={"imageBase64": TINY_PNG_BASE64}, timeout=30.0)
+        httpx.post(url, json={"imageBase64": TINY_PNG_BASE64}, headers=auth, timeout=30.0)
     except Exception as e:
         print(f"keep_warm ping failed: {e}")
 

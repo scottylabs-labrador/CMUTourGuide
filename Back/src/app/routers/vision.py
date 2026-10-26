@@ -1,13 +1,34 @@
+import base64
+import binascii
 import os
 import httpx
 from fastapi import APIRouter, BackgroundTasks, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from services.s3Services import upload_interaction
 from services.rate_limit import limiter
 
+MODAL_URL = "https://ncdev1919--cmu-tour-guide-cv-recognize-building-lp.modal.run"
+MAX_IMAGE_BASE64_CHARS = 12_000_000  # ~9MB JPEG; a full-quality phone photo fits
+JPEG_MAGIC = b"\xff\xd8\xff"
+
 class VisionRequest(BaseModel):
 	imageBase64: str
+
+	@field_validator("imageBase64")
+	@classmethod
+	def must_be_jpeg(cls, v: str) -> str:
+		# Strip data-URL prefix, bound size, then require JPEG bytes so only photos reach Modal and S3
+		v = v.split(",", 1)[-1]
+		if len(v) > MAX_IMAGE_BASE64_CHARS:
+			raise ValueError("image too large")
+		try:
+			head = base64.b64decode(v, validate=True)[:3]
+		except (binascii.Error, ValueError):
+			raise ValueError("image is not valid base64")
+		if head != JPEG_MAGIC:
+			raise ValueError("image must be a JPEG")
+		return v
 
 class VisionResponse(BaseModel):
 	building_name: str
@@ -44,10 +65,15 @@ async def image(request: Request, req: VisionRequest, background_tasks: Backgrou
 async def recognize_building(image_base64: str) -> VisionResponse:
 	try:
 		async with httpx.AsyncClient(timeout=30.0) as client:
+			# Modal proxy auth token pair: https://modal.com/docs/guide/webhook-proxy-auth
 			response = await client.post(
-				"https://ncdev1919--cmu-tour-guide-cv-recognize-building-lp.modal.run",
+				MODAL_URL,
 				json={"imageBase64": image_base64},
-				headers={"Content-Type": "application/json"}
+				headers={
+					"Content-Type": "application/json",
+					"Modal-Key": os.getenv("VISION_PROXY_KEY", ""),
+					"Modal-Secret": os.getenv("VISION_PROXY_SECRET", ""),
+				}
 			)
 			response.raise_for_status()
 			res_json =  response.json()
