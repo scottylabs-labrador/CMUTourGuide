@@ -8,7 +8,7 @@ import { CMU_RED } from '../constants/colors';
 import FeedbackModal from '../components/FeedbackModal';
 import ScreenHeader from '../components/ScreenHeader';
 
-const PRIVACY_POLICY_URL = 'https://github.com/scottylabs-labrador/CMUTourGuide/blob/main/docs/privacy-policy.md';
+const PRIVACY_POLICY_URL = 'https://scottylabs-labrador.github.io/CMUTourGuide/privacy-policy';
 
 export default function InfoScreen() {
   const router = useRouter();
