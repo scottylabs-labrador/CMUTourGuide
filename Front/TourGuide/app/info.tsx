@@ -51,7 +51,7 @@ export default function InfoScreen() {
       >
         {/* App Title */}
         <View className="items-center mb-10">
-          <Text className="font-serif-bold text-[32px] text-cmu-red mb-2 tracking-tight">{`CMU Campus Explorer`}</Text>
+          <Text className="font-serif-bold text-[32px] text-cmu-red mb-2 tracking-tight">{`CMU Explorer`}</Text>
           <Text className="font-serif text-[16px] text-[#666]">Your Intelligent Campus Guide</Text>
         </View>
 
@@ -62,7 +62,7 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">What is it?</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            CMU Campus Explorer is your personal pocket tour guide for Carnegie Mellon University. It uses computer vision and AI to share detailed information about buildings and landmarks across campus.
+            CMU Explorer is your personal pocket tour guide for Carnegie Mellon University. It uses computer vision and AI to share detailed information about buildings and landmarks across campus.
           </Text>
         </View>
 
@@ -110,7 +110,7 @@ export default function InfoScreen() {
             <Text className="font-serif-semi text-[20px] text-cmu-red">About Us</Text>
           </View>
           <Text className="font-serif text-[16px] text-[#1F2933] leading-6">
-            CMU Campus Explorer was built by Noah Choi and Kaveh Fayyazi, members of ScottyLabs, a student-run club at Carnegie Mellon University that builds practical software for our school community. Explore more projects at{' '}
+            CMU Explorer was built by Noah Choi and Kaveh Fayyazi, members of ScottyLabs, a student-run club at Carnegie Mellon University that builds practical software for our school community. Explore more projects at{' '}
             <Text className="font-serif-semi text-cmu-red" onPress={() => Linking.openURL('https://scottylabs.org')}>scottylabs.org</Text>.
           </Text>
         </View>

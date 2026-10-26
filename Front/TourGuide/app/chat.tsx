@@ -150,29 +150,34 @@ export default function ChatScreen() {
         />
 
         {/* Input */}
-        <View className="flex-row items-end px-4 py-3 bg-white border-t border-[#e0e0e0]">
-          <TextInput
-            className="flex-1 border border-[#e0e0e0] rounded-[20px] px-4 py-3 mr-3 font-serif text-[16px]"
-            style={{ maxHeight: 100 }}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Ask about the building..."
-            placeholderTextColor="#999"
-            multiline
-            maxLength={500}
-          />
-          <TouchableOpacity
-            className="w-11 h-11 rounded-[22px] justify-center items-center"
-            style={{ backgroundColor: inputText.trim() === '' ? '#e0e0e0' : CMU_RED }}
-            onPress={handleSend}
-            disabled={inputText.trim() === ''}
-          >
-            <Ionicons
-              name="send"
-              size={20}
-              color={inputText.trim() === '' ? '#999' : 'white'}
+        <View className="px-4 pt-3 pb-2 bg-white border-t border-[#e0e0e0]">
+          <View className="flex-row items-end">
+            <TextInput
+              className="flex-1 border border-[#e0e0e0] rounded-[20px] px-4 py-3 mr-3 font-serif text-[16px]"
+              style={{ maxHeight: 100 }}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Ask about the building..."
+              placeholderTextColor="#999"
+              multiline
+              maxLength={500}
             />
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="w-11 h-11 rounded-[22px] justify-center items-center"
+              style={{ backgroundColor: inputText.trim() === '' ? '#e0e0e0' : CMU_RED }}
+              onPress={handleSend}
+              disabled={inputText.trim() === ''}
+            >
+              <Ionicons
+                name="send"
+                size={20}
+                color={inputText.trim() === '' ? '#999' : 'white'}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text className="font-serif text-[11px] text-muted text-center mt-2">
+            Don’t share personal information. Responses are AI-generated and may contain mistakes.
+          </Text>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

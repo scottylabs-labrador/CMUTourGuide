@@ -13,7 +13,7 @@
       "bundleIdentifier": "com.bigboa19.TourGuide",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "CMU Campus Explorer uses your location to show your position on the campus map."
+        "NSLocationWhenInUseUsageDescription": "CMU Explorer uses your location to show your position on the campus map."
       }
     },
     "android": {

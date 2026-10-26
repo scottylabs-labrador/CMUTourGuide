@@ -138,7 +138,7 @@ export default function FeedbackModal({ visible, onClose }: FeedbackModalProps) 
               keyboardShouldPersistTaps="handled"
             >
               <Text className="font-serif text-[14px] text-[#666] mb-4 leading-5">
-                CMU Campus Explorer is actively in development! We always seek feedback to improve the app.
+                CMU Explorer is actively in development! We always seek feedback to improve the app.
               </Text>
 
               {/* Category picker */}
