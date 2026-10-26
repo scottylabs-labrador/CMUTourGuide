@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.bigboa19.TourGuide",
+      "bundleIdentifier": "edu.cmu.campusexplorer",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "CMU Explorer uses your location to show your position on the campus map."
@@ -24,7 +24,7 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
-      "package": "com.bigboa19.TourGuide"
+      "package": "edu.cmu.campusexplorer"
     },
     "plugins": [
       "expo-router",
