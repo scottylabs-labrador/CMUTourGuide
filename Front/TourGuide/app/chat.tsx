@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
+  Animated,
   View,
   Text,
   TouchableOpacity,
@@ -21,6 +22,29 @@ import { FONTS } from '../constants/typography';
 import { SHADOWS } from '../constants/layout';
 import { usePostHog } from 'posthog-react-native';
 import { getBuilding } from '../services/buildingService';
+
+const DOT_STYLE = { width: 6, height: 6, borderRadius: 3, backgroundColor: CMU_RED, marginHorizontal: 2 };
+
+function TypingDots() {
+  const [dots] = useState(() => [0, 1, 2].map(() => new Animated.Value(0.3)));
+
+  useEffect(() => {
+    // Pulse each dot in turn, forever
+    const pulse = (v: Animated.Value) => Animated.sequence([
+      Animated.timing(v, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(v, { toValue: 0.3, duration: 300, useNativeDriver: true }),
+    ]);
+    const loop = Animated.loop(Animated.stagger(150, dots.map(pulse)));
+    loop.start();
+    return () => loop.stop();
+  }, [dots]);
+
+  return (
+    <View className="flex-row">
+      {dots.map((opacity, i) => <Animated.View key={i} style={[DOT_STYLE, { opacity }]} />)}
+    </View>
+  );
+}
 
 export default function ChatScreen() {
   const { sessionId, imageUri, building_name, building_id } = useLocalSearchParams();
@@ -112,12 +136,8 @@ export default function ChatScreen() {
     <View className="my-1 px-4 items-start">
       <View className="max-w-[80%] px-[10px] py-[10px] rounded-[20px] bg-white rounded-bl-[4px]" style={SHADOWS.small}>
         <View className="flex-row items-center">
-          <Text className="font-serif text-[#666] text-sm italic mr-2">AI is typing</Text>
-          <View className="flex-row">
-            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
-            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
-            <View className="w-[6px] h-[6px] rounded-[3px] bg-cmu-red mx-[2px]" />
-          </View>
+          <Text className="font-serif text-[#666] text-sm italic mr-2">Thinking</Text>
+          <TypingDots />
         </View>
       </View>
     </View>

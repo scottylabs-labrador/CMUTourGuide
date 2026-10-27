@@ -4,6 +4,7 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, Linking } from 'react-
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useBuildings } from '../contexts/BuildingContext';
+import { clearAllChatSessions } from '../utils/chatStorage';
 import { CMU_RED } from '../constants/colors';
 import FeedbackModal from '../components/FeedbackModal';
 import ScreenHeader from '../components/ScreenHeader';
@@ -18,7 +19,7 @@ export default function InfoScreen() {
   const handleClearStorage = () => {
     Alert.alert(
       'Clear Progress',
-      'Are you sure you want to clear all unlocked buildings? This action cannot be undone.',
+      'This erases your unlocked buildings and chat history on this device. This action cannot be undone.',
       [
         {
           text: 'Cancel',
@@ -29,9 +30,9 @@ export default function InfoScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await clearStorage();
+              await Promise.all([clearStorage(), clearAllChatSessions()]);
               Alert.alert('Success', 'All progress has been cleared.');
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to clear storage. Please try again.');
             }
           },
@@ -152,17 +153,16 @@ export default function InfoScreen() {
           </Text>
         </View>
 
-        {/* Clear Storage Section */}
-        <View className="mb-8">
-          <TouchableOpacity
-            className="flex-row items-center justify-center bg-cmu-red rounded-[12px] py-4 px-6 gap-2"
-            onPress={handleClearStorage}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="trash-outline" size={20} color="#fff" />
-            <Text className="font-serif-semi text-[16px] text-white">Clear All Progress</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Clear Storage: quiet destructive row */}
+        <TouchableOpacity
+          className="flex-row items-center justify-center py-3 mb-4 gap-2"
+          onPress={handleClearStorage}
+          activeOpacity={0.6}
+          accessibilityRole="button"
+        >
+          <Ionicons name="trash-outline" size={18} color={CMU_RED} />
+          <Text className="font-serif-semi text-[15px] text-cmu-red">Clear All Progress</Text>
+        </TouchableOpacity>
 
         {/* Footer */}
         <View className="items-center mt-2 pt-6 border-t border-border">
