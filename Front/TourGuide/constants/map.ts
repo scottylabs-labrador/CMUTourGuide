@@ -17,16 +17,6 @@ export const CAMPUS_CENTER: LatLng = {
 };
 export const OFF_CAMPUS_THRESHOLD_M = 1500;
 
-// Custom Google Maps style — strips POIs, transit, and noisy labels so CMU
-// outlines and pins read clearly.
-export const CMU_MAP_STYLE = [
-  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-  { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-  { featureType: 'road', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
-  { featureType: 'landscape.man_made', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-];
-
 // Hand-traced outline of the CMU main campus boundary.
 export const CMU_POLYGON = [
   { latitude: 40.448153, longitude: -79.952625 },

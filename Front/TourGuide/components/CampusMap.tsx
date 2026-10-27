@@ -8,7 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import MapView, { Polygon, Polyline, Marker, Callout, Region, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Polygon, Polyline, Marker, Callout, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useBuildings } from '../contexts/BuildingContext';
 import { isLandmark } from '../config/scannableBuildings';
@@ -38,7 +38,6 @@ import {
 import { SHADOWS } from '../constants/layout';
 import {
   CMU_POLYGON,
-  CMU_MAP_STYLE,
   INITIAL_REGION,
   CAMPUS_CENTER,
   OFF_CAMPUS_THRESHOLD_M,
@@ -317,7 +316,6 @@ export default function CampusMap({
         ref={mapRef}
         style={{ flex: 1 }}
         initialRegion={INITIAL_REGION}
-        customMapStyle={CMU_MAP_STYLE}
         showsBuildings
         showsIndoors={false}
         showsPointsOfInterests={false}

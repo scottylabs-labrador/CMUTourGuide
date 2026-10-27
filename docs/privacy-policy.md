@@ -1,6 +1,6 @@
 # CMU Explorer Privacy Policy
 
-_Last updated: October 26, 2026_
+_Last updated: October 27, 2026_
 
 CMU Explorer ("the app") is a self-guided campus tour app for Carnegie Mellon University, built by students in ScottyLabs with the CMU Welcome Center. This policy explains what the app collects, why, where it goes, and how long we keep it.
 
@@ -27,7 +27,7 @@ We do not ask for or store your name, email address, phone number, contacts, or 
 - **Modal** runs the building recognition model on scanned photos.
 - **Amazon Web Services (S3)** stores scanned photos.
 - **OpenRouteService** computes walking routes from coordinates the app sends.
-- **Google Maps** displays the campus map. Google may receive map requests from your device, as described in Google's privacy policy.
+- **Apple Maps** displays the campus map. Apple may receive map requests from your device, as described in Apple's privacy policy.
 - **Discord** delivers in-app feedback to our team.
 
 Each service processes data only to provide its part of the app.
