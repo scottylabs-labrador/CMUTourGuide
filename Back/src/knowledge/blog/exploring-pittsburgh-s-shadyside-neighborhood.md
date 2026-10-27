@@ -4,6 +4,7 @@ title: "Exploring Pittsburgh's Shadyside Neighborhood"
 type: blog
 category: pittsburgh
 author: "Samhita G."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-06/IMG_9510.jpg.webp?itok=h1tqgrZ5"
 date: 2025-06-04
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

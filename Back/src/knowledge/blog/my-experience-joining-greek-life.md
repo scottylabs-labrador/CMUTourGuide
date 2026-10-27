@@ -4,6 +4,7 @@ title: "My Experience Joining Greek Life"
 type: blog
 category: campus-life
 author: "Selena L."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-02/Screenshot%202025-02-05%20at%2011.52.44%E2%80%AFAM.png.webp?itok=H8A-4IDO"
 date: 2025-02-05
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

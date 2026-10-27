@@ -6,7 +6,7 @@ Markdown is the source of truth for everything the chat assistant knows. `servic
 
 - `buildings/<ID>.md` — one file per building or landmark. `ID` matches the client's building codes.
 - `campus/<topic>.md` — campus-wide topics: history, traditions, dining, visiting, transit, Pittsburgh.
-- `blog/<slug>.md` — admission blog posts, imported verbatim from the client bundle.
+- `blog/<slug>.md` — admission blog posts. Also served to the app by `GET /blog` (`app/routers/blog.py`), so adding a file here and redeploying publishes a post. Frontmatter adds `category` (academics | campus-life | pittsburgh | advice), `author`, `date` (YYYY-MM-DD) and `image` (cover URL); the italic first line under the H1 becomes the subtitle.
 
 ## File format
 

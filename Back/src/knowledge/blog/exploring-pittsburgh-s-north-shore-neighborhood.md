@@ -4,6 +4,7 @@ title: "Exploring Pittsburgh's North Shore Neighborhood"
 type: blog
 category: pittsburgh
 author: "Esha S."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-01/Makerspace%20Blog%20Post%20Photos.png.webp?itok=9UzoISCN"
 date: 2026-01-28
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

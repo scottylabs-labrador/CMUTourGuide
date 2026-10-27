@@ -4,6 +4,7 @@ title: "A Guide to the FAIR"
 type: blog
 category: campus-life
 author: "LiLi D."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-09/IMG_6117.jpeg.webp?itok=EWNMZxbF"
 date: 2025-09-23
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

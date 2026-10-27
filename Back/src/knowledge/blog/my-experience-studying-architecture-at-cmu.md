@@ -4,6 +4,7 @@ title: "My Experience Studying Architecture at CMU"
 type: blog
 category: academics
 author: "Esha S."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-05/DBS_1214.JPEG.webp?itok=2BHivih2"
 date: 2025-05-14
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

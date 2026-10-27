@@ -47,3 +47,11 @@ test('a second send while a reply is pending is ignored', async () => {
   await act(async () => resolve('answer'));
   expect(result.current.messages.map((m) => m.text).slice(1)).toEqual(['first', 'answer']);
 });
+
+test('greeting names the building, or campus when there is none', async () => {
+  const withBuilding = await renderHook(() => useChatSession({ buildingId: 'GHC', buildingName: 'Gates' }));
+  expect(withBuilding.result.current.messages[0].text).toBe(
+    "Hi, welcome to CMU! I'm your AI campus tour guide. What would you like to know about Gates?");
+  const without = await renderHook(() => useChatSession({}));
+  expect(without.result.current.messages[0].text).toContain('know about campus?');
+});

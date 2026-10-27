@@ -4,6 +4,7 @@ title: "My Favorite Club at CMU"
 type: blog
 category: campus-life
 author: "Rohit G."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-04/092A8610.jpg.webp"
 date: 2025-04-22
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

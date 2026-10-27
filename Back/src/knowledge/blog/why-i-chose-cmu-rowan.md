@@ -4,6 +4,7 @@ title: "Why I Chose CMU \u2014 Rowan"
 type: blog
 category: advice
 author: "Rowan C."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-03/Untitled%20design.png.webp?itok=heYh379Q"
 date: 2026-03-25
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

@@ -21,7 +21,7 @@ export function useChatSession({ sessionId, imageUri, buildingName, buildingId }
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: `Hi, Welcome to CMU! Im your personal AI campus Tour Guide. What would you like to know about ${buildingName}?`,
+      text: `Hi, welcome to CMU! I'm your AI campus tour guide. What would you like to know about ${buildingName ?? 'campus'}?`,
       isUser: false,
       timestamp: new Date(),
     },

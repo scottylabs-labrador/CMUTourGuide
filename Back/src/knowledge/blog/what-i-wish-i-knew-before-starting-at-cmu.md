@@ -4,6 +4,7 @@ title: "What I Wish I Knew Before Starting at CMU"
 type: blog
 category: advice
 author: "Cindy G."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-02/kiltie%20color%20guard%20photo.png.webp?itok=b3cI0K14"
 date: 2026-02-11
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

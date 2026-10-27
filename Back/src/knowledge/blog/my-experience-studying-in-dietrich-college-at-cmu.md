@@ -4,6 +4,7 @@ title: "My Experience Studying in Dietrich College at CMU"
 type: blog
 category: academics
 author: "Peter S."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-07/Peter%20S..jpg.webp?itok=PUN6lF91"
 date: 2025-07-09
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

@@ -4,6 +4,7 @@ title: "My Mentorship Experiences at CMU"
 type: blog
 category: advice
 author: "Marissa M."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-04/IMG_5935.JPEG.webp?itok=SWE1KfYp"
 date: 2026-04-15
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

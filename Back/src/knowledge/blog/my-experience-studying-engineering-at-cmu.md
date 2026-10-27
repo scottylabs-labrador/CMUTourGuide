@@ -4,6 +4,7 @@ title: "My Experience Studying Engineering at CMU"
 type: blog
 category: academics
 author: "Sydney H."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-07/Screenshot%202025-05-29%20at%201.18.58%E2%80%AFPM_0.png.webp?itok=VzbwrCSh"
 date: 2025-08-06
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

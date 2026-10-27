@@ -131,7 +131,7 @@ export default function ChatScreen() {
       >
         {/* Header */}
         <ScreenHeader
-          title={(buildingIdState && getBuilding(buildingIdState)?.title) || "CMU Tour Guide"}
+          title={(buildingIdState && getBuilding(buildingIdState)?.title) || "CMU Explorer"}
           onBack={() => router.back()}
           rightAction={{
             icon: 'add',

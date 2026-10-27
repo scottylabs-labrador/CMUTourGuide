@@ -41,7 +41,7 @@ Back/
     ├── knowledge/                # markdown knowledge base (see its README)
     ├── app/
     │   ├── main.py               # app, CORS, rate limiter, routers
-    │   └── routers/              # chat.py, vision.py, feedback.py, health.py
+    │   └── routers/              # chat.py, vision.py, feedback.py, blog.py, health.py
     └── services/
         ├── knowledge.py          # loads + chunks markdown, BM25 search
         ├── chat_tools.py         # tool schemas + dispatch (search_campus_info, get_building_info)
@@ -52,7 +52,7 @@ Back/
 
 ## Data
 
-`src/knowledge/` holds the chatbot's knowledge base as markdown (buildings, campus topics, blog posts). See `src/knowledge/README.md` for the file format. It is indexed with BM25 at startup (`services/knowledge.py`) and exposed to the model as the `search_campus_info` and `get_building_info` tools.
+`src/knowledge/` holds the chatbot's knowledge base as markdown (buildings, campus topics, blog posts). See `src/knowledge/README.md` for the file format. It is indexed with BM25 at startup (`services/knowledge.py`) and exposed to the model as the `search_campus_info` and `get_building_info` tools. Blog posts are also served to the app by `GET /blog`, so publishing a post is adding a markdown file and redeploying.
 
 ## Testing locally
 

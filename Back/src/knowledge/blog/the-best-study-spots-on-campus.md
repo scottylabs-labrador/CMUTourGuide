@@ -4,6 +4,7 @@ title: "The Best Study Spots on Campus"
 type: blog
 category: academics
 author: "Angella C."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-12/240826B_First_Day26.jpg.webp?itok=-3mWt6kp"
 date: 2025-11-19
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

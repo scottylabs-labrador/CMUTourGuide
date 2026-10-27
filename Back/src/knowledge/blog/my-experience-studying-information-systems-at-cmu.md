@@ -4,6 +4,7 @@ title: "My Experience Studying Information Systems at CMU"
 type: blog
 category: academics
 author: "Sofia Y."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-06/TA.JPG.webp?itok=HMyxmFBF"
 date: 2025-06-25
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

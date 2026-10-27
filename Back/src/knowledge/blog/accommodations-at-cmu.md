@@ -4,6 +4,7 @@ title: "Accommodations at CMU"
 type: blog
 category: advice
 author: "LiLi D."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-08/DSC_2386.jpeg.webp?itok=-trnZJo6"
 date: 2025-08-20
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

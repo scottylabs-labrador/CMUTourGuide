@@ -4,6 +4,7 @@ title: "My Experience Studying Computer Science at CMU"
 type: blog
 category: academics
 author: "Ronav J."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-05/IMG_9127.jpg.webp?itok=Q0WBvoRU"
 date: 2025-05-28
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

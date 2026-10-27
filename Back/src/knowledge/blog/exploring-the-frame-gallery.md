@@ -4,6 +4,7 @@ title: "Exploring the Frame Gallery"
 type: blog
 category: pittsburgh
 author: "Cat R."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-11/P1160442%202-2.jpg.webp?itok=5BWbrzk-"
 date: 2025-11-19
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

@@ -4,6 +4,7 @@ title: "My Experience at TartanHacks"
 type: blog
 category: campus-life
 author: "Sai P."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-02/IMG_9609.jpeg.webp?itok=6WJBoldw"
 date: 2026-02-18
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

@@ -4,6 +4,7 @@ title: "Learn CMU Lingo"
 type: blog
 category: advice
 author: "Hannah V."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-09/1_0.png.webp?itok=F4F9Ooh5"
 date: 2025-10-01
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

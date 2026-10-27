@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   Modal,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -14,9 +15,10 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
-import { getBlogPostsByCategory } from '../services/blogService';
+import { fetchBlogPosts, getCachedBlogPosts, filterByCategory } from '../services/blogService';
 import type { BlogPost } from '../types/blog';
 import ScreenHeader from '../components/ScreenHeader';
+import EmptyState from '../components/EmptyState';
 import { COLORS } from '../constants/colors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -33,8 +35,27 @@ export default function BlogScreen() {
   const router = useRouter();
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [posts, setPosts] = useState<BlogPost[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const filteredPosts = getBlogPostsByCategory(activeCategory);
+  const refresh = useCallback(() =>
+    fetchBlogPosts()
+      .then((fresh) => { setPosts(fresh); setFailed(false); })
+      .catch(() => setFailed(true)), []);
+
+  // Show cached posts instantly, then swap in fresh ones
+  useEffect(() => {
+    getCachedBlogPosts().then((cached) => cached && setPosts((p) => p ?? cached));
+    refresh();
+  }, [refresh]);
+
+  const onPullRefresh = () => {
+    setRefreshing(true);
+    refresh().finally(() => setRefreshing(false));
+  };
+
+  const filteredPosts = filterByCategory(posts ?? [], activeCategory);
 
   const handlePostPress = (post: BlogPost) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -182,14 +203,24 @@ export default function BlogScreen() {
       </ScrollView>
 
       {/* Content */}
-      <FlatList
-        data={filteredPosts}
-        renderItem={renderPostItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderFeaturedPost}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {posts === null ? (
+        failed ? (
+          <EmptyState icon="cloud-offline-outline" title="Couldn't load posts" subtitle="Check your connection and try again" />
+        ) : (
+          <ActivityIndicator style={{ marginTop: 40 }} color={COLORS.textMuted} />
+        )
+      ) : (
+        <FlatList
+          data={filteredPosts}
+          renderItem={renderPostItem}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={renderFeaturedPost}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={onPullRefresh}
+        />
+      )}
 
       {/* Post Detail Modal */}
       <Modal

@@ -4,6 +4,7 @@ title: "On-Campus Communities at CMU"
 type: blog
 category: campus-life
 author: "Jonathan K."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-10/CCT.JPG.webp?itok=q0zK9g89"
 date: 2025-10-29
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

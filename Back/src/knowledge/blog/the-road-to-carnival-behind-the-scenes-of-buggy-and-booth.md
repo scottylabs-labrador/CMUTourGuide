@@ -4,6 +4,7 @@ title: "The Road to Carnival: Behind the Scenes of Buggy and Booth"
 type: blog
 category: campus-life
 author: "Ray K."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-04/IMG_7083.jpeg.webp?itok=2T9GUAO4"
 date: 2026-04-08
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

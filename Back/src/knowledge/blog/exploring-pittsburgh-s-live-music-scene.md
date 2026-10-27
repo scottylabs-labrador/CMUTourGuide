@@ -4,6 +4,7 @@ title: "Exploring Pittsburgh's Live Music Scene"
 type: blog
 category: pittsburgh
 author: "Harshitha B."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-08/54B7C472-CC01-4424-994C-7CECC0BC5A60.jpg.webp?itok=5gt-BcEm"
 date: 2025-08-15
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

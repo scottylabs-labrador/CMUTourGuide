@@ -4,6 +4,7 @@ title: "What to Do in Pittsburgh During Fall Break"
 type: blog
 category: pittsburgh
 author: "Sruti B."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-10/1.png.webp?itok=jJeDKKeb"
 date: 2025-10-15
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

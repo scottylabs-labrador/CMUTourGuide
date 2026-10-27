@@ -4,6 +4,7 @@ title: "Women in STEM at CMU"
 type: blog
 category: academics
 author: "Katherine W."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-02/SWE%20Conference.JPG.webp"
 date: 2025-02-12
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

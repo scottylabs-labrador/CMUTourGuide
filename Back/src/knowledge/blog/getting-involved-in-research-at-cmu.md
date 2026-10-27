@@ -4,6 +4,7 @@ title: "Getting Involved in Research at CMU"
 type: blog
 category: academics
 author: "Sonali S."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-03/IMG_3435%20%281%29.jpg.webp?itok=CYwlryPm"
 date: 2026-04-01
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

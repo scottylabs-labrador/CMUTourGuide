@@ -4,6 +4,7 @@ title: "Balancing Part-Time Work and Academics"
 type: blog
 category: academics
 author: "Brian K."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-08/headshot.png.webp?itok=0_tTQ2wx"
 date: 2025-09-03
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

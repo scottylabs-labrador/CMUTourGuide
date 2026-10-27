@@ -4,6 +4,7 @@ title: "Exploring Career Fairs at CMU"
 type: blog
 category: academics
 author: "Samhita G."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-02/Media%201-3326E849-F5C4-4962-B7A2-E5F6C9FD5487.jpg.webp?itok=7KJAgitL"
 date: 2026-02-25
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

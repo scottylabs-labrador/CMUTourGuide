@@ -4,6 +4,7 @@ title: "My Favorite Places to Eat on Campus"
 type: blog
 category: pittsburgh
 author: "Gina G."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-09/Eating%20Revolution%20Noodles.png.webp?itok=-QGj5O07"
 date: 2025-09-10
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

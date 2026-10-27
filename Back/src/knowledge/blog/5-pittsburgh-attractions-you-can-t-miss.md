@@ -4,6 +4,7 @@ title: "5 Pittsburgh Attractions You Can't Miss"
 type: blog
 category: pittsburgh
 author: "Anna A."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-03/mattressFactory.jpeg.webp?itok=kHhSKOUo"
 date: 2026-03-18
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

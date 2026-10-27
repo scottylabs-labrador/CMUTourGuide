@@ -4,6 +4,7 @@ title: "My Experience Studying in MCS at CMU"
 type: blog
 category: academics
 author: "Rebecca M."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-07/IMG_6191.jpg.webp?itok=ecysiUf3"
 date: 2025-07-23
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

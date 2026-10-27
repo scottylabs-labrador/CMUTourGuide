@@ -4,6 +4,7 @@ title: "Winter in Pittsburgh: What to See, Do and Experience"
 type: blog
 category: pittsburgh
 author: "Alycen K."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-12/MC-240116A-Campus-Snow070.jpg.webp?itok=dNOJOyMN"
 date: 2025-12-10
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

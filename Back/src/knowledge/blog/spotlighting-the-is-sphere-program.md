@@ -4,6 +4,7 @@ title: "Spotlighting the IS Sphere Program"
 type: blog
 category: academics
 author: "Riyan K."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2026-03/IMG_4217.jpeg.webp?itok=k_TV1--V"
 date: 2026-03-04
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

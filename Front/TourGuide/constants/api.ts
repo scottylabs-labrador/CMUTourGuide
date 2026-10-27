@@ -4,4 +4,5 @@ export const ENDPOINTS = {
   vision: `${API_BASE_URL}/vision`,
   chat: `${API_BASE_URL}/chat`,
   feedback: `${API_BASE_URL}/feedback`,
+  blog: `${API_BASE_URL}/blog`,
 } as const;

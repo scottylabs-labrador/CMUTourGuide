@@ -22,6 +22,7 @@ class Doc:
 	body: str
 	aliases: list[str] = field(default_factory=list)
 	sources: list[str] = field(default_factory=list)
+	meta: dict = field(default_factory=dict)  # full frontmatter, for type-specific fields (blog author/date/image)
 
 
 @dataclass
@@ -45,7 +46,7 @@ def parse_doc(path: Path) -> Doc:
 	body = re.sub(r"^# .*\n", "", body + "\n", count=1).strip()  # drop the H1, title comes from frontmatter
 	return Doc(id=str(meta.get("id", path.stem)), title=str(meta.get("title", path.stem)), type=str(meta.get("type", "doc")),
 	           body=body, aliases=[str(a) for a in (meta.get("aliases") or []) if a],
-	           sources=[str(s) for s in (meta.get("sources") or []) if str(s).startswith("http")])
+	           sources=[str(s) for s in (meta.get("sources") or []) if str(s).startswith("http")], meta=meta)
 
 
 def chunk_doc(doc: Doc) -> list[Chunk]:

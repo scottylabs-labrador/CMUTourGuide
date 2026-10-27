@@ -4,6 +4,7 @@ title: "My Experience as a First-Generation College Student"
 type: blog
 category: advice
 author: "Cynthia Erazo-Rodas"
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2024-10/SALSA_1.jpg.webp"
 date: 2024-10-22
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

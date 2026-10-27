@@ -4,6 +4,7 @@ title: "Volunteering in the Pittsburgh Community"
 type: blog
 category: campus-life
 author: "Sruti B."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-08/Me%20with%20One%20of%20the%20Dogs%21.jpeg.webp?itok=8f9m1cn-"
 date: 2025-08-27
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

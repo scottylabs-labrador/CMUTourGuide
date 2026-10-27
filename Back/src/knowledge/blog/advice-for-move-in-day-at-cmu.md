@@ -4,6 +4,7 @@ title: "Advice for Move-In Day at CMU"
 type: blog
 category: advice
 author: "Indu A."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-07/SCC%20Group%20Pic%20during%20MoveOn%20%281%29.jpg.webp?itok=isfQqswv"
 date: 2025-07-30
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

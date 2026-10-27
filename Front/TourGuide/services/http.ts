@@ -1,6 +1,7 @@
 // Hermes lacks AbortSignal.timeout(), so build timeouts from AbortController + a timer.
 export const VISION_TIMEOUT_MS = 35_000; // backend waits up to 30s on Modal
 export const CHAT_TIMEOUT_MS = 45_000;
+export const BLOG_TIMEOUT_MS = 15_000;
 
 export class TimeoutError extends Error {
   name = 'TimeoutError';

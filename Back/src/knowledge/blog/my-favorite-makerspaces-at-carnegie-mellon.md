@@ -4,6 +4,7 @@ title: "My Favorite Makerspaces at Carnegie Mellon"
 type: blog
 category: academics
 author: "Natalie C."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-11/3.png.webp?itok=kN02nrHq"
 date: 2025-11-19
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

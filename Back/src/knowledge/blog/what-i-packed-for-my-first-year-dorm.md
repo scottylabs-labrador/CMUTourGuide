@@ -4,6 +4,7 @@ title: "What I Packed for my First-Year Dorm"
 type: blog
 category: advice
 author: "Miriam I."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-06/unnamed.png.webp?itok=iHSpDj_O"
 date: 2025-06-18
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

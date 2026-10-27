@@ -4,6 +4,7 @@ title: "A Day in My Life as a Student Athlete"
 type: blog
 category: campus-life
 author: "Ryan F."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/embedded_aligned/public/2025-05/friends.jpg.webp?itok=ZQRfkM7L"
 date: 2025-05-19
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

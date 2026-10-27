@@ -4,6 +4,7 @@ title: "My Experience Studying Business at CMU"
 type: blog
 category: academics
 author: "Angie Y."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-06/protrek.JPEG.webp?itok=I4JcKMxM"
 date: 2025-06-11
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

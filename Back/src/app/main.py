@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from typing import List
 from app.routers.health import router as health_router
 from app.routers.chat import router as chat_router
 from app.routers.vision import router as vision_router
 from app.routers.feedback import router as feedback_router
+from app.routers.blog import router as blog_router
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from services.rate_limit import limiter
@@ -26,6 +28,8 @@ app.add_middleware(
 	allow_methods=["*"],
 	allow_headers=["*"],
 )
+# blog list is ~140KB of text; compresses ~3x
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 @app.on_event("shutdown")
 def _flush_traces():
@@ -36,6 +40,7 @@ app.include_router(health_router)
 app.include_router(chat_router)
 app.include_router(vision_router)
 app.include_router(feedback_router)
+app.include_router(blog_router)
 
 
 @app.get("/")

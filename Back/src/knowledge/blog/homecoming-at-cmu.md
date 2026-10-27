@@ -4,6 +4,7 @@ title: "Homecoming at CMU"
 type: blog
 category: campus-life
 author: "Bridget H."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-11/FINAL.jpg.webp?itok=oGtv_Mmc"
 date: 2025-11-05
 sources: ["https://www.cmu.edu/admission/blog"]
 ---

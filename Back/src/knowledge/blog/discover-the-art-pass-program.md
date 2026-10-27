@@ -4,6 +4,7 @@ title: "Discover the Art Pass Program"
 type: blog
 category: pittsburgh
 author: "Edie H."
+image: "https://www.cmu.edu/admission/sites/default/files/styles/hero_full_width_fallback/public/2025-11/ArtPassArticle1.jpeg.webp?itok=8xN4A76h"
 date: 2025-11-12
 sources: ["https://www.cmu.edu/admission/blog"]
 ---
