@@ -73,9 +73,9 @@ export function getBaseOutlineColors(category: BuildingCategory) {
 }
 
 // Simplified two-state palette used on the campus map:
-// red when the building is unlocked, neutral gray when not.
+// green when the building is unlocked, neutral gray when not.
 export function getMapBuildingColors(unlocked: boolean) {
-  const hex = unlocked ? CMU_RED : IRON_GRAY;
+  const hex = unlocked ? VISITED_GREEN : IRON_GRAY;
   return {
     stroke: hex,
     fill: hexToRgba(hex, unlocked ? 0.18 : 0.08),
@@ -120,8 +120,8 @@ export function getMapBuildingStyle(opts: {
   if (!inRoute) {
     const base = getMapBuildingColors(unlocked);
     return {
-      stroke: hexToRgba(unlocked ? CMU_RED : IRON_GRAY, 0.35),
-      fill: hexToRgba(unlocked ? CMU_RED : IRON_GRAY, 0.05),
+      stroke: hexToRgba(unlocked ? VISITED_GREEN : IRON_GRAY, 0.35),
+      fill: hexToRgba(unlocked ? VISITED_GREEN : IRON_GRAY, 0.05),
       dot: base.dot,
       opacity: 0.4,
       showCheck: false,

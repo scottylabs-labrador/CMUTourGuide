@@ -434,9 +434,7 @@ export default function CampusMap({
             ? LANDMARK_YELLOW
             : showLocked
               ? COLORS.locked
-              : routeActive && inRoute
-                ? VISITED_GREEN
-                : CMU_RED;
+              : VISITED_GREEN;
           // Include route-state bits in the key so the native marker
           // bitmap is re-captured when membership/next-stop/unlock changes
           // (same mechanism as the existing label-visibility rekey).
